@@ -30,34 +30,54 @@ const specialties = [
 
 function Home() {
   const [showAll, setShowAll] = useState(false);
+  const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
+  const [originLabel, setOriginLabel] = useState<string>("الجزائر");
 
-  const { data: doctors } = useQuery({
+  useEffect(() => {
+    (async () => {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) return;
+      const { data: p } = await supabase.from("profiles")
+        .select("lat,lng,wilayas(name_ar),baladiyas(name_ar)").eq("user_id", u.user.id).maybeSingle();
+      if (p?.lat && p?.lng) setOrigin({ lat: p.lat, lng: p.lng });
+      const w = (p as any)?.wilayas?.name_ar;
+      const b = (p as any)?.baladiyas?.name_ar;
+      if (w || b) setOriginLabel([b, w].filter(Boolean).join("، "));
+    })();
+  }, []);
+
+  const { data: doctorsRaw } = useQuery({
     queryKey: ["featured-doctors"],
     queryFn: async () => {
       const { data } = await supabase.from("doctors")
-        .select("id,full_name,rating,reviews_count,photo_url,fee,verified,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)")
-        .order("rating", { ascending: false }).limit(6);
+        .select("id,full_name,rating,reviews_count,photo_url,fee,verified,phone,lat,lng,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)")
+        .order("rating", { ascending: false }).limit(20);
       return data ?? [];
     },
   });
 
-  const { data: hospitals } = useQuery({
+  const { data: hospitalsRaw } = useQuery({
     queryKey: ["nearby-hospitals"],
     queryFn: async () => {
       const { data } = await supabase.from("hospitals")
-        .select("id,name,photo_url,wilayas(name_ar),baladiyas(name_ar)").limit(4);
+        .select("id,name,photo_url,phone,lat,lng,wilayas(name_ar),baladiyas(name_ar)").limit(20);
       return data ?? [];
     },
   });
 
-  const { data: pharmacies } = useQuery({
+  const { data: pharmaciesRaw } = useQuery({
     queryKey: ["nearby-pharmacies"],
     queryFn: async () => {
       const { data } = await supabase.from("pharmacies")
-        .select("id,name,is_24_7,phone,wilayas(name_ar)").limit(4);
+        .select("id,name,is_24_7,phone,lat,lng,wilayas(name_ar)").limit(20);
       return data ?? [];
     },
   });
+
+  const doctors = sortByDistance((doctorsRaw ?? []) as any[], origin).slice(0, 6);
+  const hospitals = sortByDistance((hospitalsRaw ?? []) as any[], origin).slice(0, 4);
+  const pharmacies = sortByDistance((pharmaciesRaw ?? []) as any[], origin).slice(0, 4);
+
 
   const { data: emergency } = useQuery({
     queryKey: ["emergency-donor"],
