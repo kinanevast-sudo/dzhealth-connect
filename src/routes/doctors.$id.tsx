@@ -248,12 +248,19 @@ function RatingsTab({ doctor }: { doctor: any }) {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("doctor_reviews")
-        .select("id,stars,comment,created_at,user_id,profiles:profiles!doctor_reviews_user_id_fkey(full_name,avatar_url)")
+        .select("id,stars,comment,created_at,user_id")
         .eq("doctor_id", doctor.id)
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
-      return data ?? [];
+      const rows = data ?? [];
+      const ids = Array.from(new Set(rows.map((r: any) => r.user_id)));
+      let profilesMap: Record<string, any> = {};
+      if (ids.length) {
+        const { data: profs } = await supabase.from("profiles").select("user_id,full_name,avatar_url").in("user_id", ids);
+        (profs ?? []).forEach((p: any) => { profilesMap[p.user_id] = p; });
+      }
+      return rows.map((r: any) => ({ ...r, profile: profilesMap[r.user_id] }));
     },
   });
 
