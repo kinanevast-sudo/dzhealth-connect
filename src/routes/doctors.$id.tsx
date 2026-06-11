@@ -172,13 +172,7 @@ function Detail() {
         )}
 
         {tab === "التقييمات" && (
-          <Panel title="التقييمات">
-            <div className="flex items-center justify-center gap-2">
-              <span className="text-3xl font-extrabold" style={{ color: "#0891b2" }}>{x.rating}</span>
-              <Star className="h-6 w-6 fill-yellow-400 text-yellow-400" />
-            </div>
-            <p className="mt-1 text-center text-xs text-muted-foreground">{x.reviews_count} تقييم</p>
-          </Panel>
+          <RatingsTab doctor={x} />
         )}
 
         {tab === "احجز موعد" && (
