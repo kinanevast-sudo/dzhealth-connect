@@ -34,15 +34,28 @@ function Home() {
   const [originLabel, setOriginLabel] = useState<string>("الجزائر");
 
   useEffect(() => {
+    let gotProfileLoc = false;
     (async () => {
       const { data: u } = await supabase.auth.getUser();
-      if (!u.user) return;
-      const { data: p } = await supabase.from("profiles")
-        .select("lat,lng,wilayas(name_ar),baladiyas(name_ar)").eq("user_id", u.user.id).maybeSingle();
-      if (p?.lat && p?.lng) setOrigin({ lat: p.lat, lng: p.lng });
-      const w = (p as any)?.wilayas?.name_ar;
-      const b = (p as any)?.baladiyas?.name_ar;
-      if (w || b) setOriginLabel([b, w].filter(Boolean).join("، "));
+      if (u.user) {
+        const { data: p } = await supabase.from("profiles")
+          .select("lat,lng,wilayas(name_ar),baladiyas(name_ar)").eq("user_id", u.user.id).maybeSingle();
+        if (p?.lat && p?.lng) { setOrigin({ lat: p.lat, lng: p.lng }); gotProfileLoc = true; }
+        const w = (p as any)?.wilayas?.name_ar;
+        const b = (p as any)?.baladiyas?.name_ar;
+        if (w || b) setOriginLabel([b, w].filter(Boolean).join("، "));
+      }
+      // Auto-detect via browser geolocation if no profile location
+      if (!gotProfileLoc && typeof navigator !== "undefined" && navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            setOrigin({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+            setOriginLabel("موقعك الحالي");
+          },
+          () => {},
+          { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
+        );
+      }
     })();
   }, []);
 
