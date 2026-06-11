@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Search as SearchIcon, ChevronUp, ChevronDown, MapPin, Mic, Stethoscope, Building2, Pill, Droplet, Baby } from "lucide-react";
-import { useState, useMemo } from "react";
+import { Search as SearchIcon, ChevronUp, MapPin, Mic, Stethoscope, Star, Phone, BadgeCheck } from "lucide-react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 
