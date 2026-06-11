@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Building2, Phone, MapPin, Search } from "lucide-react";
+import { Building2, Phone, MapPin, Search, Map as MapIcon } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 import { sortByDistance } from "@/lib/geo";
@@ -127,30 +128,37 @@ function HospitalImg({ src, alt }: { src?: string | null; alt: string }) {
 function HospitalCard({ h }: { h: any }) {
   const km = fmtKm((h as any)._distanceKm);
   return (
-    <Link to="/hospitals" className="flex items-stretch gap-3 overflow-hidden rounded-2xl bg-surface card-elevated p-3">
-      <HospitalImg src={h.photo_url} alt={h.name} />
-      <div className="min-w-0 flex-1 text-right">
-        <h3 className="truncate text-base font-extrabold">{h.name}</h3>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          {h.wilayas?.name_ar}{h.baladiyas?.name_ar ? ` - ${h.baladiyas?.name_ar}` : ""}
-        </p>
-        <div className="mt-2 flex flex-wrap justify-end gap-1.5">
-          {["طوارئ","جراحة","أطفال"].map((t) => (
-            <span key={t} className="rounded-full bg-primary/10 px-2.5 py-0.5 text-[10px] text-primary">{t}</span>
-          ))}
-        </div>
-        <div className="mt-2 flex items-center justify-end gap-1 text-[11px]">
-          {km && <span className="font-bold text-primary">{km}</span>}
-          <MapPin className="h-3 w-3 text-muted-foreground" />
+    <Link to="/hospitals" className="block rounded-2xl p-4 active:scale-[0.98] transition" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
+      <div className="flex items-start gap-3">
+        <HospitalImg src={h.photo_url} alt={h.name} />
+        <div className="min-w-0 flex-1 text-right">
+          <h3 className="text-base font-extrabold leading-tight">{h.name}</h3>
+          <p className="mt-0.5 text-sm font-semibold" style={{ color: "#0891b2" }}>{h.kind ?? "مستشفى عام"}</p>
+          <div className="mt-1 flex items-center justify-end gap-1 text-xs text-muted-foreground">
+            <span>{h.wilayas?.name_ar}{h.baladiyas?.name_ar ? ` - ${h.baladiyas?.name_ar}` : ""}</span>
+            <MapPin className="h-3 w-3" />
+          </div>
+          <div className="mt-2 flex flex-wrap justify-end gap-1.5">
+            {["طوارئ","جراحة","أطفال"].map((t) => (
+              <span key={t} className="rounded-full px-2.5 py-0.5 text-[10px]" style={{ background: "#cffafe", color: "#0891b2" }}>{t}</span>
+            ))}
+          </div>
+          {km && (
+            <div className="mt-2 flex items-center justify-end">
+              <span className="text-xs font-bold" style={{ color: "#0891b2" }}>{km}</span>
+            </div>
+          )}
         </div>
       </div>
-      <a
-        href={`tel:${h.phone}`}
-        onClick={(e) => e.stopPropagation()}
-        className="flex h-10 w-10 flex-shrink-0 items-center justify-center self-end rounded-full bg-primary/10"
-      >
-        <Phone className="h-4 w-4 text-primary" />
-      </a>
+      <div className="mt-3 grid grid-cols-2 gap-2.5 border-t pt-3" style={{ borderColor: "var(--border)" }}>
+        <button onClick={(e) => e.preventDefault()} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0e7490" }}>
+          <MapIcon className="h-4 w-4" /> عرض على الخريطة
+        </button>
+        <a href={`tel:${h.phone}`} onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold" style={{ background: "#e0f2fe", color: "#0891b2" }}>
+          <Phone className="h-4 w-4" /> اتصال
+        </a>
+      </div>
     </Link>
   );
 }
+
