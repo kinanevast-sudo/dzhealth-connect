@@ -14,7 +14,7 @@ function Doctors() {
     queryKey: ["doctors-all"],
     queryFn: async () => {
       const { data, error } = await supabase.from("doctors")
-        .select("id,full_name,rating,reviews_count,fee,phone,photo_url,verified,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)");
+        .select("id,full_name,rating,reviews_count,fee,phone,photo_url,verified,lat,lng,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)");
       if (error) throw error;
       return data ?? [];
     },
