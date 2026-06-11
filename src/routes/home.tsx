@@ -48,9 +48,17 @@ function Home() {
       // Auto-detect via browser geolocation if no profile location
       if (!gotProfileLoc && typeof navigator !== "undefined" && navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
-          (pos) => {
-            setOrigin({ lat: pos.coords.latitude, lng: pos.coords.longitude });
-            setOriginLabel("موقعك الحالي");
+          async (pos) => {
+            const lat = pos.coords.latitude, lng = pos.coords.longitude;
+            setOrigin({ lat, lng });
+            try {
+              const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=ar`);
+              const j = await r.json();
+              const city = j.city || j.locality || j.principalSubdivision;
+              const commune = j.locality && j.locality !== city ? j.locality : (j.localityInfo?.administrative?.find?.((a: any) => a.order >= 6)?.name);
+              const label = [commune, city].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join("، ");
+              if (label) setOriginLabel(label);
+            } catch {}
           },
           () => {},
           { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
