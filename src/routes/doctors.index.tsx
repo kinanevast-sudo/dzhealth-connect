@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Search, Phone, Star, MapPin, Map as MapIcon, BadgeCheck, Stethoscope } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
+import { openMap } from "@/lib/map";
 
 export const Route = createFileRoute("/doctors/")({ component: Doctors });
 
