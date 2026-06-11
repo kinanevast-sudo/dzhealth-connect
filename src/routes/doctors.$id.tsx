@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ArrowLeft, Phone, MapPin, Share2, Heart, BadgeCheck, Map as MapIcon, Star, Stethoscope } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { openMap } from "@/lib/map";
 
 export const Route = createFileRoute("/doctors/$id")({ component: Detail });
 
