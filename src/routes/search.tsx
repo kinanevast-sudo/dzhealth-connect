@@ -1,7 +1,7 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Search as SearchIcon, ChevronUp, ChevronDown, MapPin, Mic, Stethoscope, Building2, Pill, Droplet, Baby } from "lucide-react";
-import { useState, useMemo } from "react";
+import { Search as SearchIcon, ChevronUp, MapPin, Mic, Stethoscope, Star, Phone, BadgeCheck } from "lucide-react";
+import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 
@@ -38,10 +38,14 @@ function Page() {
   const table = type === "hospitals" ? "hospitals" : type === "pharmacies" ? "pharmacies" : type === "donors" ? "blood_donors" : "doctors";
   const nameCol = table === "doctors" ? "full_name" : table === "blood_donors" ? "full_name" : "name";
 
+  const selectCols = table === "doctors"
+    ? "id,full_name,photo_url,rating,reviews_count,fee,phone,verified,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)"
+    : `id,${nameCol},photo_url,phone,wilayas(name_ar),baladiyas(name_ar)`;
+
   const { data: results = [] } = useQuery({
     queryKey: ["search", table, q, wilaya?.id],
     queryFn: async () => {
-      let query: any = supabase.from(table as any).select(`id,${nameCol},photo_url,wilayas(name_ar),baladiyas(name_ar)`).limit(30);
+      let query: any = supabase.from(table as any).select(selectCols).limit(30);
       if (q) query = query.ilike(nameCol, `%${q}%`);
       if (wilaya?.id) query = query.eq("wilaya_id", wilaya.id);
       const { data } = await query;
@@ -149,17 +153,69 @@ function Page() {
         </header>
 
         {/* Results */}
-        <section className="px-5 pb-24 space-y-2">
+        <section className="px-5 pb-24 space-y-3">
           {results.length === 0 && (
             <p className="py-8 text-center text-sm text-muted-foreground">لا توجد نتائج</p>
           )}
-          {results.map((r: any) => (
-            <a key={r.id} href={table === "doctors" ? `/doctors/${r.id}` : detailBase}
-              className="flex items-center justify-between rounded-2xl px-4 py-3" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
-              <span className="text-xs text-muted-foreground">{r.wilayas?.name_ar ?? ""}</span>
-              <span className="text-sm font-semibold">{r[nameCol]}</span>
-            </a>
-          ))}
+          {results.map((r: any) => {
+            const href = table === "doctors" ? `/doctors/${r.id}` : `${detailBase}/${r.id}`;
+            const name = r[nameCol];
+            const loc = `${r.wilayas?.name_ar ?? ""}${r.baladiyas?.name_ar ? ` - ${r.baladiyas.name_ar}` : ""}`;
+            return (
+              <div key={r.id} className="rounded-2xl p-4" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
+                <a href={href} className="block">
+                  <div className="flex items-start gap-3">
+                    <div className="relative shrink-0 order-2">
+                      {r.photo_url ? (
+                        <img src={r.photo_url} alt={name} className="h-20 w-20 rounded-2xl object-cover" />
+                      ) : (
+                        <div className="flex h-20 w-20 items-center justify-center rounded-2xl" style={{ background: "#cffafe", color: "#0891b2" }}>
+                          <Stethoscope className="h-8 w-8" />
+                        </div>
+                      )}
+                      {r.verified && (
+                        <div className="absolute -bottom-1 -left-1 flex h-6 w-6 items-center justify-center rounded-full" style={{ background: "#0891b2" }}>
+                          <BadgeCheck className="h-4 w-4 text-white" />
+                        </div>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1 text-right">
+                      <h3 className="text-base font-extrabold leading-tight">{name}</h3>
+                      {r.specialties?.name_ar && (
+                        <p className="mt-0.5 text-sm font-semibold" style={{ color: "#0891b2" }}>{r.specialties.name_ar}</p>
+                      )}
+                      {loc && (
+                        <div className="mt-1 flex items-center justify-end gap-1 text-xs text-muted-foreground">
+                          <span>{loc}</span>
+                          <MapPin className="h-3 w-3" />
+                        </div>
+                      )}
+                      <div className="mt-2 flex items-center justify-between">
+                        {r.fee != null ? (
+                          <span className="text-xs font-bold" style={{ color: "#0891b2" }}>{r.fee} دج</span>
+                        ) : <span />}
+                        {r.rating != null && (
+                          <div className="flex items-center gap-1 text-xs">
+                            <span className="text-muted-foreground">({r.reviews_count ?? 0})</span>
+                            <span className="font-bold">{r.rating}</span>
+                            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </a>
+                <div className="mt-3 grid grid-cols-2 gap-2.5 border-t pt-3" style={{ borderColor: "var(--border)" }}>
+                  <a href={href} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0891b2" }}>
+                    احجز موعد
+                  </a>
+                  <a href={r.phone ? `tel:${r.phone}` : "#"} onClick={(e) => { if (!r.phone) e.preventDefault(); }} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold" style={{ background: "#e0f2fe", color: "#0891b2" }}>
+                    <Phone className="h-4 w-4" /> اتصال
+                  </a>
+                </div>
+              </div>
+            );
+          })}
         </section>
       </div>
     </AppShell>
