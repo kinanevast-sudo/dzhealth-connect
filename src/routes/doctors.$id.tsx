@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Phone, MapPin, Share2, Heart, BadgeCheck, Map as MapIcon, Star, Stethoscope, Plus, Check } from "lucide-react";
+import { ArrowRight, Phone, MapPin, Share2, Heart, BadgeCheck, Map as MapIcon, Star, Stethoscope } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { openMap } from "@/lib/map";
 
