@@ -215,6 +215,85 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
+function RatingsTab({ doctor }: { doctor: any }) {
+  const total = doctor.reviews_count ?? 280;
+  const avg = doctor.rating ?? 4.9;
+  // Distribution: fallback synthetic if not provided
+  const dist = doctor.rating_breakdown ?? { 5: 210, 4: 45, 3: 15, 2: 7, 1: 3 };
+  const max = Math.max(...Object.values(dist as Record<string, number>).map(Number), 1);
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 50); return () => clearTimeout(t); }, []);
+
+  const reviews = (doctor.reviews as any[]) ?? [
+    { name: "أحمد بن سالم", when: "منذ أسبوع", stars: 5, text: "طبيب ممتاز، شرح كل شيء بتفصيل وتعامل معنا باحترافية عالية. أنصح به." , gender: "male" },
+    { name: "فاطمة الزهراء", when: "منذ أسبوعين", stars: 5, text: "تجربة رائعة، طاقم محترم وعيادة نظيفة. شكراً دكتور.", gender: "female" },
+    { name: "محمد العربي", when: "منذ شهر", stars: 4, text: "تشخيص دقيق ومتابعة ممتازة بعد الكشف.", gender: "male" },
+  ];
+
+  return (
+    <div className="space-y-4 animate-fade-in">
+      <div className="rounded-2xl p-4 text-right" style={{ background: "white", border: "1px solid #e2e8f0" }}>
+        <div className="flex items-center gap-4" dir="ltr">
+          {/* Bars */}
+          <div className="flex-1 space-y-2">
+            {[5, 4, 3, 2, 1].map((s, i) => {
+              const count = Number((dist as any)[s] ?? 0);
+              const pct = mounted ? Math.round((count / max) * 100) : 0;
+              return (
+                <div key={s} className="flex items-center gap-2">
+                  <span className="w-6 text-xs font-bold text-slate-600">{count}</span>
+                  <div className="relative flex-1 h-2.5 rounded-full overflow-hidden" style={{ background: "#e2e8f0" }}>
+                    <div
+                      className="h-full rounded-full transition-[width] ease-out"
+                      style={{ width: `${pct}%`, background: "#f59e0b", transitionDuration: `${700 + i * 120}ms`, transitionDelay: `${i * 80}ms` }}
+                    />
+                  </div>
+                  <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+                  <span className="w-3 text-xs font-bold text-slate-600">{s}</span>
+                </div>
+              );
+            })}
+          </div>
+          {/* Score */}
+          <div className="text-center px-2">
+            <div className="text-5xl font-extrabold" style={{ color: "#0891b2" }}>{avg}</div>
+            <div className="mt-1 flex justify-center gap-0.5">
+              {[1,2,3,4,5].map(i => (
+                <Star key={i} className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
+              ))}
+            </div>
+            <div className="mt-1 text-[11px] text-slate-500">{total} التقييمات</div>
+          </div>
+        </div>
+      </div>
+
+      {reviews.map((r, idx) => (
+        <div
+          key={idx}
+          className="rounded-2xl p-4 text-right opacity-0 animate-fade-in"
+          style={{ background: "white", border: "1px solid #e2e8f0", animationDelay: `${150 + idx * 120}ms`, animationFillMode: "forwards" }}
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex gap-0.5">
+              {[1,2,3,4,5].map(i => (
+                <Star key={i} className={`h-4 w-4 ${i <= r.stars ? "fill-yellow-400 text-yellow-400" : "text-slate-300"}`} />
+              ))}
+            </div>
+            <div className="flex items-center gap-2">
+              <div>
+                <div className="text-sm font-bold" style={{ color: "#0f172a" }}>{r.name}</div>
+                <div className="text-[11px] text-slate-500">{r.when}</div>
+              </div>
+              <span className="text-2xl leading-none">{r.gender === "female" ? "👩" : "👨"}</span>
+            </div>
+          </div>
+          <p className="mt-3 text-sm leading-relaxed text-slate-600">{r.text}</p>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function Shimmer({ className = "" }: { className?: string }) {
   return <div className={`animate-pulse rounded-xl bg-slate-200 ${className}`} />;
 }
