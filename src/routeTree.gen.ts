@@ -21,6 +21,11 @@ import { Route as EquipmentRouteImport } from './routes/equipment'
 import { Route as DonorsRouteImport } from './routes/donors'
 import { Route as DoctorsRouteImport } from './routes/doctors'
 import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AddPharmacyRouteImport } from './routes/add-pharmacy'
+import { Route as AddHospitalRouteImport } from './routes/add-hospital'
+import { Route as AddEquipmentRouteImport } from './routes/add-equipment'
+import { Route as AddDonorRouteImport } from './routes/add-donor'
+import { Route as AddDoctorRouteImport } from './routes/add-doctor'
 import { Route as AddRouteImport } from './routes/add'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DoctorsIdRouteImport } from './routes/doctors.$id'
@@ -85,6 +90,31 @@ const AuthRoute = AuthRouteImport.update({
   path: '/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AddPharmacyRoute = AddPharmacyRouteImport.update({
+  id: '/add-pharmacy',
+  path: '/add-pharmacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AddHospitalRoute = AddHospitalRouteImport.update({
+  id: '/add-hospital',
+  path: '/add-hospital',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AddEquipmentRoute = AddEquipmentRouteImport.update({
+  id: '/add-equipment',
+  path: '/add-equipment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AddDonorRoute = AddDonorRouteImport.update({
+  id: '/add-donor',
+  path: '/add-donor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AddDoctorRoute = AddDoctorRouteImport.update({
+  id: '/add-doctor',
+  path: '/add-doctor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AddRoute = AddRouteImport.update({
   id: '/add',
   path: '/add',
@@ -104,6 +134,11 @@ const DoctorsIdRoute = DoctorsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/add': typeof AddRoute
+  '/add-doctor': typeof AddDoctorRoute
+  '/add-donor': typeof AddDonorRoute
+  '/add-equipment': typeof AddEquipmentRoute
+  '/add-hospital': typeof AddHospitalRoute
+  '/add-pharmacy': typeof AddPharmacyRoute
   '/auth': typeof AuthRoute
   '/doctors': typeof DoctorsRouteWithChildren
   '/donors': typeof DonorsRoute
@@ -121,6 +156,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/add': typeof AddRoute
+  '/add-doctor': typeof AddDoctorRoute
+  '/add-donor': typeof AddDonorRoute
+  '/add-equipment': typeof AddEquipmentRoute
+  '/add-hospital': typeof AddHospitalRoute
+  '/add-pharmacy': typeof AddPharmacyRoute
   '/auth': typeof AuthRoute
   '/doctors': typeof DoctorsRouteWithChildren
   '/donors': typeof DonorsRoute
@@ -139,6 +179,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/add': typeof AddRoute
+  '/add-doctor': typeof AddDoctorRoute
+  '/add-donor': typeof AddDonorRoute
+  '/add-equipment': typeof AddEquipmentRoute
+  '/add-hospital': typeof AddHospitalRoute
+  '/add-pharmacy': typeof AddPharmacyRoute
   '/auth': typeof AuthRoute
   '/doctors': typeof DoctorsRouteWithChildren
   '/donors': typeof DonorsRoute
@@ -158,6 +203,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/add'
+    | '/add-doctor'
+    | '/add-donor'
+    | '/add-equipment'
+    | '/add-hospital'
+    | '/add-pharmacy'
     | '/auth'
     | '/doctors'
     | '/donors'
@@ -175,6 +225,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/add'
+    | '/add-doctor'
+    | '/add-donor'
+    | '/add-equipment'
+    | '/add-hospital'
+    | '/add-pharmacy'
     | '/auth'
     | '/doctors'
     | '/donors'
@@ -192,6 +247,11 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/add'
+    | '/add-doctor'
+    | '/add-donor'
+    | '/add-equipment'
+    | '/add-hospital'
+    | '/add-pharmacy'
     | '/auth'
     | '/doctors'
     | '/donors'
@@ -210,6 +270,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AddRoute: typeof AddRoute
+  AddDoctorRoute: typeof AddDoctorRoute
+  AddDonorRoute: typeof AddDonorRoute
+  AddEquipmentRoute: typeof AddEquipmentRoute
+  AddHospitalRoute: typeof AddHospitalRoute
+  AddPharmacyRoute: typeof AddPharmacyRoute
   AuthRoute: typeof AuthRoute
   DoctorsRoute: typeof DoctorsRouteWithChildren
   DonorsRoute: typeof DonorsRoute
@@ -310,6 +375,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/add-pharmacy': {
+      id: '/add-pharmacy'
+      path: '/add-pharmacy'
+      fullPath: '/add-pharmacy'
+      preLoaderRoute: typeof AddPharmacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/add-hospital': {
+      id: '/add-hospital'
+      path: '/add-hospital'
+      fullPath: '/add-hospital'
+      preLoaderRoute: typeof AddHospitalRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/add-equipment': {
+      id: '/add-equipment'
+      path: '/add-equipment'
+      fullPath: '/add-equipment'
+      preLoaderRoute: typeof AddEquipmentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/add-donor': {
+      id: '/add-donor'
+      path: '/add-donor'
+      fullPath: '/add-donor'
+      preLoaderRoute: typeof AddDonorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/add-doctor': {
+      id: '/add-doctor'
+      path: '/add-doctor'
+      fullPath: '/add-doctor'
+      preLoaderRoute: typeof AddDoctorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/add': {
       id: '/add'
       path: '/add'
@@ -348,6 +448,11 @@ const DoctorsRouteWithChildren =
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddRoute: AddRoute,
+  AddDoctorRoute: AddDoctorRoute,
+  AddDonorRoute: AddDonorRoute,
+  AddEquipmentRoute: AddEquipmentRoute,
+  AddHospitalRoute: AddHospitalRoute,
+  AddPharmacyRoute: AddPharmacyRoute,
   AuthRoute: AuthRoute,
   DoctorsRoute: DoctorsRouteWithChildren,
   DonorsRoute: DonorsRoute,
@@ -364,3 +469,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
