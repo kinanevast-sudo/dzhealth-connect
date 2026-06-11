@@ -84,13 +84,14 @@ function Page() {
               {/* Avatar */}
               <div className="relative -mt-16">
                 <button onClick={() => fileRef.current?.click()} className="relative block h-24 w-24 overflow-hidden rounded-2xl" style={{ background: "#e0f2fe", border: "4px solid var(--card)" }}>
-                  {profile?.avatar_url ? (
-                    <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="" className="h-full w-full object-cover" onError={() => setAvatarUrl(null)} />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
                       <UserIcon className="h-12 w-12" style={{ color: "#0891b2" }} strokeWidth={1.5} />
                     </div>
                   )}
+
                   <div className="absolute inset-x-0 bottom-0 flex items-center justify-center bg-black/40 py-1 text-[10px] font-bold text-white">
                     {uploading ? "..." : <Camera className="h-3 w-3" />}
                   </div>
