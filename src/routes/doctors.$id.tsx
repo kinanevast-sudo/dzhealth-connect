@@ -247,20 +247,20 @@ function RatingsTab({ doctor }: { doctor: any }) {
     queryKey: ["doctor-reviews", doctor.id],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("doctor_reviews")
-        .select("id,stars,comment,created_at,user_id")
+        .from("reviews" as any)
+        .select("id,rating,review_text,created_at,user_id")
         .eq("doctor_id", doctor.id)
         .order("created_at", { ascending: false })
         .limit(50);
       if (error) throw error;
-      const rows = data ?? [];
+      const rows = (data ?? []) as any[];
       const ids = Array.from(new Set(rows.map((r: any) => r.user_id)));
       let profilesMap: Record<string, any> = {};
       if (ids.length) {
         const { data: profs } = await supabase.from("profiles").select("user_id,full_name,avatar_url").in("user_id", ids);
         (profs ?? []).forEach((p: any) => { profilesMap[p.user_id] = p; });
       }
-      return rows.map((r: any) => ({ ...r, profile: profilesMap[r.user_id] }));
+      return rows.map((r: any) => ({ ...r, stars: r.rating, comment: r.review_text, profile: profilesMap[r.user_id] }));
     },
   });
 
@@ -276,8 +276,8 @@ function RatingsTab({ doctor }: { doctor: any }) {
     if (!userId) { toast.error("يجب تسجيل الدخول لإرسال تقييم"); return; }
     if (stars < 1) { toast.error("اختر عدد النجوم"); return; }
     setSubmitting(true);
-    const { error } = await supabase.from("doctor_reviews").upsert({
-      doctor_id: doctor.id, user_id: userId, stars, comment: comment.trim() || null,
+    const { error } = await supabase.from("reviews" as any).upsert({
+      doctor_id: doctor.id, user_id: userId, rating: stars, review_text: comment.trim() || null,
     }, { onConflict: "doctor_id,user_id" });
     setSubmitting(false);
     if (error) { toast.error(error.message); return; }
