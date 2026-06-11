@@ -150,11 +150,11 @@ function Page() {
             <p className="py-8 text-center text-sm text-muted-foreground">لا توجد نتائج</p>
           )}
           {results.map((r: any) => (
-            <Link key={r.id} to={`${detailBase}/$id` as any} params={{ id: String(r.id) }}
+            <a key={r.id} href={table === "doctors" ? `/doctors/${r.id}` : detailBase}
               className="flex items-center justify-between rounded-2xl px-4 py-3" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
               <span className="text-xs text-muted-foreground">{r.wilayas?.name_ar ?? ""}</span>
               <span className="text-sm font-semibold">{r[nameCol]}</span>
-            </Link>
+            </a>
           ))}
         </section>
       </div>
