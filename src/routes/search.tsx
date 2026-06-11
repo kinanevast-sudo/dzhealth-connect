@@ -106,25 +106,29 @@ function Page() {
             </div>
           )}
 
-          {/* Type dropdown */}
-          <button
-            onClick={() => setTOpen((v) => !v)}
-            className="mt-3 flex w-full items-center justify-between rounded-2xl px-4 py-3"
-            style={{ background: "#e0f2fe" }}
-          >
-            <ChevronDown className={`h-4 w-4 transition-transform ${tOpen ? "rotate-180" : ""}`} style={{ color: "#0891b2" }} />
-            <span className="text-sm font-semibold">{SUB.find(s => s.id === sub)?.label ?? "الكل"}</span>
-          </button>
-          {tOpen && (
-            <div className="mt-2 rounded-2xl p-2 shadow-lg" style={{ background: "white", border: "1px solid var(--border)" }}>
-              {SUB.map((s) => (
-                <button key={s.id} onClick={() => { setSub(s.id); setTOpen(false); }}
-                  className="flex w-full items-center justify-end gap-2 rounded-xl px-3 py-2 text-right text-sm hover:bg-slate-50">
-                  <span>{s.label}</span>{s.icon && <span>{s.icon}</span>}
-                </button>
-              ))}
-            </div>
-          )}
+          {/* Type field (same design: internal icon + dropdown below the field) */}
+          <div className="mt-3">
+            <button
+              onClick={() => setTOpen((v) => !v)}
+              className="flex w-full items-center gap-2 rounded-2xl px-3 py-3"
+              style={{ background: "#e0f2fe" }}
+            >
+              <ChevronUp className={`h-4 w-4 transition-transform ${tOpen ? "" : "rotate-180"}`} style={{ color: "#0891b2" }} />
+              <span className="flex-1 text-right text-sm font-semibold">{SUB.find(s => s.id === sub)?.label ?? "الكل"}</span>
+              <Stethoscope className="h-4 w-4 shrink-0" style={{ color: "#0891b2" }} />
+            </button>
+            {tOpen && (
+              <div className="mt-2 max-h-64 overflow-y-auto rounded-2xl p-2 shadow-lg" style={{ background: "white", border: "1px solid var(--border)" }}>
+                {SUB.map((s) => (
+                  <button key={s.id} onClick={() => { setSub(s.id); setTOpen(false); }}
+                    className={`flex w-full items-center justify-end gap-2 rounded-xl px-3 py-2 text-right text-sm hover:bg-slate-50 ${sub === s.id ? "font-bold" : ""}`}
+                    style={sub === s.id ? { background: "#e0f2fe", color: "#0891b2" } : undefined}>
+                    <span>{s.label}</span>{s.icon && <span>{s.icon}</span>}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Type chips */}
           <div dir="rtl" className="mt-3 flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
