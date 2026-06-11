@@ -1,29 +1,30 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { HeartPulse } from "lucide-react";
+import { motion } from "framer-motion";
+import { useEffect } from "react";
 
-export const Route = createFileRoute("/")({
-  head: () => ({
-    meta: [
-      { title: "Your App" },
-      { name: "description", content: "Replace this with a one-sentence description of your app." },
-      { property: "og:title", content: "Your App" },
-      { property: "og:description", content: "Replace this with a one-sentence description of your app." },
-    ],
-  }),
-  component: Index,
-});
+export const Route = createFileRoute("/")({ component: Splash });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+function Splash() {
+  useEffect(() => {
+    const t = setTimeout(() => { window.location.href = "/onboarding"; }, 2400);
+    return () => clearTimeout(t);
+  }, []);
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
+    <div className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
+      <div className="pointer-events-none absolute inset-0 opacity-50" style={{ background: "radial-gradient(60% 40% at 50% 35%, color-mix(in oklab, var(--primary) 25%, transparent), transparent 70%)" }} />
+      <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ type: "spring", stiffness: 140, damping: 14 }}
+        className="relative flex h-32 w-32 items-center justify-center rounded-3xl gradient-primary neon-glow animate-float">
+        <HeartPulse className="h-16 w-16 text-primary-foreground" strokeWidth={2.4} />
+      </motion.div>
+      <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.35 }}
+        className="mt-8 text-5xl font-extrabold tracking-tight text-gradient">DzHealth</motion.h1>
+      <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
+        className="mt-3 text-sm text-muted-foreground">كل الخدمات الصحية في مكان واحد</motion.p>
+      <div className="absolute bottom-16 h-1 w-40 overflow-hidden rounded-full bg-surface-2">
+        <motion.div initial={{ x: "-100%" }} animate={{ x: "100%" }} transition={{ repeat: Infinity, duration: 1.2 }} className="h-full w-1/2 gradient-primary" />
+      </div>
+      <Link to="/home" className="absolute bottom-6 text-xs text-muted-foreground/70">تخطي</Link>
     </div>
   );
 }
