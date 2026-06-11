@@ -1,11 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Bell, Search, MapPin, Phone, Stethoscope, Building2, Pill, Droplet, Accessibility, Leaf, Eye, Baby, Brain, Bone, Heart, Star, ChevronLeft, BadgeCheck, Map as MapIcon, Zap } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
+import { sortByDistance } from "@/lib/geo";
 
 export const Route = createFileRoute("/home")({ component: Home });
+
+function fmtKm(km?: number) {
+  if (km == null || !isFinite(km)) return null;
+  return km < 1 ? `${Math.round(km * 1000)} م` : `${km.toFixed(1)} كم`;
+}
 
 const specialties = [
   { icon: Droplet, label: "متبرعو الدم", to: "/donors", color: "#ef4444", bg: "#fee2e2" },
@@ -24,34 +30,54 @@ const specialties = [
 
 function Home() {
   const [showAll, setShowAll] = useState(false);
+  const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
+  const [originLabel, setOriginLabel] = useState<string>("الجزائر");
 
-  const { data: doctors } = useQuery({
+  useEffect(() => {
+    (async () => {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) return;
+      const { data: p } = await supabase.from("profiles")
+        .select("lat,lng,wilayas(name_ar),baladiyas(name_ar)").eq("user_id", u.user.id).maybeSingle();
+      if (p?.lat && p?.lng) setOrigin({ lat: p.lat, lng: p.lng });
+      const w = (p as any)?.wilayas?.name_ar;
+      const b = (p as any)?.baladiyas?.name_ar;
+      if (w || b) setOriginLabel([b, w].filter(Boolean).join("، "));
+    })();
+  }, []);
+
+  const { data: doctorsRaw } = useQuery({
     queryKey: ["featured-doctors"],
     queryFn: async () => {
       const { data } = await supabase.from("doctors")
-        .select("id,full_name,rating,reviews_count,photo_url,fee,verified,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)")
-        .order("rating", { ascending: false }).limit(6);
+        .select("id,full_name,rating,reviews_count,photo_url,fee,verified,phone,lat,lng,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)")
+        .order("rating", { ascending: false }).limit(20);
       return data ?? [];
     },
   });
 
-  const { data: hospitals } = useQuery({
+  const { data: hospitalsRaw } = useQuery({
     queryKey: ["nearby-hospitals"],
     queryFn: async () => {
       const { data } = await supabase.from("hospitals")
-        .select("id,name,photo_url,wilayas(name_ar),baladiyas(name_ar)").limit(4);
+        .select("id,name,photo_url,phone,lat,lng,wilayas(name_ar),baladiyas(name_ar)").limit(20);
       return data ?? [];
     },
   });
 
-  const { data: pharmacies } = useQuery({
+  const { data: pharmaciesRaw } = useQuery({
     queryKey: ["nearby-pharmacies"],
     queryFn: async () => {
       const { data } = await supabase.from("pharmacies")
-        .select("id,name,is_24_7,phone,wilayas(name_ar)").limit(4);
+        .select("id,name,is_24_7,phone,lat,lng,wilayas(name_ar)").limit(20);
       return data ?? [];
     },
   });
+
+  const doctors = sortByDistance((doctorsRaw ?? []) as any[], origin).slice(0, 6);
+  const hospitals = sortByDistance((hospitalsRaw ?? []) as any[], origin).slice(0, 4);
+  const pharmacies = sortByDistance((pharmaciesRaw ?? []) as any[], origin).slice(0, 4);
+
 
   const { data: emergency } = useQuery({
     queryKey: ["emergency-donor"],
@@ -76,7 +102,7 @@ function Home() {
               <p className="text-sm text-muted-foreground">مرحباً 👋</p>
               <h1 className="text-xl font-extrabold leading-tight">كيف يمكننا مساعدتك اليوم؟</h1>
               <div className="mt-1 flex items-center justify-end gap-1 text-[12px] text-muted-foreground">
-                <span>الحجار، عنابة</span><MapPin className="h-3 w-3" />
+                <span>{originLabel}</span><MapPin className="h-3 w-3" />
               </div>
             </div>
           </div>
@@ -144,35 +170,36 @@ function Home() {
         {/* Featured doctors */}
         <section className="mt-6 px-5">
           <div className="mb-3 flex items-center justify-between">
-            <Link to="/doctors" className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل <ChevronLeft className="h-3 w-3" /></Link>
             <h2 className="text-base font-bold">أطباء مميزون</h2>
+            <Link to="/doctors" className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل <ChevronLeft className="h-3 w-3 rotate-180" /></Link>
           </div>
           <div className="space-y-3">
-            {(doctors ?? []).map((d: any) => <DoctorCard key={d.id} d={d} />)}
+            {doctors.map((d: any) => <DoctorCard key={d.id} d={d} />)}
           </div>
         </section>
 
         {/* Nearby hospitals */}
         <section className="mt-6 px-5">
           <div className="mb-3 flex items-center justify-between">
-            <Link to="/hospitals" className="text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل</Link>
             <h2 className="text-base font-bold">مستشفيات قريبة</h2>
+            <Link to="/hospitals" className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل <ChevronLeft className="h-3 w-3 rotate-180" /></Link>
           </div>
           <div className="space-y-3">
-            {(hospitals ?? []).map((h: any) => <HospitalCard key={h.id} h={h} />)}
+            {hospitals.map((h: any) => <HospitalCard key={h.id} h={h} />)}
           </div>
         </section>
 
         {/* Nearby pharmacies */}
         <section className="mt-6 px-5">
           <div className="mb-3 flex items-center justify-between">
-            <Link to="/pharmacies" className="text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل</Link>
             <h2 className="text-base font-bold">صيدليات قريبة</h2>
+            <Link to="/pharmacies" className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل <ChevronLeft className="h-3 w-3 rotate-180" /></Link>
           </div>
           <div className="space-y-3">
-            {(pharmacies ?? []).map((p: any) => <PharmacyCard key={p.id} p={p} />)}
+            {pharmacies.map((p: any) => <PharmacyCard key={p.id} p={p} />)}
           </div>
         </section>
+
 
         <div className="h-8" />
       </div>
@@ -212,9 +239,11 @@ function DoctorCard({ d }: { d: any }) {
           <h3 className="text-base font-extrabold leading-tight">{d.full_name}</h3>
           <p className="mt-0.5 text-sm font-semibold" style={{ color: "#0891b2" }}>{d.specialties?.name_ar}</p>
           <div className="mt-1 flex items-center justify-end gap-1 text-xs text-muted-foreground">
-            <span>{d.wilayas?.name_ar} - {d.baladiyas?.name_ar}</span>
+            {fmtKm(d._distanceKm) && <span className="rounded-full px-1.5 py-0.5 text-[10px] font-bold" style={{ background: "#cffafe", color: "#0891b2" }}>{fmtKm(d._distanceKm)}</span>}
+            <span>{d.wilayas?.name_ar}{d.baladiyas?.name_ar ? ` - ${d.baladiyas?.name_ar}` : ""}</span>
             <MapPin className="h-3 w-3" />
           </div>
+
           <div className="mt-2 flex items-center justify-between">
             <span className="text-xs font-bold" style={{ color: "#0891b2" }}>{d.fee} دج</span>
             <div className="flex items-center gap-1 text-xs">
@@ -243,14 +272,15 @@ function HospitalCard({ h }: { h: any }) {
       {h.photo_url && <img src={h.photo_url} alt={h.name} className="h-24 w-28 flex-shrink-0 rounded-xl object-cover" />}
       <div className="min-w-0 flex-1 text-right">
         <h3 className="text-base font-extrabold">{h.name}</h3>
-        <p className="mt-0.5 text-xs text-muted-foreground">{h.wilayas?.name_ar} - {h.baladiyas?.name_ar}</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">{h.wilayas?.name_ar}{h.baladiyas?.name_ar ? ` - ${h.baladiyas?.name_ar}` : ""}</p>
         <div className="mt-2 flex flex-wrap justify-end gap-1.5">
           {["طوارئ","جراحة","أطفال"].map((t) => (
             <span key={t} className="rounded-full px-2.5 py-0.5 text-[10px]" style={{ background: "#cffafe", color: "#0891b2" }}>{t}</span>
           ))}
         </div>
-        <p className="mt-2 text-[11px] text-muted-foreground">{h.wilayas?.name_ar}</p>
+        {fmtKm(h._distanceKm) && <p className="mt-2 text-[11px] font-bold" style={{ color: "#0891b2" }}>{fmtKm(h._distanceKm)}</p>}
       </div>
+
       <button className="flex h-10 w-10 flex-shrink-0 items-center justify-center self-end rounded-full" style={{ background: "#e0f2fe" }}>
         <Phone className="h-4 w-4" style={{ color: "#0891b2" }} />
       </button>
@@ -269,7 +299,11 @@ function PharmacyCard({ p }: { p: any }) {
           {p.is_24_7 && <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "#dcfce7", color: "#16a34a" }}>24/7</span>}
           <h3 className="text-base font-extrabold">{p.name}</h3>
         </div>
-        <p className="mt-0.5 text-xs text-muted-foreground">{p.wilayas?.name_ar}</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          {p.wilayas?.name_ar}
+          {fmtKm(p._distanceKm) && <span className="ms-2 font-bold" style={{ color: "#0891b2" }}>· {fmtKm(p._distanceKm)}</span>}
+        </p>
+
       </div>
       <div className="flex h-12 w-12 items-center justify-center rounded-2xl text-2xl" style={{ background: "#fef3c7" }}>💊</div>
     </div>
