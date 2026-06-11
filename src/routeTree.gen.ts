@@ -19,7 +19,6 @@ import { Route as HospitalsRouteImport } from './routes/hospitals'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as EquipmentRouteImport } from './routes/equipment'
 import { Route as DonorsRouteImport } from './routes/donors'
-import { Route as DoctorsRouteImport } from './routes/doctors'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AddPharmacyRouteImport } from './routes/add-pharmacy'
 import { Route as AddHospitalRouteImport } from './routes/add-hospital'
@@ -28,6 +27,7 @@ import { Route as AddDonorRouteImport } from './routes/add-donor'
 import { Route as AddDoctorRouteImport } from './routes/add-doctor'
 import { Route as AddRouteImport } from './routes/add'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DoctorsIndexRouteImport } from './routes/doctors.index'
 import { Route as DoctorsIdRouteImport } from './routes/doctors.$id'
 
 const SettingsRoute = SettingsRouteImport.update({
@@ -80,11 +80,6 @@ const DonorsRoute = DonorsRouteImport.update({
   path: '/donors',
   getParentRoute: () => rootRouteImport,
 } as any)
-const DoctorsRoute = DoctorsRouteImport.update({
-  id: '/doctors',
-  path: '/doctors',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
   path: '/auth',
@@ -125,10 +120,15 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DoctorsIndexRoute = DoctorsIndexRouteImport.update({
+  id: '/doctors/',
+  path: '/doctors/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DoctorsIdRoute = DoctorsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => DoctorsRoute,
+  id: '/doctors/$id',
+  path: '/doctors/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -140,7 +140,6 @@ export interface FileRoutesByFullPath {
   '/add-hospital': typeof AddHospitalRoute
   '/add-pharmacy': typeof AddPharmacyRoute
   '/auth': typeof AuthRoute
-  '/doctors': typeof DoctorsRouteWithChildren
   '/donors': typeof DonorsRoute
   '/equipment': typeof EquipmentRoute
   '/home': typeof HomeRoute
@@ -152,6 +151,7 @@ export interface FileRoutesByFullPath {
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/doctors/$id': typeof DoctorsIdRoute
+  '/doctors/': typeof DoctorsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -162,7 +162,6 @@ export interface FileRoutesByTo {
   '/add-hospital': typeof AddHospitalRoute
   '/add-pharmacy': typeof AddPharmacyRoute
   '/auth': typeof AuthRoute
-  '/doctors': typeof DoctorsRouteWithChildren
   '/donors': typeof DonorsRoute
   '/equipment': typeof EquipmentRoute
   '/home': typeof HomeRoute
@@ -174,6 +173,7 @@ export interface FileRoutesByTo {
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/doctors/$id': typeof DoctorsIdRoute
+  '/doctors': typeof DoctorsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -185,7 +185,6 @@ export interface FileRoutesById {
   '/add-hospital': typeof AddHospitalRoute
   '/add-pharmacy': typeof AddPharmacyRoute
   '/auth': typeof AuthRoute
-  '/doctors': typeof DoctorsRouteWithChildren
   '/donors': typeof DonorsRoute
   '/equipment': typeof EquipmentRoute
   '/home': typeof HomeRoute
@@ -197,6 +196,7 @@ export interface FileRoutesById {
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/doctors/$id': typeof DoctorsIdRoute
+  '/doctors/': typeof DoctorsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -209,7 +209,6 @@ export interface FileRouteTypes {
     | '/add-hospital'
     | '/add-pharmacy'
     | '/auth'
-    | '/doctors'
     | '/donors'
     | '/equipment'
     | '/home'
@@ -221,6 +220,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/doctors/$id'
+    | '/doctors/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -231,7 +231,6 @@ export interface FileRouteTypes {
     | '/add-hospital'
     | '/add-pharmacy'
     | '/auth'
-    | '/doctors'
     | '/donors'
     | '/equipment'
     | '/home'
@@ -243,6 +242,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/doctors/$id'
+    | '/doctors'
   id:
     | '__root__'
     | '/'
@@ -253,7 +253,6 @@ export interface FileRouteTypes {
     | '/add-hospital'
     | '/add-pharmacy'
     | '/auth'
-    | '/doctors'
     | '/donors'
     | '/equipment'
     | '/home'
@@ -265,6 +264,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/doctors/$id'
+    | '/doctors/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -276,7 +276,6 @@ export interface RootRouteChildren {
   AddHospitalRoute: typeof AddHospitalRoute
   AddPharmacyRoute: typeof AddPharmacyRoute
   AuthRoute: typeof AuthRoute
-  DoctorsRoute: typeof DoctorsRouteWithChildren
   DonorsRoute: typeof DonorsRoute
   EquipmentRoute: typeof EquipmentRoute
   HomeRoute: typeof HomeRoute
@@ -287,6 +286,8 @@ export interface RootRouteChildren {
   ProfileRoute: typeof ProfileRoute
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
+  DoctorsIdRoute: typeof DoctorsIdRoute
+  DoctorsIndexRoute: typeof DoctorsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -361,13 +362,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DonorsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/doctors': {
-      id: '/doctors'
-      path: '/doctors'
-      fullPath: '/doctors'
-      preLoaderRoute: typeof DoctorsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -424,26 +418,22 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/doctors/': {
+      id: '/doctors/'
+      path: '/doctors'
+      fullPath: '/doctors/'
+      preLoaderRoute: typeof DoctorsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/doctors/$id': {
       id: '/doctors/$id'
-      path: '/$id'
+      path: '/doctors/$id'
       fullPath: '/doctors/$id'
       preLoaderRoute: typeof DoctorsIdRouteImport
-      parentRoute: typeof DoctorsRoute
+      parentRoute: typeof rootRouteImport
     }
   }
 }
-
-interface DoctorsRouteChildren {
-  DoctorsIdRoute: typeof DoctorsIdRoute
-}
-
-const DoctorsRouteChildren: DoctorsRouteChildren = {
-  DoctorsIdRoute: DoctorsIdRoute,
-}
-
-const DoctorsRouteWithChildren =
-  DoctorsRoute._addFileChildren(DoctorsRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -454,7 +444,6 @@ const rootRouteChildren: RootRouteChildren = {
   AddHospitalRoute: AddHospitalRoute,
   AddPharmacyRoute: AddPharmacyRoute,
   AuthRoute: AuthRoute,
-  DoctorsRoute: DoctorsRouteWithChildren,
   DonorsRoute: DonorsRoute,
   EquipmentRoute: EquipmentRoute,
   HomeRoute: HomeRoute,
@@ -465,7 +454,19 @@ const rootRouteChildren: RootRouteChildren = {
   ProfileRoute: ProfileRoute,
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
+  DoctorsIdRoute: DoctorsIdRoute,
+  DoctorsIndexRoute: DoctorsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
