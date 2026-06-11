@@ -6,6 +6,7 @@ import { Building2, Phone, MapPin, Search, Map as MapIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 import { sortByDistance } from "@/lib/geo";
+import { openMap } from "@/lib/map";
 
 export const Route = createFileRoute("/hospitals")({ component: Page });
 
@@ -151,7 +152,7 @@ function HospitalCard({ h }: { h: any }) {
         </div>
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2.5 border-t pt-3" style={{ borderColor: "var(--border)" }}>
-        <button onClick={(e) => e.preventDefault()} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0e7490" }}>
+        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); openMap(h.lat, h.lng, h.name); }} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0e7490" }}>
           <MapIcon className="h-4 w-4" /> عرض على الخريطة
         </button>
         <a href={`tel:${h.phone}`} onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold" style={{ background: "#e0f2fe", color: "#0891b2" }}>

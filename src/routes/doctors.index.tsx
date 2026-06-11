@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Search, Phone, Star, MapPin, Map as MapIcon, BadgeCheck, Stethoscope } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
+import { openMap } from "@/lib/map";
 
 export const Route = createFileRoute("/doctors/")({ component: Doctors });
 
@@ -13,7 +14,7 @@ function Doctors() {
     queryKey: ["doctors-all"],
     queryFn: async () => {
       const { data, error } = await supabase.from("doctors")
-        .select("id,full_name,rating,reviews_count,fee,phone,photo_url,verified,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)");
+        .select("id,full_name,rating,reviews_count,fee,phone,photo_url,verified,lat,lng,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)");
       if (error) throw error;
       return data ?? [];
     },
@@ -105,7 +106,7 @@ function DoctorCard({ d }: { d: any }) {
         </div>
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2.5 border-t pt-3" style={{ borderColor: "var(--border)" }}>
-        <button onClick={(e) => e.preventDefault()} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0e7490" }}>
+        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); openMap(d.lat, d.lng, d.full_name); }} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0e7490" }}>
           <MapIcon className="h-4 w-4" /> عرض على الخريطة
         </button>
         <a href={`tel:${d.phone}`} onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold" style={{ background: "#e0f2fe", color: "#0891b2" }}>

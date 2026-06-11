@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { ArrowLeft, Phone, MapPin, Share2, Heart, BadgeCheck, Map as MapIcon, Star, Stethoscope } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { openMap } from "@/lib/map";
 
 export const Route = createFileRoute("/doctors/$id")({ component: Detail });
 
@@ -95,7 +96,7 @@ function Detail() {
 
         {/* Action buttons — RTL: عرض على الخريطة (right, primary), اتصال (left) */}
         <div className="grid grid-cols-2 gap-3">
-          <button className="flex items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold" style={{ background: "#22d3ee", color: "#0a1628", boxShadow: "0 0 24px rgba(34, 211, 238, 0.5)" }}>
+          <button onClick={() => openMap((x as any).lat, (x as any).lng, x.full_name)} className="flex items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold" style={{ background: "#22d3ee", color: "#0a1628", boxShadow: "0 0 24px rgba(34, 211, 238, 0.5)" }}>
             <MapIcon className="h-4 w-4" /> عرض على الخريطة
           </button>
           <a href={`tel:${x.phone}`} className="flex items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold" style={{ background: "rgba(15, 30, 50, 0.8)", border: "1px solid rgba(34, 211, 238, 0.3)", color: "#e2f7ff" }}>
