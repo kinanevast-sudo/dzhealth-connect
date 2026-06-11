@@ -102,7 +102,7 @@ function Home() {
               <p className="text-sm text-muted-foreground">مرحباً 👋</p>
               <h1 className="text-xl font-extrabold leading-tight">كيف يمكننا مساعدتك اليوم؟</h1>
               <div className="mt-1 flex items-center justify-end gap-1 text-[12px] text-muted-foreground">
-                <span>الحجار، عنابة</span><MapPin className="h-3 w-3" />
+                <span>{originLabel}</span><MapPin className="h-3 w-3" />
               </div>
             </div>
           </div>
