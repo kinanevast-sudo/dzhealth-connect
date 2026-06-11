@@ -299,7 +299,11 @@ function PharmacyCard({ p }: { p: any }) {
           {p.is_24_7 && <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "#dcfce7", color: "#16a34a" }}>24/7</span>}
           <h3 className="text-base font-extrabold">{p.name}</h3>
         </div>
-        <p className="mt-0.5 text-xs text-muted-foreground">{p.wilayas?.name_ar}</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">
+          {p.wilayas?.name_ar}
+          {fmtKm(p._distanceKm) && <span className="ms-2 font-bold" style={{ color: "#0891b2" }}>· {fmtKm(p._distanceKm)}</span>}
+        </p>
+
       </div>
       <div className="flex h-12 w-12 items-center justify-center rounded-2xl text-2xl" style={{ background: "#fef3c7" }}>💊</div>
     </div>
