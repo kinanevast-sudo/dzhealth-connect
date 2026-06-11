@@ -225,13 +225,13 @@ function DoctorCard({ d }: { d: any }) {
           </div>
         </div>
       </div>
-      <div className="mt-3 grid grid-cols-2 gap-2 border-t pt-3" style={{ borderColor: "var(--border)" }}>
-        <a href={`tel:${d.phone}`} onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-2 rounded-xl py-2 text-xs font-semibold" style={{ background: "#f0f9ff", color: "#0891b2" }}>
-          <Phone className="h-3.5 w-3.5" /> اتصال
-        </a>
-        <button onClick={(e) => e.preventDefault()} className="flex items-center justify-center gap-2 rounded-xl py-2 text-xs font-semibold text-white" style={{ background: "#0891b2" }}>
-          <MapIcon className="h-3.5 w-3.5" /> عرض على الخريطة
+      <div className="mt-3 grid grid-cols-2 gap-2.5 border-t pt-3" style={{ borderColor: "var(--border)" }}>
+        <button onClick={(e) => e.preventDefault()} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0e7490" }}>
+          <MapIcon className="h-4 w-4" /> عرض على الخريطة
         </button>
+        <a href={`tel:${d.phone}`} onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold" style={{ background: "#e0f2fe", color: "#0891b2" }}>
+          <Phone className="h-4 w-4" /> اتصال
+        </a>
       </div>
     </Link>
   );
