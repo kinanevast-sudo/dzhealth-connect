@@ -1,7 +1,8 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { Building2, Phone, MapPin, Search } from "lucide-react";
+import { Building2, Phone, MapPin, Search, Map as MapIcon } from "lucide-react";
+
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 import { sortByDistance } from "@/lib/geo";
