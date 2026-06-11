@@ -44,7 +44,7 @@ function Detail() {
   const showImg = x.photo_url && !imgError;
 
   return (
-    <div className="dark min-h-[100dvh] pb-32" style={{ background: "#0a1628", color: "#e2f7ff" }}>
+    <div dir="rtl" className="dark min-h-[100dvh] pb-32" style={{ background: "#0a1628", color: "#e2f7ff" }}>
       {/* Hero photo */}
       <div className="relative h-[420px] overflow-hidden">
         {showImg ? (
@@ -56,19 +56,19 @@ function Detail() {
         )}
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,22,40,0.4) 0%, rgba(10,22,40,0.1) 50%, #0a1628 100%)" }} />
 
-        {/* Top bar */}
-        <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-4 pt-6">
-          <Link to="/doctors" className="flex h-11 w-11 items-center justify-center rounded-full" style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}>
-            <ArrowLeft className="h-5 w-5 text-white rotate-180" />
-          </Link>
+        {/* Top bar — RTL: heart/share on the LEFT, back arrow on the RIGHT */}
+        <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between px-4 pt-6" dir="ltr">
           <div className="flex gap-2">
-            <button className="flex h-11 w-11 items-center justify-center rounded-full" style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}>
-              <Share2 className="h-5 w-5 text-white" />
-            </button>
-            <button className="flex h-11 w-11 items-center justify-center rounded-full" style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}>
+            <button aria-label="مفضلة" className="flex h-11 w-11 items-center justify-center rounded-full" style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}>
               <Heart className="h-5 w-5 text-white" />
             </button>
+            <button aria-label="مشاركة" className="flex h-11 w-11 items-center justify-center rounded-full" style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}>
+              <Share2 className="h-5 w-5 text-white" />
+            </button>
           </div>
+          <Link to="/doctors" aria-label="رجوع" className="flex h-11 w-11 items-center justify-center rounded-full" style={{ background: "rgba(0,0,0,0.5)", backdropFilter: "blur(8px)" }}>
+            <ArrowLeft className="h-5 w-5 text-white" />
+          </Link>
         </div>
 
         {/* Name overlay */}
@@ -86,24 +86,24 @@ function Detail() {
       </div>
 
       <div className="px-4 -mt-2 space-y-4">
-        {/* Stats */}
+        {/* Stats — RTL visual order: نسبة الرضا | المرضى | الخبرة */}
         <div className="grid grid-cols-3 gap-3 rounded-2xl p-4" style={{ background: "rgba(15, 30, 50, 0.6)", border: "1px solid rgba(34, 211, 238, 0.2)" }}>
-          <Stat label="الخبرة" value={`${x.experience_years ?? 12}`} suffix="سنوات" />
-          <Stat label="المرضى" value={`+${((x.patients_count ?? 2800)/1000).toFixed(1)}K`} />
           <Stat label="نسبة الرضا" value={`${x.satisfaction ?? 98}%`} />
+          <Stat label="المرضى" value={`+${((x.patients_count ?? 2800)/1000).toFixed(1)}K`} />
+          <Stat label="الخبرة" value={`${x.experience_years ?? 12}`} suffix="سنوات" />
         </div>
 
-        {/* Action buttons */}
+        {/* Action buttons — RTL: عرض على الخريطة (right, primary), اتصال (left) */}
         <div className="grid grid-cols-2 gap-3">
-          <a href={`tel:${x.phone}`} className="flex items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold" style={{ background: "rgba(15, 30, 50, 0.8)", border: "1px solid rgba(34, 211, 238, 0.3)", color: "#e2f7ff" }}>
-            <Phone className="h-4 w-4" /> اتصال
-          </a>
           <button className="flex items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold" style={{ background: "#22d3ee", color: "#0a1628", boxShadow: "0 0 24px rgba(34, 211, 238, 0.5)" }}>
             <MapIcon className="h-4 w-4" /> عرض على الخريطة
           </button>
+          <a href={`tel:${x.phone}`} className="flex items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-bold" style={{ background: "rgba(15, 30, 50, 0.8)", border: "1px solid rgba(34, 211, 238, 0.3)", color: "#e2f7ff" }}>
+            <Phone className="h-4 w-4" /> اتصال
+          </a>
         </div>
 
-        {/* Tabs */}
+        {/* Tabs — RTL: نبذة (right/active), التقييمات (middle), احجز موعد (left) */}
         <div className="flex rounded-2xl p-1" style={{ background: "rgba(15, 30, 50, 0.6)", border: "1px solid rgba(34, 211, 238, 0.2)" }}>
           {TABS.map((t) => (
             <button
