@@ -106,7 +106,7 @@ function DoctorCard({ d }: { d: any }) {
         </div>
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2.5 border-t pt-3" style={{ borderColor: "var(--border)" }}>
-        <button onClick={(e) => e.preventDefault()} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0e7490" }}>
+        <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); openMap(d.lat, d.lng, d.full_name); }} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0e7490" }}>
           <MapIcon className="h-4 w-4" /> عرض على الخريطة
         </button>
         <a href={`tel:${d.phone}`} onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold" style={{ background: "#e0f2fe", color: "#0891b2" }}>
