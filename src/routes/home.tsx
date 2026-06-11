@@ -170,35 +170,36 @@ function Home() {
         {/* Featured doctors */}
         <section className="mt-6 px-5">
           <div className="mb-3 flex items-center justify-between">
-            <Link to="/doctors" className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل <ChevronLeft className="h-3 w-3" /></Link>
             <h2 className="text-base font-bold">أطباء مميزون</h2>
+            <Link to="/doctors" className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل <ChevronLeft className="h-3 w-3 rotate-180" /></Link>
           </div>
           <div className="space-y-3">
-            {(doctors ?? []).map((d: any) => <DoctorCard key={d.id} d={d} />)}
+            {doctors.map((d: any) => <DoctorCard key={d.id} d={d} />)}
           </div>
         </section>
 
         {/* Nearby hospitals */}
         <section className="mt-6 px-5">
           <div className="mb-3 flex items-center justify-between">
-            <Link to="/hospitals" className="text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل</Link>
             <h2 className="text-base font-bold">مستشفيات قريبة</h2>
+            <Link to="/hospitals" className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل <ChevronLeft className="h-3 w-3 rotate-180" /></Link>
           </div>
           <div className="space-y-3">
-            {(hospitals ?? []).map((h: any) => <HospitalCard key={h.id} h={h} />)}
+            {hospitals.map((h: any) => <HospitalCard key={h.id} h={h} />)}
           </div>
         </section>
 
         {/* Nearby pharmacies */}
         <section className="mt-6 px-5">
           <div className="mb-3 flex items-center justify-between">
-            <Link to="/pharmacies" className="text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل</Link>
             <h2 className="text-base font-bold">صيدليات قريبة</h2>
+            <Link to="/pharmacies" className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل <ChevronLeft className="h-3 w-3 rotate-180" /></Link>
           </div>
           <div className="space-y-3">
-            {(pharmacies ?? []).map((p: any) => <PharmacyCard key={p.id} p={p} />)}
+            {pharmacies.map((p: any) => <PharmacyCard key={p.id} p={p} />)}
           </div>
         </section>
+
 
         <div className="h-8" />
       </div>
