@@ -14,7 +14,7 @@ function Donors() {
     queryKey: ["donors", filter],
     queryFn: async () => {
       let q = supabase.from("blood_donors").select("*,wilayas(name_ar),baladiyas(name_ar)");
-      if (filter !== "الكل") q = q.eq("blood_type", filter);
+      if (filter !== "الكل") q = q.eq("blood_type", filter as any);
       const { data } = await q;
       return data ?? [];
     },

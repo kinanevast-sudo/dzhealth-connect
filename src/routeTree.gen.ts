@@ -9,38 +9,314 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as SearchRouteImport } from './routes/search'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PharmaciesRouteImport } from './routes/pharmacies'
+import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as NotificationsRouteImport } from './routes/notifications'
+import { Route as HospitalsRouteImport } from './routes/hospitals'
+import { Route as HomeRouteImport } from './routes/home'
+import { Route as EquipmentRouteImport } from './routes/equipment'
+import { Route as DonorsRouteImport } from './routes/donors'
+import { Route as DoctorsRouteImport } from './routes/doctors'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AddRouteImport } from './routes/add'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DoctorsIdRouteImport } from './routes/doctors.$id'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SearchRoute = SearchRouteImport.update({
+  id: '/search',
+  path: '/search',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PharmaciesRoute = PharmaciesRouteImport.update({
+  id: '/pharmacies',
+  path: '/pharmacies',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnboardingRoute = OnboardingRouteImport.update({
+  id: '/onboarding',
+  path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HospitalsRoute = HospitalsRouteImport.update({
+  id: '/hospitals',
+  path: '/hospitals',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const HomeRoute = HomeRouteImport.update({
+  id: '/home',
+  path: '/home',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EquipmentRoute = EquipmentRouteImport.update({
+  id: '/equipment',
+  path: '/equipment',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DonorsRoute = DonorsRouteImport.update({
+  id: '/donors',
+  path: '/donors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DoctorsRoute = DoctorsRouteImport.update({
+  id: '/doctors',
+  path: '/doctors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AddRoute = AddRouteImport.update({
+  id: '/add',
+  path: '/add',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DoctorsIdRoute = DoctorsIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => DoctorsRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/add': typeof AddRoute
+  '/auth': typeof AuthRoute
+  '/doctors': typeof DoctorsRouteWithChildren
+  '/donors': typeof DonorsRoute
+  '/equipment': typeof EquipmentRoute
+  '/home': typeof HomeRoute
+  '/hospitals': typeof HospitalsRoute
+  '/notifications': typeof NotificationsRoute
+  '/onboarding': typeof OnboardingRoute
+  '/pharmacies': typeof PharmaciesRoute
+  '/profile': typeof ProfileRoute
+  '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
+  '/doctors/$id': typeof DoctorsIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/add': typeof AddRoute
+  '/auth': typeof AuthRoute
+  '/doctors': typeof DoctorsRouteWithChildren
+  '/donors': typeof DonorsRoute
+  '/equipment': typeof EquipmentRoute
+  '/home': typeof HomeRoute
+  '/hospitals': typeof HospitalsRoute
+  '/notifications': typeof NotificationsRoute
+  '/onboarding': typeof OnboardingRoute
+  '/pharmacies': typeof PharmaciesRoute
+  '/profile': typeof ProfileRoute
+  '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
+  '/doctors/$id': typeof DoctorsIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/add': typeof AddRoute
+  '/auth': typeof AuthRoute
+  '/doctors': typeof DoctorsRouteWithChildren
+  '/donors': typeof DonorsRoute
+  '/equipment': typeof EquipmentRoute
+  '/home': typeof HomeRoute
+  '/hospitals': typeof HospitalsRoute
+  '/notifications': typeof NotificationsRoute
+  '/onboarding': typeof OnboardingRoute
+  '/pharmacies': typeof PharmaciesRoute
+  '/profile': typeof ProfileRoute
+  '/search': typeof SearchRoute
+  '/settings': typeof SettingsRoute
+  '/doctors/$id': typeof DoctorsIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/add'
+    | '/auth'
+    | '/doctors'
+    | '/donors'
+    | '/equipment'
+    | '/home'
+    | '/hospitals'
+    | '/notifications'
+    | '/onboarding'
+    | '/pharmacies'
+    | '/profile'
+    | '/search'
+    | '/settings'
+    | '/doctors/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/add'
+    | '/auth'
+    | '/doctors'
+    | '/donors'
+    | '/equipment'
+    | '/home'
+    | '/hospitals'
+    | '/notifications'
+    | '/onboarding'
+    | '/pharmacies'
+    | '/profile'
+    | '/search'
+    | '/settings'
+    | '/doctors/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/add'
+    | '/auth'
+    | '/doctors'
+    | '/donors'
+    | '/equipment'
+    | '/home'
+    | '/hospitals'
+    | '/notifications'
+    | '/onboarding'
+    | '/pharmacies'
+    | '/profile'
+    | '/search'
+    | '/settings'
+    | '/doctors/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AddRoute: typeof AddRoute
+  AuthRoute: typeof AuthRoute
+  DoctorsRoute: typeof DoctorsRouteWithChildren
+  DonorsRoute: typeof DonorsRoute
+  EquipmentRoute: typeof EquipmentRoute
+  HomeRoute: typeof HomeRoute
+  HospitalsRoute: typeof HospitalsRoute
+  NotificationsRoute: typeof NotificationsRoute
+  OnboardingRoute: typeof OnboardingRoute
+  PharmaciesRoute: typeof PharmaciesRoute
+  ProfileRoute: typeof ProfileRoute
+  SearchRoute: typeof SearchRoute
+  SettingsRoute: typeof SettingsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/search': {
+      id: '/search'
+      path: '/search'
+      fullPath: '/search'
+      preLoaderRoute: typeof SearchRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pharmacies': {
+      id: '/pharmacies'
+      path: '/pharmacies'
+      fullPath: '/pharmacies'
+      preLoaderRoute: typeof PharmaciesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/onboarding': {
+      id: '/onboarding'
+      path: '/onboarding'
+      fullPath: '/onboarding'
+      preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/hospitals': {
+      id: '/hospitals'
+      path: '/hospitals'
+      fullPath: '/hospitals'
+      preLoaderRoute: typeof HospitalsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/home': {
+      id: '/home'
+      path: '/home'
+      fullPath: '/home'
+      preLoaderRoute: typeof HomeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/equipment': {
+      id: '/equipment'
+      path: '/equipment'
+      fullPath: '/equipment'
+      preLoaderRoute: typeof EquipmentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/donors': {
+      id: '/donors'
+      path: '/donors'
+      fullPath: '/donors'
+      preLoaderRoute: typeof DonorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/doctors': {
+      id: '/doctors'
+      path: '/doctors'
+      fullPath: '/doctors'
+      preLoaderRoute: typeof DoctorsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/add': {
+      id: '/add'
+      path: '/add'
+      fullPath: '/add'
+      preLoaderRoute: typeof AddRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +324,42 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/doctors/$id': {
+      id: '/doctors/$id'
+      path: '/$id'
+      fullPath: '/doctors/$id'
+      preLoaderRoute: typeof DoctorsIdRouteImport
+      parentRoute: typeof DoctorsRoute
+    }
   }
 }
 
+interface DoctorsRouteChildren {
+  DoctorsIdRoute: typeof DoctorsIdRoute
+}
+
+const DoctorsRouteChildren: DoctorsRouteChildren = {
+  DoctorsIdRoute: DoctorsIdRoute,
+}
+
+const DoctorsRouteWithChildren =
+  DoctorsRoute._addFileChildren(DoctorsRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AddRoute: AddRoute,
+  AuthRoute: AuthRoute,
+  DoctorsRoute: DoctorsRouteWithChildren,
+  DonorsRoute: DonorsRoute,
+  EquipmentRoute: EquipmentRoute,
+  HomeRoute: HomeRoute,
+  HospitalsRoute: HospitalsRoute,
+  NotificationsRoute: NotificationsRoute,
+  OnboardingRoute: OnboardingRoute,
+  PharmaciesRoute: PharmaciesRoute,
+  ProfileRoute: ProfileRoute,
+  SearchRoute: SearchRoute,
+  SettingsRoute: SettingsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
