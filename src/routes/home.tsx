@@ -223,6 +223,10 @@ function StatCard({ icon: Icon, value, label, color, bg }: any) {
   );
 }
 
+function DoctorSlide({ d }: { d: any }) {
+  return <DoctorCard d={d} />;
+}
+
 function DoctorCard({ d }: { d: any }) {
   return (
     <Link to="/doctors/$id" params={{ id: d.id }} className="block rounded-2xl p-4 active:scale-[0.98] transition" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
