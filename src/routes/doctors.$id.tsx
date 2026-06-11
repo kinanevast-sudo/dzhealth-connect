@@ -43,7 +43,6 @@ function Detail() {
   const [tab, setTab] = useState<(typeof TABS)[number]>("نبذة عن الطبيب");
   const [imgError, setImgError] = useState(false);
   const [fav, setFav] = useState(false);
-  const [added, setAdded] = useState(false);
 
   const { data: d, isLoading, isError } = useQuery({
     queryKey: ["doctor", id],
