@@ -216,38 +216,83 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
   );
 }
 
-function RatingsTab({ doctor }: { doctor: any }) {
-  const total = doctor.reviews_count ?? 280;
-  const avg = doctor.rating ?? 4.9;
-  // Distribution: fallback synthetic if not provided
-  const dist = doctor.rating_breakdown ?? { 5: 210, 4: 45, 3: 15, 2: 7, 1: 3 };
-  const max = Math.max(...Object.values(dist as Record<string, number>).map(Number), 1);
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { const t = setTimeout(() => setMounted(true), 50); return () => clearTimeout(t); }, []);
+function timeAgo(iso: string) {
+  const diff = Date.now() - new Date(iso).getTime();
+  const m = Math.floor(diff / 60000);
+  if (m < 1) return "الآن";
+  if (m < 60) return `منذ ${m} دقيقة`;
+  const h = Math.floor(m / 60);
+  if (h < 24) return `منذ ${h} ساعة`;
+  const d = Math.floor(h / 24);
+  if (d < 7) return `منذ ${d} يوم`;
+  const w = Math.floor(d / 7);
+  if (w < 5) return `منذ ${w} أسبوع`;
+  const mo = Math.floor(d / 30);
+  return `منذ ${mo} شهر`;
+}
 
-  const reviews = (doctor.reviews as any[]) ?? [
-    { name: "أحمد بن سالم", when: "منذ أسبوع", stars: 5, text: "طبيب ممتاز، شرح كل شيء بتفصيل وتعامل معنا باحترافية عالية. أنصح به." , gender: "male" },
-    { name: "فاطمة الزهراء", when: "منذ أسبوعين", stars: 5, text: "تجربة رائعة، طاقم محترم وعيادة نظيفة. شكراً دكتور.", gender: "female" },
-    { name: "محمد العربي", when: "منذ شهر", stars: 4, text: "تشخيص دقيق ومتابعة ممتازة بعد الكشف.", gender: "male" },
-  ];
+function RatingsTab({ doctor }: { doctor: any }) {
+  const qc = useQueryClient();
+  const [mounted, setMounted] = useState(false);
+  const [stars, setStars] = useState(5);
+  const [hover, setHover] = useState(0);
+  const [comment, setComment] = useState("");
+  const [submitting, setSubmitting] = useState(false);
+  const [userId, setUserId] = useState<string | null>(null);
+
+  useEffect(() => { const t = setTimeout(() => setMounted(true), 50); return () => clearTimeout(t); }, []);
+  useEffect(() => { supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id ?? null)); }, []);
+
+  const { data: reviews = [], isLoading } = useQuery({
+    queryKey: ["doctor-reviews", doctor.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("doctor_reviews")
+        .select("id,stars,comment,created_at,user_id,profiles:profiles!doctor_reviews_user_id_fkey(full_name,avatar_url)")
+        .eq("doctor_id", doctor.id)
+        .order("created_at", { ascending: false })
+        .limit(50);
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const total = reviews.length || (doctor.reviews_count ?? 0);
+  const avg = reviews.length
+    ? (reviews.reduce((a: number, r: any) => a + r.stars, 0) / reviews.length).toFixed(1)
+    : (doctor.rating ?? 0).toFixed(1);
+  const dist: Record<number, number> = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+  reviews.forEach((r: any) => { dist[r.stars] = (dist[r.stars] || 0) + 1; });
+  const max = Math.max(...Object.values(dist), 1);
+
+  const submit = async () => {
+    if (!userId) { toast.error("يجب تسجيل الدخول لإرسال تقييم"); return; }
+    if (stars < 1) { toast.error("اختر عدد النجوم"); return; }
+    setSubmitting(true);
+    const { error } = await supabase.from("doctor_reviews").upsert({
+      doctor_id: doctor.id, user_id: userId, stars, comment: comment.trim() || null,
+    }, { onConflict: "doctor_id,user_id" });
+    setSubmitting(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success("شكراً لتقييمك");
+    setComment(""); setStars(5);
+    qc.invalidateQueries({ queryKey: ["doctor-reviews", doctor.id] });
+  };
 
   return (
     <div className="space-y-4 animate-fade-in">
       <div className="rounded-2xl p-4 text-right" style={{ background: "white", border: "1px solid #e2e8f0" }}>
         <div className="flex items-center gap-4" dir="ltr">
-          {/* Bars */}
           <div className="flex-1 space-y-2">
             {[5, 4, 3, 2, 1].map((s, i) => {
-              const count = Number((dist as any)[s] ?? 0);
+              const count = dist[s] ?? 0;
               const pct = mounted ? Math.round((count / max) * 100) : 0;
               return (
                 <div key={s} className="flex items-center gap-2">
                   <span className="w-6 text-xs font-bold text-slate-600">{count}</span>
                   <div className="relative flex-1 h-2.5 rounded-full overflow-hidden" style={{ background: "#e2e8f0" }}>
-                    <div
-                      className="h-full rounded-full transition-[width] ease-out"
-                      style={{ width: `${pct}%`, background: "#f59e0b", transitionDuration: `${700 + i * 120}ms`, transitionDelay: `${i * 80}ms` }}
-                    />
+                    <div className="h-full rounded-full transition-[width] ease-out"
+                      style={{ width: `${pct}%`, background: "#f59e0b", transitionDuration: `${700 + i * 120}ms`, transitionDelay: `${i * 80}ms` }} />
                   </div>
                   <Star className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
                   <span className="w-3 text-xs font-bold text-slate-600">{s}</span>
@@ -255,42 +300,60 @@ function RatingsTab({ doctor }: { doctor: any }) {
               );
             })}
           </div>
-          {/* Score */}
           <div className="text-center px-2">
             <div className="text-5xl font-extrabold" style={{ color: "#0891b2" }}>{avg}</div>
             <div className="mt-1 flex justify-center gap-0.5">
-              {[1,2,3,4,5].map(i => (
-                <Star key={i} className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />
-              ))}
+              {[1,2,3,4,5].map(i => <Star key={i} className="h-3.5 w-3.5 fill-yellow-400 text-yellow-400" />)}
             </div>
             <div className="mt-1 text-[11px] text-slate-500">{total} التقييمات</div>
           </div>
         </div>
       </div>
 
-      {reviews.map((r, idx) => (
-        <div
-          key={idx}
-          className="rounded-2xl p-4 text-right opacity-0 animate-fade-in"
-          style={{ background: "white", border: "1px solid #e2e8f0", animationDelay: `${150 + idx * 120}ms`, animationFillMode: "forwards" }}
-        >
-          <div className="flex items-start justify-between gap-3">
-            <div className="flex gap-0.5">
-              {[1,2,3,4,5].map(i => (
-                <Star key={i} className={`h-4 w-4 ${i <= r.stars ? "fill-yellow-400 text-yellow-400" : "text-slate-300"}`} />
-              ))}
-            </div>
-            <div className="flex items-center gap-2">
-              <div>
-                <div className="text-sm font-bold" style={{ color: "#0f172a" }}>{r.name}</div>
-                <div className="text-[11px] text-slate-500">{r.when}</div>
-              </div>
-              <span className="text-2xl leading-none">{r.gender === "female" ? "👩" : "👨"}</span>
-            </div>
-          </div>
-          <p className="mt-3 text-sm leading-relaxed text-slate-600">{r.text}</p>
+      {/* Submit form */}
+      <div className="rounded-2xl p-4 text-right" style={{ background: "white", border: "1px solid #e2e8f0" }}>
+        <h3 className="mb-3 text-sm font-bold" style={{ color: "#0891b2" }}>أضف تقييمك</h3>
+        <div className="mb-3 flex justify-end gap-1" dir="ltr">
+          {[1,2,3,4,5].map((i) => (
+            <button key={i} type="button" onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(0)} onClick={() => setStars(i)} className="transition-transform hover:scale-110">
+              <Star className={`h-8 w-8 ${i <= (hover || stars) ? "fill-yellow-400 text-yellow-400" : "text-slate-300"}`} />
+            </button>
+          ))}
         </div>
-      ))}
+        <textarea value={comment} onChange={(e) => setComment(e.target.value)} maxLength={500} rows={3} placeholder="شاركنا تجربتك مع الطبيب..." className="w-full rounded-xl p-3 text-sm text-right resize-none focus:outline-none focus:ring-2" style={{ background: "#f8fafc", border: "1px solid #e2e8f0" }} />
+        <button onClick={submit} disabled={submitting} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold text-white disabled:opacity-60" style={{ background: "#0891b2", boxShadow: "0 6px 16px rgba(8,145,178,0.25)" }}>
+          <Send className="h-4 w-4" /> {submitting ? "جارٍ الإرسال..." : "إرسال التقييم"}
+        </button>
+      </div>
+
+      {isLoading && <div className="rounded-2xl p-6 text-center text-xs text-slate-500" style={{ background: "white", border: "1px solid #e2e8f0" }}>جارٍ تحميل التقييمات...</div>}
+      {!isLoading && reviews.length === 0 && (
+        <div className="rounded-2xl p-6 text-center text-xs text-slate-500" style={{ background: "white", border: "1px solid #e2e8f0" }}>لا توجد تقييمات بعد. كن أول من يقيّم!</div>
+      )}
+
+      {reviews.map((r: any, idx: number) => {
+        const name = r.profiles?.full_name ?? "مستخدم";
+        return (
+          <div key={r.id} className="rounded-2xl p-4 text-right opacity-0 animate-fade-in"
+            style={{ background: "white", border: "1px solid #e2e8f0", animationDelay: `${150 + idx * 80}ms`, animationFillMode: "forwards" }}>
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex gap-0.5">
+                {[1,2,3,4,5].map(i => (
+                  <Star key={i} className={`h-4 w-4 ${i <= r.stars ? "fill-yellow-400 text-yellow-400" : "text-slate-300"}`} />
+                ))}
+              </div>
+              <div className="flex items-center gap-2">
+                <div>
+                  <div className="text-sm font-bold" style={{ color: "#0f172a" }}>{name}</div>
+                  <div className="text-[11px] text-slate-500">{timeAgo(r.created_at)}</div>
+                </div>
+                <span className="text-2xl leading-none">👤</span>
+              </div>
+            </div>
+            {r.comment && <p className="mt-3 text-sm leading-relaxed text-slate-600">{r.comment}</p>}
+          </div>
+        );
+      })}
     </div>
   );
 }
