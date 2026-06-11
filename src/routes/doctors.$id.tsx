@@ -108,15 +108,12 @@ function Detail() {
             <button onClick={toggleFav} aria-label="مفضلة" className="flex h-11 w-11 items-center justify-center rounded-full shadow-md" style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(8px)" }}>
               <Heart className="h-5 w-5" style={{ color: fav ? "#e11d48" : "#0f172a", fill: fav ? "#e11d48" : "transparent" }} />
             </button>
-            <button onClick={share} aria-label="مشاركة" className="flex h-11 w-11 items-center justify-center rounded-full shadow-md" style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(8px)" }}>
+          <button onClick={share} aria-label="مشاركة" className="flex h-11 w-11 items-center justify-center rounded-full shadow-md" style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(8px)" }}>
               <Share2 className="h-5 w-5" style={{ color: "#0f172a" }} />
-            </button>
-            <button onClick={addToList} aria-label="إضافة" className="flex h-11 w-11 items-center justify-center rounded-full shadow-md" style={{ background: added ? "#10b981" : "rgba(255,255,255,0.9)", backdropFilter: "blur(8px)" }}>
-              {added ? <Check className="h-5 w-5 text-white" /> : <Plus className="h-5 w-5" style={{ color: "#0f172a" }} />}
             </button>
           </div>
           <Link to="/doctors" aria-label="رجوع" className="flex h-11 w-11 items-center justify-center rounded-full shadow-md" style={{ background: "rgba(255,255,255,0.9)", backdropFilter: "blur(8px)" }}>
-            <ArrowLeft className="h-5 w-5" style={{ color: "#0f172a" }} />
+            <ArrowRight className="h-5 w-5" style={{ color: "#0f172a" }} />
           </Link>
         </div>
 
