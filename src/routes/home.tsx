@@ -1,11 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Bell, Search, MapPin, Phone, Stethoscope, Building2, Pill, Droplet, Accessibility, Leaf, Eye, Baby, Brain, Bone, Heart, Star, ChevronLeft, BadgeCheck, Map as MapIcon, Zap } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
+import { sortByDistance } from "@/lib/geo";
 
 export const Route = createFileRoute("/home")({ component: Home });
+
+function fmtKm(km?: number) {
+  if (km == null || !isFinite(km)) return null;
+  return km < 1 ? `${Math.round(km * 1000)} م` : `${km.toFixed(1)} كم`;
+}
 
 const specialties = [
   { icon: Droplet, label: "متبرعو الدم", to: "/donors", color: "#ef4444", bg: "#fee2e2" },
