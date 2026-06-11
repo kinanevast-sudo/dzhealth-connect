@@ -4,7 +4,7 @@ import { User as UserIcon, Phone, MapPin, Droplet, Pencil, Star, Stethoscope, Ca
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
-import { uploadAvatar } from "@/lib/storage";
+import { uploadAvatar, getAvatarUrl } from "@/lib/storage";
 
 export const Route = createFileRoute("/profile")({ component: Page });
 
@@ -12,6 +12,7 @@ const TABS = ["نبذة عن الحساب", "مواعيدي", "المفضلة"] 
 
 function Page() {
   const [profile, setProfile] = useState<any>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({ full_name: "", phone: "", blood_type: "O+" });
   const [tab, setTab] = useState<(typeof TABS)[number]>("نبذة عن الحساب");
@@ -23,10 +24,15 @@ function Page() {
     if (!u.user) return;
     const { data } = await supabase.from("profiles").select("*,wilayas(name_ar)").eq("user_id", u.user.id).maybeSingle();
     setProfile(data);
-    if (data) setForm({ full_name: data.full_name ?? "", phone: data.phone ?? "", blood_type: (data as any).blood_type ?? "O+" });
+    if (data) {
+      setForm({ full_name: data.full_name ?? "", phone: data.phone ?? "", blood_type: (data as any).blood_type ?? "O+" });
+      const url = await getAvatarUrl((data as any).avatar_url);
+      setAvatarUrl(url);
+    }
   };
 
   useEffect(() => { load(); }, []);
+
 
   const saveProfile = async () => {
     const { data: u } = await supabase.auth.getUser();
@@ -44,24 +50,26 @@ function Page() {
     const file = e.target.files?.[0];
     if (!file) return;
     const { data: u } = await supabase.auth.getUser();
-    if (!u.user) return;
+    if (!u.user) { toast.error("يجب تسجيل الدخول"); return; }
     setUploading(true);
     try {
-      const url = await uploadAvatar(file, u.user.id);
-      const { error } = await supabase.from("profiles").update({ avatar_url: url }).eq("user_id", u.user.id);
+      const path = await uploadAvatar(file, u.user.id);
+      const { error } = await supabase.from("profiles").update({ avatar_url: path }).eq("user_id", u.user.id);
       if (error) throw error;
       toast.success("تم تحديث الصورة");
-      load();
+      await load();
     } catch (err: any) {
       toast.error(err.message ?? "تعذّر رفع الصورة");
     } finally {
       setUploading(false);
+      if (fileRef.current) fileRef.current.value = "";
     }
   };
 
+
   return (
     <AppShell>
-      <div className="light min-h-[100dvh]" style={{ background: "var(--background)", color: "var(--foreground)" }}>
+      <div className="min-h-[100dvh]" style={{ background: "var(--background)", color: "var(--foreground)" }}>
         {/* Header band */}
         <div className="relative h-24" style={{ background: "linear-gradient(135deg, #67e8f9, #22d3ee)" }} />
 
@@ -76,13 +84,14 @@ function Page() {
               {/* Avatar */}
               <div className="relative -mt-16">
                 <button onClick={() => fileRef.current?.click()} className="relative block h-24 w-24 overflow-hidden rounded-2xl" style={{ background: "#e0f2fe", border: "4px solid var(--card)" }}>
-                  {profile?.avatar_url ? (
-                    <img src={profile.avatar_url} alt="" className="h-full w-full object-cover" />
+                  {avatarUrl ? (
+                    <img src={avatarUrl} alt="" className="h-full w-full object-cover" onError={() => setAvatarUrl(null)} />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center">
                       <UserIcon className="h-12 w-12" style={{ color: "#0891b2" }} strokeWidth={1.5} />
                     </div>
                   )}
+
                   <div className="absolute inset-x-0 bottom-0 flex items-center justify-center bg-black/40 py-1 text-[10px] font-bold text-white">
                     {uploading ? "..." : <Camera className="h-3 w-3" />}
                   </div>

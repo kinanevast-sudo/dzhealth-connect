@@ -91,7 +91,7 @@ function Home() {
 
   return (
     <AppShell>
-      <div className="light min-h-[100dvh]" style={{ background: "var(--background)", color: "var(--foreground)" }}>
+      <div className="min-h-[100dvh]" style={{ background: "var(--background)", color: "var(--foreground)" }}>
         {/* Header */}
         <header className="px-5 pt-8 pb-4">
           <div className="flex items-start justify-between">
