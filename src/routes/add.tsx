@@ -1,16 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Stethoscope, Building2, Pill, Droplet, Accessibility, PawPrint } from "lucide-react";
+import { Stethoscope, Building2, Pill, Droplet, Accessibility } from "lucide-react";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 
 export const Route = createFileRoute("/add")({ component: Page });
+
 const items = [
-  { icon: Stethoscope, label: "إضافة طبيب", to: "/doctors" },
-  { icon: Building2, label: "إضافة مستشفى", to: "/hospitals" },
-  { icon: Pill, label: "إضافة صيدلية", to: "/pharmacies" },
-  { icon: Droplet, label: "تسجيل متبرع جديد", to: "/donors" },
-  { icon: Accessibility, label: "إضافة معدات طبية", to: "/equipment" },
-  { icon: PawPrint, label: "طبيب بيطري", to: "/search" },
+  { icon: Stethoscope, label: "إضافة طبيب", to: "/add-doctor" },
+  { icon: Building2, label: "إضافة مستشفى", to: "/add-hospital" },
+  { icon: Pill, label: "إضافة صيدلية", to: "/add-pharmacy" },
+  { icon: Droplet, label: "تسجيل متبرع جديد", to: "/add-donor" },
+  { icon: Accessibility, label: "إضافة معدات طبية", to: "/add-equipment" },
 ];
+
 function Page() {
   return (
     <AppShell>
