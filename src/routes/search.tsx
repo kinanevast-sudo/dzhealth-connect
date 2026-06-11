@@ -1,30 +1,162 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Search as SearchIcon, ChevronLeft } from "lucide-react";
+import { Search as SearchIcon, ChevronUp, ChevronDown, MapPin, Mic, Stethoscope, Building2, Pill, Droplet, Baby } from "lucide-react";
+import { useState, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { AppShell, ScreenHeader } from "@/components/AppShell";
+import { AppShell } from "@/components/AppShell";
 
 export const Route = createFileRoute("/search")({ component: Page });
 
+const TYPES = [
+  { id: "all", label: "الكل", icon: null, color: "#0891b2", bg: "#e0f2fe" },
+  { id: "doctors", label: "الأطباء", icon: "👨‍⚕️", color: "#0891b2", bg: "#0891b2" },
+  { id: "hospitals", label: "المستشفيات", icon: "🏥", color: "#3b82f6", bg: "#dbeafe" },
+  { id: "pharmacies", label: "الصيدليات", icon: "💊", color: "#10b981", bg: "#d1fae5" },
+  { id: "donors", label: "متبرعو الدم", icon: "🩸", color: "#ef4444", bg: "#fee2e2" },
+];
+
+const SUB = [
+  { id: "all", label: "الكل" },
+  { id: "peds", label: "طب الأطفال", icon: "👶" },
+  { id: "hosp", label: "المستشفيات", icon: "🏥" },
+  { id: "pharma", label: "الصيدليات", icon: "💊" },
+];
+
 function Page() {
-  const { data: specs } = useQuery({ queryKey: ["specs"], queryFn: async () => (await supabase.from("specialties").select("*")).data ?? [] });
+  const [q, setQ] = useState("");
+  const [type, setType] = useState("doctors");
+  const [sub, setSub] = useState("all");
+  const [wOpen, setWOpen] = useState(false);
+  const [tOpen, setTOpen] = useState(false);
+  const [wilaya, setWilaya] = useState<{ id: number; name_ar: string } | null>(null);
+
+  const { data: wilayas = [] } = useQuery({
+    queryKey: ["wilayas"],
+    queryFn: async () => (await supabase.from("wilayas").select("id,name_ar").order("id")).data ?? [],
+  });
+
+  const table = type === "hospitals" ? "hospitals" : type === "pharmacies" ? "pharmacies" : type === "donors" ? "blood_donors" : "doctors";
+  const nameCol = table === "doctors" ? "full_name" : table === "blood_donors" ? "full_name" : "name";
+
+  const { data: results = [] } = useQuery({
+    queryKey: ["search", table, q, wilaya?.id],
+    queryFn: async () => {
+      let query: any = supabase.from(table as any).select(`id,${nameCol},photo_url,wilayas(name_ar),baladiyas(name_ar)`).limit(30);
+      if (q) query = query.ilike(nameCol, `%${q}%`);
+      if (wilaya?.id) query = query.eq("wilaya_id", wilaya.id);
+      const { data } = await query;
+      return data ?? [];
+    },
+  });
+
+  const detailBase = table === "doctors" ? "/doctors" : table === "hospitals" ? "/hospitals" : table === "pharmacies" ? "/pharmacies" : "/donors";
+
   return (
     <AppShell>
-      <ScreenHeader title="البحث" />
-      <div className="px-4 pt-3">
-        <div className="flex items-center gap-2 rounded-2xl bg-surface card-elevated px-4 py-3">
-          <SearchIcon className="h-4 w-4 text-muted-foreground" />
-          <input placeholder="ابحث عن تخصص أو طبيب..." className="flex-1 bg-transparent text-sm outline-none" />
-        </div>
-        <h3 className="mt-5 mb-2 text-sm font-bold">التخصصات الشائعة</h3>
-        <div className="space-y-2">
-          {(specs ?? []).map((s: any) => (
-            <Link key={s.id} to="/doctors" className="flex items-center justify-between rounded-2xl bg-surface card-elevated px-4 py-3">
-              <span className="text-sm font-semibold">{s.name_ar}</span>
-              <ChevronLeft className="h-4 w-4 text-muted-foreground" />
-            </Link>
+      <div dir="rtl" className="min-h-[100dvh]" style={{ background: "var(--background)", color: "var(--foreground)" }}>
+        <header className="px-5 pt-8 pb-3">
+          <h1 className="text-2xl font-extrabold text-right">بحث</h1>
+
+          {/* Row: search input + wilaya pill */}
+          <div className="mt-4 flex items-center gap-2">
+            {/* Search input (flex-1) */}
+            <div className="relative flex-1 flex items-center rounded-2xl px-3 py-3" style={{ background: "#e0f2fe" }}>
+              <SearchIcon className="h-4 w-4 shrink-0" style={{ color: "#64748b" }} />
+              <input
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                placeholder="ابحث عن طبيب، تخصص، و..."
+                className="flex-1 bg-transparent px-2 text-sm outline-none text-right placeholder:text-slate-500"
+              />
+              <button aria-label="إدخال صوتي" className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full" style={{ background: "#bae6fd" }}>
+                <Mic className="h-3.5 w-3.5" style={{ color: "#0891b2" }} />
+              </button>
+            </div>
+            {/* Wilaya pill */}
+            <button
+              onClick={() => setWOpen((v) => !v)}
+              className="shrink-0 flex items-center gap-1.5 rounded-2xl px-3 py-3"
+              style={{ background: "#e0f2fe" }}
+            >
+              <ChevronUp className={`h-4 w-4 transition-transform ${wOpen ? "" : "rotate-180"}`} style={{ color: "#0891b2" }} />
+              <span className="text-sm font-semibold">{wilaya?.name_ar ?? "الولاية"}</span>
+              <MapPin className="h-4 w-4" style={{ color: "#0891b2" }} />
+            </button>
+          </div>
+
+          {/* Wilaya dropdown */}
+          {wOpen && (
+            <div className="mt-2 max-h-64 overflow-y-auto rounded-2xl p-2 shadow-lg" style={{ background: "white", border: "1px solid var(--border)" }}>
+              <button
+                onClick={() => { setWilaya(null); setWOpen(false); }}
+                className="block w-full rounded-xl px-3 py-2 text-right text-sm hover:bg-slate-50"
+              >
+                كل الولايات
+              </button>
+              {wilayas.map((w: any) => (
+                <button
+                  key={w.id}
+                  onClick={() => { setWilaya(w); setWOpen(false); }}
+                  className={`block w-full rounded-xl px-3 py-2 text-right text-sm hover:bg-slate-50 ${wilaya?.id === w.id ? "font-bold" : ""}`}
+                  style={wilaya?.id === w.id ? { background: "#e0f2fe", color: "#0891b2" } : undefined}
+                >
+                  {w.name_ar}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Type dropdown */}
+          <button
+            onClick={() => setTOpen((v) => !v)}
+            className="mt-3 flex w-full items-center justify-between rounded-2xl px-4 py-3"
+            style={{ background: "#e0f2fe" }}
+          >
+            <ChevronDown className={`h-4 w-4 transition-transform ${tOpen ? "rotate-180" : ""}`} style={{ color: "#0891b2" }} />
+            <span className="text-sm font-semibold">{SUB.find(s => s.id === sub)?.label ?? "الكل"}</span>
+          </button>
+          {tOpen && (
+            <div className="mt-2 rounded-2xl p-2 shadow-lg" style={{ background: "white", border: "1px solid var(--border)" }}>
+              {SUB.map((s) => (
+                <button key={s.id} onClick={() => { setSub(s.id); setTOpen(false); }}
+                  className="flex w-full items-center justify-end gap-2 rounded-xl px-3 py-2 text-right text-sm hover:bg-slate-50">
+                  <span>{s.label}</span>{s.icon && <span>{s.icon}</span>}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {/* Type chips */}
+          <div dir="rtl" className="mt-3 flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
+            {TYPES.map((t) => {
+              const active = type === t.id;
+              return (
+                <button key={t.id} onClick={() => setType(t.id)}
+                  className="shrink-0 flex items-center gap-1.5 rounded-2xl px-3 py-2 text-xs font-semibold"
+                  style={active
+                    ? { background: t.color, color: "white" }
+                    : { background: t.bg, color: t.color }}>
+                  <span>{t.label}</span>
+                  {t.icon && <span>{t.icon}</span>}
+                </button>
+              );
+            })}
+          </div>
+        </header>
+
+        {/* Results */}
+        <section className="px-5 pb-24 space-y-2">
+          {results.length === 0 && (
+            <p className="py-8 text-center text-sm text-muted-foreground">لا توجد نتائج</p>
+          )}
+          {results.map((r: any) => (
+            <a key={r.id} href={table === "doctors" ? `/doctors/${r.id}` : detailBase}
+              className="flex items-center justify-between rounded-2xl px-4 py-3" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
+              <span className="text-xs text-muted-foreground">{r.wilayas?.name_ar ?? ""}</span>
+              <span className="text-sm font-semibold">{r[nameCol]}</span>
+            </a>
           ))}
-        </div>
+        </section>
       </div>
     </AppShell>
   );
