@@ -272,14 +272,15 @@ function HospitalCard({ h }: { h: any }) {
       {h.photo_url && <img src={h.photo_url} alt={h.name} className="h-24 w-28 flex-shrink-0 rounded-xl object-cover" />}
       <div className="min-w-0 flex-1 text-right">
         <h3 className="text-base font-extrabold">{h.name}</h3>
-        <p className="mt-0.5 text-xs text-muted-foreground">{h.wilayas?.name_ar} - {h.baladiyas?.name_ar}</p>
+        <p className="mt-0.5 text-xs text-muted-foreground">{h.wilayas?.name_ar}{h.baladiyas?.name_ar ? ` - ${h.baladiyas?.name_ar}` : ""}</p>
         <div className="mt-2 flex flex-wrap justify-end gap-1.5">
           {["طوارئ","جراحة","أطفال"].map((t) => (
             <span key={t} className="rounded-full px-2.5 py-0.5 text-[10px]" style={{ background: "#cffafe", color: "#0891b2" }}>{t}</span>
           ))}
         </div>
-        <p className="mt-2 text-[11px] text-muted-foreground">{h.wilayas?.name_ar}</p>
+        {fmtKm(h._distanceKm) && <p className="mt-2 text-[11px] font-bold" style={{ color: "#0891b2" }}>{fmtKm(h._distanceKm)}</p>}
       </div>
+
       <button className="flex h-10 w-10 flex-shrink-0 items-center justify-center self-end rounded-full" style={{ background: "#e0f2fe" }}>
         <Phone className="h-4 w-4" style={{ color: "#0891b2" }} />
       </button>
