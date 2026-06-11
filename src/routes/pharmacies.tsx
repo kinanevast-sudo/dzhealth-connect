@@ -15,7 +15,7 @@ function Page() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("pharmacies")
-        .select("id,name,phone,lat,lng,is_24_7,photo_url,wilayas(name_ar),baladiyas(name_ar)");
+        .select("id,name,phone,lat,lng,is_24_7,wilayas(name_ar),baladiyas(name_ar)");
       if (error) throw error;
       return data ?? [];
     },
