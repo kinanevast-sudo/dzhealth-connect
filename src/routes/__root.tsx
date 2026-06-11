@@ -86,6 +86,11 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEffect(() => {
+    const t = (typeof localStorage !== "undefined" && localStorage.getItem("dzhealth-theme")) || "dark";
+    if (t === "light") document.documentElement.classList.add("light");
+    else document.documentElement.classList.remove("light");
+  }, []);
   return (
     <QueryClientProvider client={queryClient}>
       <div id="app-frame">
