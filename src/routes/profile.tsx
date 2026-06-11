@@ -61,7 +61,7 @@ function Page() {
 
   return (
     <AppShell>
-      <div className="light min-h-[100dvh]" style={{ background: "var(--background)", color: "var(--foreground)" }}>
+      <div className="min-h-[100dvh]" style={{ background: "var(--background)", color: "var(--foreground)" }}>
         {/* Header band */}
         <div className="relative h-24" style={{ background: "linear-gradient(135deg, #67e8f9, #22d3ee)" }} />
 
