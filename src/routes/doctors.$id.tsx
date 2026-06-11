@@ -90,13 +90,6 @@ function Detail() {
     } catch {}
   };
 
-  const addToList = () => {
-    const key = "my-doctors";
-    const list: string[] = JSON.parse(localStorage.getItem(key) || "[]");
-    if (!list.includes(id)) { list.push(id); localStorage.setItem(key, JSON.stringify(list)); }
-    setAdded(true);
-    setTimeout(() => setAdded(false), 1500);
-  };
 
   return (
     <div dir="rtl" className="min-h-[100dvh] pb-32" style={{ background: "#f8fafc", color: "#0f172a" }}>
