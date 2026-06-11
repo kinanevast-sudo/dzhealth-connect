@@ -38,10 +38,14 @@ function Page() {
   const table = type === "hospitals" ? "hospitals" : type === "pharmacies" ? "pharmacies" : type === "donors" ? "blood_donors" : "doctors";
   const nameCol = table === "doctors" ? "full_name" : table === "blood_donors" ? "full_name" : "name";
 
+  const selectCols = table === "doctors"
+    ? "id,full_name,photo_url,rating,reviews_count,fee,phone,verified,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)"
+    : `id,${nameCol},photo_url,phone,wilayas(name_ar),baladiyas(name_ar)`;
+
   const { data: results = [] } = useQuery({
     queryKey: ["search", table, q, wilaya?.id],
     queryFn: async () => {
-      let query: any = supabase.from(table as any).select(`id,${nameCol},photo_url,wilayas(name_ar),baladiyas(name_ar)`).limit(30);
+      let query: any = supabase.from(table as any).select(selectCols).limit(30);
       if (q) query = query.ilike(nameCol, `%${q}%`);
       if (wilaya?.id) query = query.eq("wilaya_id", wilaya.id);
       const { data } = await query;
