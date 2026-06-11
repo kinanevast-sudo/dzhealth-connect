@@ -4,7 +4,7 @@ import { Search, Phone, Star, MapPin } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 
-export const Route = createFileRoute("/doctors")({ component: Doctors });
+export const Route = createFileRoute("/doctors/")({ component: Doctors });
 
 function Doctors() {
   const { data } = useQuery({
