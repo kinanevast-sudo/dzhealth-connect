@@ -104,13 +104,10 @@ function Home() {
 
   return (
     <AppShell>
-      <div className="min-h-[100dvh]" style={{ background: "var(--background)", color: "var(--foreground)" }}>
+      <div dir="rtl" className="min-h-[100dvh]" style={{ background: "var(--background)", color: "var(--foreground)" }}>
         {/* Header */}
         <header className="px-5 pt-8 pb-4">
           <div className="flex items-start justify-between">
-            <Link to="/notifications" className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ background: "#e0f2fe" }}>
-              <Bell className="h-5 w-5" style={{ color: "#0891b2" }} />
-            </Link>
             <div className="text-right">
               <p className="text-sm text-muted-foreground">مرحباً 👋</p>
               <h1 className="text-xl font-extrabold leading-tight">كيف يمكننا مساعدتك اليوم؟</h1>
@@ -118,6 +115,9 @@ function Home() {
                 <span>{originLabel}</span><MapPin className="h-3 w-3" />
               </div>
             </div>
+            <Link to="/notifications" aria-label="الإشعارات" className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ background: "#e0f2fe" }}>
+              <Bell className="h-5 w-5" style={{ color: "#0891b2" }} />
+            </Link>
           </div>
 
           <Link to="/search" className="mt-4 flex items-center gap-2 rounded-2xl px-4 py-3.5 text-sm text-muted-foreground" style={{ background: "#f0f9ff" }}>
