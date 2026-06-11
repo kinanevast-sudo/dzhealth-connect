@@ -13,6 +13,8 @@ const TABS = ["نبذة عن الحساب", "مواعيدي", "المفضلة"] 
 function Page() {
   const [profile, setProfile] = useState<any>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarLoading, setAvatarLoading] = useState(true);
+  const [avatarError, setAvatarError] = useState(false);
   const [editing, setEditing] = useState(false);
   const [form, setForm] = useState({ full_name: "", phone: "", blood_type: "O+" });
   const [tab, setTab] = useState<(typeof TABS)[number]>("نبذة عن الحساب");
@@ -20,14 +22,24 @@ function Page() {
   const fileRef = useRef<HTMLInputElement>(null);
 
   const load = async () => {
-    const { data: u } = await supabase.auth.getUser();
-    if (!u.user) return;
-    const { data } = await supabase.from("profiles").select("*,wilayas(name_ar)").eq("user_id", u.user.id).maybeSingle();
-    setProfile(data);
-    if (data) {
-      setForm({ full_name: data.full_name ?? "", phone: data.phone ?? "", blood_type: (data as any).blood_type ?? "O+" });
-      const url = await getAvatarUrl((data as any).avatar_url);
-      setAvatarUrl(url);
+    try {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user) { setAvatarLoading(false); return; }
+      const { data } = await supabase.from("profiles").select("*,wilayas(name_ar)").eq("user_id", u.user.id).maybeSingle();
+      setProfile(data);
+      if (data) {
+        setForm({ full_name: data.full_name ?? "", phone: data.phone ?? "", blood_type: (data as any).blood_type ?? "O+" });
+        setAvatarError(false);
+        try {
+          const url = await getAvatarUrl((data as any).avatar_url);
+          setAvatarUrl(url);
+        } catch {
+          setAvatarUrl(null);
+          setAvatarError(true);
+        }
+      }
+    } finally {
+      setAvatarLoading(false);
     }
   };
 
@@ -84,11 +96,19 @@ function Page() {
               {/* Avatar */}
               <div className="relative -mt-16">
                 <button onClick={() => fileRef.current?.click()} className="relative block h-24 w-24 overflow-hidden rounded-2xl" style={{ background: "#e0f2fe", border: "4px solid var(--card)" }}>
-                  {avatarUrl ? (
-                    <img src={avatarUrl} alt="" className="h-full w-full object-cover" onError={() => setAvatarUrl(null)} />
+                  {avatarLoading ? (
+                    <div className="h-full w-full animate-pulse" style={{ background: "#bae6fd" }} />
+                  ) : avatarUrl ? (
+                    <img
+                      src={avatarUrl}
+                      alt=""
+                      className="h-full w-full object-cover"
+                      onError={() => { setAvatarUrl(null); setAvatarError(true); }}
+                    />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center">
+                    <div className="flex h-full w-full flex-col items-center justify-center gap-0.5">
                       <UserIcon className="h-12 w-12" style={{ color: "#0891b2" }} strokeWidth={1.5} />
+                      {avatarError && <span className="text-[9px] font-semibold" style={{ color: "#0891b2" }}>تعذّر التحميل</span>}
                     </div>
                   )}
 

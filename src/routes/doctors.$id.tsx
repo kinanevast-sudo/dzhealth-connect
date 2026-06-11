@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { ArrowLeft, Phone, MapPin, Share2, Heart, BadgeCheck, Map as MapIcon, Star } from "lucide-react";
+import { ArrowLeft, Phone, MapPin, Share2, Heart, BadgeCheck, Map as MapIcon, Star, Stethoscope } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/doctors/$id")({ component: Detail });
@@ -11,28 +11,48 @@ const TABS = ["نبذة عن الطبيب", "التقييمات", "احجز مو
 function Detail() {
   const { id } = Route.useParams();
   const [tab, setTab] = useState<(typeof TABS)[number]>("نبذة عن الطبيب");
+  const [imgError, setImgError] = useState(false);
 
-  const { data: d } = useQuery({
+  const { data: d, isLoading, isError } = useQuery({
     queryKey: ["doctor", id],
     queryFn: async () => {
-      const { data } = await supabase.from("doctors")
+      const { data, error } = await supabase.from("doctors")
         .select("*,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)")
         .eq("id", id).maybeSingle();
+      if (error) throw error;
       return data;
     },
+    retry: 1,
+    staleTime: 60_000,
   });
 
-  if (!d) return <div className="min-h-[100dvh] bg-background p-8 text-center text-muted-foreground">جارٍ التحميل...</div>;
+  if (isLoading) return <DoctorSkeleton />;
+  if (isError || !d) {
+    return (
+      <div className="dark min-h-[100dvh] flex flex-col items-center justify-center gap-3 p-8 text-center" style={{ background: "#0a1628", color: "#e2f7ff" }}>
+        <Stethoscope className="h-12 w-12" style={{ color: "#22d3ee" }} />
+        <p className="text-sm" style={{ color: "#94d3e3" }}>
+          تعذّر تحميل بيانات الطبيب. تحقق من الاتصال بالإنترنت.
+        </p>
+        <Link to="/doctors" className="rounded-2xl px-5 py-2.5 text-sm font-bold" style={{ background: "#22d3ee", color: "#0a1628" }}>
+          رجوع
+        </Link>
+      </div>
+    );
+  }
   const x = d as any;
+  const showImg = x.photo_url && !imgError;
 
   return (
     <div className="dark min-h-[100dvh] pb-32" style={{ background: "#0a1628", color: "#e2f7ff" }}>
       {/* Hero photo */}
       <div className="relative h-[420px] overflow-hidden">
-        {x.photo_url ? (
-          <img src={x.photo_url} alt={x.full_name} className="absolute inset-0 h-full w-full object-cover" />
+        {showImg ? (
+          <img src={x.photo_url} alt={x.full_name} loading="lazy" onError={() => setImgError(true)} className="absolute inset-0 h-full w-full object-cover" />
         ) : (
-          <div className="absolute inset-0" style={{ background: "linear-gradient(135deg, #1e3a5f, #0a1628)" }} />
+          <div className="absolute inset-0 flex items-center justify-center" style={{ background: "linear-gradient(135deg, #1e3a5f, #0a1628)" }}>
+            <Stethoscope className="h-24 w-24" style={{ color: "rgba(34, 211, 238, 0.35)" }} strokeWidth={1.2} />
+          </div>
         )}
         <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, rgba(10,22,40,0.4) 0%, rgba(10,22,40,0.1) 50%, #0a1628 100%)" }} />
 
@@ -162,6 +182,33 @@ function Panel({ title, children }: { title: string; children: React.ReactNode }
     <div className="rounded-2xl p-4 text-right" style={{ background: "rgba(15, 30, 50, 0.6)", border: "1px solid rgba(34, 211, 238, 0.2)" }}>
       <h3 className="mb-3 text-sm font-bold" style={{ color: "#22d3ee" }}>{title}</h3>
       {children}
+    </div>
+  );
+}
+
+function Shimmer({ className = "", style }: { className?: string; style?: React.CSSProperties }) {
+  return (
+    <div
+      className={`animate-pulse rounded-xl ${className}`}
+      style={{ background: "rgba(34, 211, 238, 0.08)", ...style }}
+    />
+  );
+}
+
+function DoctorSkeleton() {
+  return (
+    <div className="dark min-h-[100dvh] pb-32" style={{ background: "#0a1628", color: "#e2f7ff" }}>
+      <Shimmer className="h-[420px] !rounded-none" />
+      <div className="px-4 -mt-12 space-y-4">
+        <Shimmer className="h-24" />
+        <div className="grid grid-cols-2 gap-3">
+          <Shimmer className="h-12" />
+          <Shimmer className="h-12" />
+        </div>
+        <Shimmer className="h-12" />
+        <Shimmer className="h-28" />
+        <Shimmer className="h-20" />
+      </div>
     </div>
   );
 }
