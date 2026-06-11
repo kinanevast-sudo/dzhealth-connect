@@ -339,7 +339,7 @@ function RatingsTab({ doctor }: { doctor: any }) {
       )}
 
       {reviews.map((r: any, idx: number) => {
-        const name = r.profiles?.full_name ?? "مستخدم";
+        const name = r.profile?.full_name ?? "مستخدم";
         return (
           <div key={r.id} className="rounded-2xl p-4 text-right opacity-0 animate-fade-in"
             style={{ background: "white", border: "1px solid #e2e8f0", animationDelay: `${150 + idx * 80}ms`, animationFillMode: "forwards" }}>
