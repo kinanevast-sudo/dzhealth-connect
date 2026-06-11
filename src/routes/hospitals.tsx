@@ -23,10 +23,16 @@ function Page() {
     });
   }, []);
 
-  const { data } = useQuery({
+  const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["hospitals-all"],
-    queryFn: async () => (await supabase.from("hospitals")
-      .select("id,name,kind,phone,photo_url,lat,lng,wilayas(name_ar),baladiyas(name_ar)")).data ?? [],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("hospitals")
+        .select("id,name,kind,phone,photo_url,lat,lng,wilayas(name_ar),baladiyas(name_ar)");
+      if (error) throw error;
+      return data ?? [];
+    },
+    retry: 1,
+    staleTime: 60_000,
   });
 
   const filtered = (data ?? []).filter((h: any) =>
@@ -57,8 +63,17 @@ function Page() {
         </div>
 
         <div className="mt-3 space-y-3">
-          {visible.map((h: any) => <HospitalCard key={h.id} h={h} />)}
-          {visible.length === 0 && (
+          {isLoading && Array.from({ length: 5 }).map((_, i) => <HospitalSkeleton key={i} />)}
+          {!isLoading && isError && (
+            <div className="rounded-2xl bg-surface card-elevated p-8 text-center text-sm text-muted-foreground">
+              <p>تعذّر تحميل المستشفيات. تحقق من الاتصال بالإنترنت.</p>
+              <button onClick={() => refetch()} className="mt-3 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground">
+                إعادة المحاولة
+              </button>
+            </div>
+          )}
+          {!isLoading && !isError && visible.map((h: any) => <HospitalCard key={h.id} h={h} />)}
+          {!isLoading && !isError && visible.length === 0 && (
             <div className="rounded-2xl bg-surface card-elevated p-8 text-center text-sm text-muted-foreground">
               لا توجد نتائج
             </div>
@@ -84,17 +99,36 @@ function fmtKm(km?: number) {
   return km < 1 ? `${Math.round(km * 1000)} م` : `${km.toFixed(1)} كم`;
 }
 
+function HospitalSkeleton() {
+  return (
+    <div className="flex items-stretch gap-3 rounded-2xl bg-surface card-elevated p-3">
+      <div className="h-24 w-28 flex-shrink-0 animate-pulse rounded-xl bg-surface-2" />
+      <div className="flex-1 space-y-2 py-1">
+        <div className="ms-auto h-4 w-3/4 animate-pulse rounded bg-surface-2" />
+        <div className="ms-auto h-3 w-1/2 animate-pulse rounded bg-surface-2" />
+        <div className="ms-auto h-3 w-2/3 animate-pulse rounded bg-surface-2" />
+      </div>
+    </div>
+  );
+}
+
+function HospitalImg({ src, alt }: { src?: string | null; alt: string }) {
+  const [err, setErr] = useState(false);
+  if (!src || err) {
+    return (
+      <div className="flex h-24 w-28 flex-shrink-0 items-center justify-center rounded-xl bg-surface-2">
+        <Building2 className="h-10 w-10 text-primary" />
+      </div>
+    );
+  }
+  return <img src={src} alt={alt} loading="lazy" onError={() => setErr(true)} className="h-24 w-28 flex-shrink-0 rounded-xl object-cover" />;
+}
+
 function HospitalCard({ h }: { h: any }) {
   const km = fmtKm((h as any)._distanceKm);
   return (
     <Link to="/hospitals" className="flex items-stretch gap-3 overflow-hidden rounded-2xl bg-surface card-elevated p-3">
-      {h.photo_url ? (
-        <img src={h.photo_url} alt={h.name} className="h-24 w-28 flex-shrink-0 rounded-xl object-cover" />
-      ) : (
-        <div className="flex h-24 w-28 flex-shrink-0 items-center justify-center rounded-xl bg-surface-2">
-          <Building2 className="h-10 w-10 text-primary" />
-        </div>
-      )}
+      <HospitalImg src={h.photo_url} alt={h.name} />
       <div className="min-w-0 flex-1 text-right">
         <h3 className="truncate text-base font-extrabold">{h.name}</h3>
         <p className="mt-0.5 text-xs text-muted-foreground">
