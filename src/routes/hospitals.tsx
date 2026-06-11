@@ -49,15 +49,7 @@ function Page() {
     <AppShell>
       <ScreenHeader title="المستشفيات" />
       <div className="px-4 pt-3">
-        <div className="flex items-center gap-2 rounded-2xl bg-surface card-elevated px-3.5 py-2.5">
-          <Search className="h-4 w-4 text-muted-foreground" />
-          <input
-            value={q}
-            onChange={(e) => setQ(e.target.value)}
-            placeholder="ابحث عن مستشفى..."
-            className="w-full bg-transparent text-right text-sm outline-none placeholder:text-muted-foreground"
-          />
-        </div>
+        <SearchInput value={q} onChange={setQ} placeholder="ابحث عن مستشفى..." />
 
         <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
           <span>{sorted.length} مستشفى</span>
