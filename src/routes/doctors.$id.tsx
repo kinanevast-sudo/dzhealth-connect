@@ -257,7 +257,7 @@ function RatingsTab({ doctor }: { doctor: any }) {
       const ids = Array.from(new Set(rows.map((r: any) => r.user_id)));
       let profilesMap: Record<string, any> = {};
       if (ids.length) {
-        const { data: profs } = await supabase.from("profiles").select("user_id,full_name,avatar_url").in("user_id", ids);
+        const { data: profs } = await supabase.from("profiles_public" as any).select("user_id,full_name,avatar_url").in("user_id", ids);
         (profs ?? []).forEach((p: any) => { profilesMap[p.user_id] = p; });
       }
       return rows.map((r: any) => ({ ...r, stars: r.rating, comment: r.review_text, profile: profilesMap[r.user_id] }));
