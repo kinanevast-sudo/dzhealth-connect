@@ -1,6 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Bell, Search, MapPin, Phone, Stethoscope, Building2, Pill, Droplet, Accessibility, Leaf, Eye, Baby, Brain, Bone, Heart, Star, ChevronLeft, BadgeCheck, Map as MapIcon, Zap } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ChevronDown, Bell, Search, MapPin, ChevronRight,
+  Phone, Activity, Stethoscope, Building2, Pill, Droplet, Zap, Loader2,
+  Accessibility, Leaf, Eye, Baby, Brain, Bone, Heart, Star, BadgeCheck,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
@@ -8,30 +13,57 @@ import { sortByDistance } from "@/lib/geo";
 
 export const Route = createFileRoute("/home")({ component: Home });
 
+const BLOOD_TYPE_COLORS: Record<string, string> = {
+  "O+": "text-red-500", "O-": "text-red-600",
+  "A+": "text-blue-500", "A-": "text-blue-600",
+  "B+": "text-green-500", "B-": "text-green-600",
+  "AB+": "text-purple-500", "AB-": "text-purple-600",
+};
+
+const STATS = [
+  { icon: Stethoscope, label: "أطباء", value: "1,240+", color: "text-primary", bg: "bg-primary/10" },
+  { icon: Building2, label: "مستشفيات", value: "320+", color: "text-blue-500", bg: "bg-blue-500/10" },
+  { icon: Pill, label: "صيدليات", value: "4,500+", color: "text-green-500", bg: "bg-green-500/10" },
+  { icon: Droplet, label: "متبرعون", value: "800+", color: "text-red-500", bg: "bg-red-500/10" },
+];
+
+const SPECIALTIES = [
+  { id: "donors", icon: "🩸", name: "متبرعو الدم", to: "/donors" },
+  { id: "pharmacies", icon: "💊", name: "الصيدليات", to: "/pharmacies" },
+  { id: "hospitals", icon: "🏥", name: "المستشفيات", to: "/hospitals" },
+  { id: "pediatrics", icon: "👶", name: "طب الأطفال", to: "/doctors" },
+  { id: "equipment", icon: "🦽", name: "المعدات الطبية", to: "/equipment" },
+  { id: "alt", icon: "🌿", name: "الطب البديل", to: "/search" },
+  { id: "eye", icon: "👁️", name: "طب العيون", to: "/doctors" },
+  { id: "dental", icon: "🦷", name: "طب الأسنان", to: "/doctors" },
+  { id: "neuro", icon: "🧠", name: "طب الأعصاب", to: "/doctors" },
+  { id: "bone", icon: "🦴", name: "العظام والمفاصل", to: "/doctors" },
+  { id: "gyn", icon: "🌸", name: "أمراض النساء", to: "/doctors" },
+  { id: "cardio", icon: "❤️", name: "القلب والشرايين", to: "/doctors" },
+];
+
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.07 } },
+};
+
+const itemVariants = {
+  hidden: { opacity: 0, y: 18 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.38, ease: [0.25, 0.1, 0.25, 1] as const } },
+};
+
 function fmtKm(km?: number) {
   if (km == null || !isFinite(km)) return null;
   return km < 1 ? `${Math.round(km * 1000)} م` : `${km.toFixed(1)} كم`;
 }
 
-const specialties = [
-  { icon: Droplet, label: "متبرعو الدم", to: "/donors", color: "#ef4444", bg: "#fee2e2" },
-  { icon: Pill, label: "الصيدليات", to: "/pharmacies", color: "#10b981", bg: "#d1fae5" },
-  { icon: Building2, label: "المستشفيات", to: "/hospitals", color: "#3b82f6", bg: "#dbeafe" },
-  { icon: Baby, label: "طب الأطفال", to: "/doctors", color: "#f59e0b", bg: "#fef3c7" },
-  { icon: Accessibility, label: "المعدات الطبية", to: "/equipment", color: "#0891b2", bg: "#cffafe" },
-  { icon: Leaf, label: "الطب البديل", to: "/search", color: "#22c55e", bg: "#dcfce7" },
-  { icon: Eye, label: "طب العيون", to: "/doctors", color: "#8b5cf6", bg: "#ede9fe" },
-  { icon: Stethoscope, label: "طب الأسنان", to: "/doctors", color: "#06b6d4", bg: "#cffafe" },
-  { icon: Brain, label: "طب الأعصاب", to: "/doctors", color: "#ec4899", bg: "#fce7f3" },
-  { icon: Bone, label: "العظام والمفاصل", to: "/doctors", color: "#f97316", bg: "#ffedd5" },
-  { icon: Heart, label: "أمراض النساء", to: "/doctors", color: "#e11d48", bg: "#ffe4e6" },
-  { icon: Heart, label: "القلب والشرايين", to: "/doctors", color: "#dc2626", bg: "#fee2e2" },
-];
-
 function Home() {
-  const [showAll, setShowAll] = useState(false);
+  const [showAllSpecialties, setShowAllSpecialties] = useState(false);
   const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
-  const [originLabel, setOriginLabel] = useState<string>("الجزائر");
+  const [locationLabel, setLocationLabel] = useState<{ wilaya?: string; baladiya?: string }>({});
+  const [locationLoading, setLocationLoading] = useState(true);
+  const [displayName, setDisplayName] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
 
   useEffect(() => {
     let gotProfileLoc = false;
@@ -39,13 +71,15 @@ function Home() {
       const { data: u } = await supabase.auth.getUser();
       if (u.user) {
         const { data: p } = await supabase.from("profiles")
-          .select("lat,lng,wilayas(name_ar),baladiyas(name_ar)").eq("user_id", u.user.id).maybeSingle();
+          .select("full_name,avatar_url,lat,lng,wilayas(name_ar),baladiyas(name_ar)")
+          .eq("user_id", u.user.id).maybeSingle();
+        if (p?.full_name) setDisplayName(String(p.full_name).split(" ")[0]);
+        if (p?.avatar_url) setAvatarUrl(p.avatar_url);
         if (p?.lat && p?.lng) { setOrigin({ lat: p.lat, lng: p.lng }); gotProfileLoc = true; }
         const w = (p as any)?.wilayas?.name_ar;
         const b = (p as any)?.baladiyas?.name_ar;
-        if (w || b) setOriginLabel([b, w].filter(Boolean).join("، "));
+        if (w || b) { setLocationLabel({ wilaya: w, baladiya: b }); setLocationLoading(false); }
       }
-      // Auto-detect via browser geolocation if no profile location
       if (!gotProfileLoc && typeof navigator !== "undefined" && navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
           async (pos) => {
@@ -54,15 +88,19 @@ function Home() {
             try {
               const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=ar`);
               const j = await r.json();
-              const city = j.city || j.locality || j.principalSubdivision;
-              const commune = j.locality && j.locality !== city ? j.locality : (j.localityInfo?.administrative?.find?.((a: any) => a.order >= 6)?.name);
-              const label = [commune, city].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join("، ");
-              if (label) setOriginLabel(label);
+              const wilaya = j.city || j.principalSubdivision;
+              const baladiya = j.locality && j.locality !== wilaya ? j.locality : undefined;
+              setLocationLabel({ wilaya, baladiya });
             } catch {}
+            setLocationLoading(false);
           },
-          () => {},
+          () => setLocationLoading(false),
           { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
         );
+      } else if (gotProfileLoc) {
+        setLocationLoading(false);
+      } else {
+        setLocationLoading(false);
       }
     })();
   }, []);
@@ -95,11 +133,6 @@ function Home() {
     },
   });
 
-  const doctors = sortByDistance((doctorsRaw ?? []) as any[], origin).slice(0, 6);
-  const hospitals = sortByDistance((hospitalsRaw ?? []) as any[], origin).slice(0, 4);
-  const pharmacies = sortByDistance((pharmaciesRaw ?? []) as any[], origin).slice(0, 4);
-
-
   const { data: emergency } = useQuery({
     queryKey: ["emergency-donor"],
     queryFn: async () => {
@@ -108,178 +141,335 @@ function Home() {
     },
   });
 
-  const visibleSpecs = showAll ? specialties : specialties.slice(0, 8);
+  const doctors = sortByDistance((doctorsRaw ?? []) as any[], origin);
+  const featured = doctors.filter((d: any) => d.verified).slice(0, 3);
+  const nearbyDoctors = doctors.slice(0, 8);
+  const hospitals = sortByDistance((hospitalsRaw ?? []) as any[], origin).slice(0, 2);
+  const pharmacies = sortByDistance((pharmaciesRaw ?? []) as any[], origin).slice(0, 3);
+
+  const isLoading = !doctorsRaw;
+  const visibleSpecialties = showAllSpecialties ? SPECIALTIES : SPECIALTIES.slice(0, 8);
 
   return (
     <AppShell>
-      <div dir="rtl" className="min-h-[100dvh]" style={{ background: "var(--background)", color: "var(--foreground)" }}>
+      <div dir="rtl" className="min-h-[100dvh] bg-background">
         {/* Header */}
-        <header className="px-5 pt-8 pb-4">
-          <div className="flex items-start justify-between">
-            <div className="text-right">
-              <p className="text-sm text-muted-foreground">مرحباً 👋</p>
-              <h1 className="text-xl font-extrabold leading-tight">كيف يمكننا مساعدتك اليوم؟</h1>
-              <div className="mt-1 flex items-center justify-end gap-1 text-[12px] text-muted-foreground">
-                <span>{originLabel}</span><MapPin className="h-3 w-3" />
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] as const }}
+          className="bg-card border-b border-border px-4 pt-12 pb-4"
+        >
+          <div className="flex items-start justify-between mb-4">
+            <div>
+              <div className="flex items-center gap-2">
+                {avatarUrl ? (
+                  <img src={avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-primary/30" />
+                ) : (
+                  <motion.span
+                    initial={{ rotate: -20, scale: 0.7 }}
+                    animate={{ rotate: 0, scale: 1 }}
+                    transition={{ delay: 0.3, type: "spring", stiffness: 300, damping: 12 }}
+                    className="text-2xl"
+                  >👋</motion.span>
+                )}
+                <div>
+                  <p className="text-sm text-muted-foreground">
+                    {displayName ? `مرحباً، ${displayName}` : "مرحباً"}
+                  </p>
+                  <h1 className="text-lg font-black text-foreground">كيف يمكننا مساعدتك؟</h1>
+                </div>
               </div>
-            </div>
-            <Link to="/notifications" aria-label="الإشعارات" className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ background: "#e0f2fe" }}>
-              <Bell className="h-5 w-5" style={{ color: "#0891b2" }} />
-            </Link>
-          </div>
-
-          <Link to="/search" className="mt-4 flex items-center gap-2 rounded-2xl px-4 py-3.5 text-sm text-muted-foreground" style={{ background: "#f0f9ff" }}>
-            <Search className="h-4 w-4" />
-            ابحث عن طبيب، تخصص، ولاية...
-          </Link>
-        </header>
-
-        {/* Stats */}
-        <section className="px-5">
-          <div className="grid grid-cols-4 gap-3">
-            <StatCard icon={Droplet} value="+800" label="متبرعو الدم" color="#ef4444" bg="#fee2e2" />
-            <StatCard icon={Pill} value="+4,500" label="الصيدليات" color="#10b981" bg="#d1fae5" />
-            <StatCard icon={Building2} value="+320" label="المستشفيات" color="#3b82f6" bg="#dbeafe" />
-            <StatCard icon={Stethoscope} value="+1,240" label="الأطباء" color="#0891b2" bg="#cffafe" />
-          </div>
-        </section>
-
-        {/* Specialties */}
-        <section className="mt-6 px-5">
-          <div className="mb-3 flex items-center justify-between">
-            <button onClick={() => setShowAll((s) => !s)} className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#0891b2" }}>
-              {showAll ? "عرض أقل" : "عرض الكل"} <ChevronLeft className={`h-3 w-3 transition-transform ${showAll ? "rotate-90" : "-rotate-90"}`} />
-            </button>
-            <h2 className="text-base font-bold">التخصصات</h2>
-          </div>
-          <div className="grid grid-cols-4 gap-3">
-            {visibleSpecs.map((s) => (
-              <Link key={s.label} to={s.to} className="flex flex-col items-center gap-2 rounded-2xl p-3 active:scale-95 transition" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
-                <div className="flex h-12 w-12 items-center justify-center rounded-xl" style={{ background: s.bg }}>
-                  <s.icon className="h-6 w-6" style={{ color: s.color }} />
-                </div>
-                <span className="text-[10px] font-semibold leading-tight text-center">{s.label}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* Emergency banner */}
-        <section className="mt-6 px-5">
-          <div className="relative overflow-hidden rounded-2xl p-4" style={{ background: "linear-gradient(135deg, #fecaca, #fee2e2)" }}>
-            <div className="flex items-center justify-between">
-              <button className="flex h-12 w-12 items-center justify-center rounded-2xl shadow-md" style={{ background: "#ef4444", color: "white" }}>
-                <Phone className="h-5 w-5" />
-              </button>
-              <div className="text-right">
-                <div className="flex items-center justify-end gap-2">
-                  <span className="text-sm font-bold" style={{ color: "#dc2626" }}>مطلوب بشكل عاجل</span>
-                  <Zap className="h-4 w-4" style={{ color: "#dc2626" }} />
-                </div>
-                <div className="mt-1 flex items-center justify-end gap-2">
-                  <span className="rounded-full px-2 py-0.5 text-[10px]" style={{ background: "#fecaca", color: "#991b1b" }}>حالة طارئة</span>
-                  <span className="text-lg font-extrabold" style={{ color: "#dc2626" }}>{(emergency as any)?.blood_type ?? "O+"}</span>
-                </div>
-                {emergency && (
-                  <p className="mt-1 text-[11px] text-muted-foreground">{(emergency as any).full_name} — {(emergency as any).wilayas?.name_ar}</p>
+              <div className="flex items-center gap-1 mt-1">
+                <MapPin className="w-3 h-3 text-primary" />
+                {locationLoading ? (
+                  <Loader2 className="w-3 h-3 text-muted-foreground animate-spin" />
+                ) : (
+                  <span className="text-xs text-muted-foreground">
+                    {locationLabel.baladiya && locationLabel.wilaya
+                      ? `${locationLabel.baladiya}، ${locationLabel.wilaya}`
+                      : locationLabel.wilaya ?? locationLabel.baladiya ?? "الجزائر"}
+                  </span>
                 )}
               </div>
             </div>
+            <div className="flex items-center gap-2">
+              <Link to="/notifications" className="relative w-10 h-10 bg-secondary rounded-xl flex items-center justify-center cursor-pointer">
+                <Bell className="w-5 h-5 text-foreground" />
+              </Link>
+            </div>
           </div>
-        </section>
 
-        {/* Featured doctors - horizontal slider */}
-        <section className="mt-6">
-          <div className="mb-3 flex items-center justify-between px-5">
-            <h2 className="text-base font-bold">أطباء مميزون</h2>
-            <Link to="/doctors" className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل <ChevronLeft className="h-3 w-3 rotate-180" /></Link>
-          </div>
-          <div dir="rtl" className="flex gap-3 overflow-x-auto px-5 pb-2 snap-x snap-mandatory" style={{ scrollbarWidth: "none" }}>
-            {doctors.map((d: any) => (
-              <div key={d.id} className="w-[78%] flex-shrink-0 snap-start">
-                <DoctorSlide d={d} />
+          {/* Search bar */}
+          <Link to="/search">
+            <motion.div
+              whileTap={{ scale: 0.98 }}
+              className="flex items-center gap-3 bg-secondary rounded-2xl px-4 py-3 cursor-pointer"
+            >
+              <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+              <span className="text-sm text-muted-foreground">ابحث عن طبيب، تخصص، ولاية...</span>
+            </motion.div>
+          </Link>
+        </motion.div>
+
+        <motion.div variants={containerVariants} initial="hidden" animate="visible" className="px-4 py-4 space-y-6">
+          {/* Stats */}
+          <motion.div variants={itemVariants}>
+            <div className="grid grid-cols-4 gap-2">
+              {STATS.map((stat) => (
+                <div key={stat.label} className="flex flex-col items-center gap-1 bg-card rounded-xl border border-border p-2.5">
+                  <div className={`w-8 h-8 ${stat.bg} rounded-lg flex items-center justify-center`}>
+                    <stat.icon className={`w-4 h-4 ${stat.color}`} />
+                  </div>
+                  <span className={`text-xs font-black ${stat.color}`}>{stat.value}</span>
+                  <span className="text-[9px] text-muted-foreground text-center leading-tight">{stat.label}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
+
+          {/* Specialties */}
+          <motion.section variants={itemVariants}>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-black text-base text-foreground">التخصصات</h2>
+              <button
+                onClick={() => setShowAllSpecialties(!showAllSpecialties)}
+                className="flex items-center gap-1 text-primary text-xs font-medium cursor-pointer"
+              >
+                {showAllSpecialties ? "عرض أقل" : "عرض الكل"}
+                <motion.div animate={{ rotate: showAllSpecialties ? 180 : 0 }} transition={{ duration: 0.2 }}>
+                  <ChevronDown className="w-3 h-3" />
+                </motion.div>
+              </button>
+            </div>
+
+            <AnimatePresence>
+              <motion.div layout className="grid grid-cols-4 gap-3">
+                {visibleSpecialties.map((s, i) => (
+                  <motion.div
+                    key={s.id}
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.8 }}
+                    transition={{ delay: i * 0.03, duration: 0.25 }}
+                  >
+                    <Link to={s.to}>
+                      <motion.div
+                        whileTap={{ scale: 0.93 }}
+                        className="flex flex-col items-center gap-1.5 p-2 bg-card rounded-2xl border border-border hover:border-primary/50 transition-colors cursor-pointer active:bg-primary/5"
+                      >
+                        <span className="text-2xl">{s.icon}</span>
+                        <span className="text-[10px] text-center text-foreground font-medium leading-tight line-clamp-2">
+                          {s.name}
+                        </span>
+                      </motion.div>
+                    </Link>
+                  </motion.div>
+                ))}
+              </motion.div>
+            </AnimatePresence>
+          </motion.section>
+
+          {/* Emergency donor */}
+          {emergency && (
+            <motion.div variants={itemVariants}>
+              <motion.div
+                animate={{ boxShadow: ["0 0 0 0px rgba(239,68,68,0)", "0 0 0 4px rgba(239,68,68,0.15)", "0 0 0 0px rgba(239,68,68,0)"] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                className="bg-gradient-to-r from-red-950/80 to-red-900/40 border border-red-800/50 rounded-2xl p-4"
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <Zap className="w-4 h-4 text-red-400" />
+                  <span className="text-xs font-bold text-red-400 uppercase tracking-wider">حاجة عاجلة للدم</span>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 bg-red-600/20 border border-red-700/40 rounded-xl flex items-center justify-center text-2xl">🩸</div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className={`text-2xl font-black ${BLOOD_TYPE_COLORS[(emergency as any).blood_type] ?? "text-red-400"}`}>
+                          {(emergency as any).blood_type}
+                        </span>
+                        <span className="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded-full animate-pulse font-bold">عاجل</span>
+                      </div>
+                      <p className="text-sm font-semibold text-foreground">{(emergency as any).full_name}</p>
+                      <p className="text-xs text-muted-foreground">{(emergency as any).wilayas?.name_ar}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 items-end">
+                    {(emergency as any).phone && (
+                      <a href={`tel:${(emergency as any).phone}`} className="cursor-pointer">
+                        <div className="w-11 h-11 bg-red-600 rounded-xl flex items-center justify-center">
+                          <Phone className="w-5 h-5 text-white" />
+                        </div>
+                      </a>
+                    )}
+                    <Link to="/donors" className="text-[10px] text-red-400 font-medium">عرض الكل</Link>
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+
+          {/* Featured doctors */}
+          <motion.section variants={itemVariants}>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-black text-base text-foreground">أطباء مميزون</h2>
+              <Link to="/doctors" className="flex items-center gap-1 text-primary text-xs font-medium">
+                عرض الكل <ChevronRight className="w-3 h-3 rotate-180" />
+              </Link>
+            </div>
+            {isLoading ? (
+              <div className="space-y-3">
+                {[1, 2].map((i) => <div key={i} className="h-28 w-full rounded-2xl bg-muted animate-pulse" />)}
               </div>
-            ))}
-          </div>
-        </section>
+            ) : (
+              <div className="space-y-3">
+                {featured.map((doc, i) => (
+                  <motion.div
+                    key={doc.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.1 + i * 0.07, duration: 0.35 }}
+                  >
+                    <DoctorRow d={doc} />
+                  </motion.div>
+                ))}
+              </div>
+            )}
+          </motion.section>
 
-        {/* Nearby hospitals */}
-        <section className="mt-6 px-5">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-bold">مستشفيات قريبة</h2>
-            <Link to="/hospitals" className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل <ChevronLeft className="h-3 w-3 rotate-180" /></Link>
-          </div>
-          <div className="space-y-3">
-            {hospitals.map((h: any) => <HospitalCard key={h.id} h={h} />)}
-          </div>
-        </section>
+          {/* Nearby doctors — horizontal */}
+          <motion.section variants={itemVariants}>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-black text-base text-foreground">أطباء قريبون</h2>
+              <Link to="/doctors" className="flex items-center gap-1 text-primary text-xs font-medium">عرض الكل</Link>
+            </div>
+            <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4" style={{ scrollbarWidth: "none" }}>
+              {nearbyDoctors.map((doc) => (
+                <div key={doc.id} className="min-w-[200px] max-w-[200px]">
+                  <DoctorCompact d={doc} />
+                </div>
+              ))}
+            </div>
+          </motion.section>
 
-        {/* Nearby pharmacies */}
-        <section className="mt-6 px-5">
-          <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-base font-bold">صيدليات قريبة</h2>
-            <Link to="/pharmacies" className="flex items-center gap-1 text-xs font-semibold" style={{ color: "#0891b2" }}>عرض الكل <ChevronLeft className="h-3 w-3 rotate-180" /></Link>
-          </div>
-          <div className="space-y-3">
-            {pharmacies.map((p: any) => <PharmacyCard key={p.id} p={p} />)}
-          </div>
-        </section>
+          {/* Nearby hospitals */}
+          <motion.section variants={itemVariants}>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-black text-base text-foreground">مستشفيات قريبة</h2>
+              <Link to="/hospitals" className="flex items-center gap-1 text-primary text-xs font-medium">عرض الكل</Link>
+            </div>
+            <div className="space-y-3">
+              {hospitals.map((h: any) => (
+                <motion.div key={h.id} whileTap={{ scale: 0.98 }} className="bg-card rounded-2xl border border-border overflow-hidden flex cursor-pointer">
+                  {h.photo_url && <img src={h.photo_url} alt={h.name} className="w-24 h-24 object-cover flex-shrink-0" />}
+                  <div className="p-3 flex-1 min-w-0">
+                    <h3 className="font-bold text-sm text-foreground truncate">{h.name}</h3>
+                    <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                      {h.baladiyas?.name_ar ? `${h.baladiyas.name_ar} - ` : ""}{h.wilayas?.name_ar}
+                    </p>
+                    <div className="flex flex-wrap gap-1 mt-1.5">
+                      {["طوارئ", "جراحة", "أطفال"].map((s) => (
+                        <span key={s} className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">{s}</span>
+                      ))}
+                    </div>
+                    <div className="flex items-center justify-between mt-2">
+                      <span className="text-xs text-muted-foreground">{fmtKm(h._distanceKm) ?? h.wilayas?.name_ar}</span>
+                      {h.phone && (
+                        <a href={`tel:${h.phone}`} onClick={(e) => e.stopPropagation()} className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center cursor-pointer">
+                          <Phone className="w-3.5 h-3.5 text-primary" />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </motion.section>
 
+          {/* Nearby pharmacies */}
+          <motion.section variants={itemVariants}>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="font-black text-base text-foreground">صيدليات قريبة</h2>
+              <Link to="/pharmacies" className="flex items-center gap-1 text-primary text-xs font-medium">عرض الكل</Link>
+            </div>
+            <div className="space-y-2">
+              {pharmacies.map((p: any, i: number) => (
+                <motion.div
+                  key={p.id}
+                  initial={{ opacity: 0, x: -12 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.06, duration: 0.3 }}
+                  className="flex items-center gap-3 bg-card rounded-xl border border-border p-3"
+                >
+                  <div className="w-10 h-10 bg-green-500/10 rounded-xl flex items-center justify-center text-xl flex-shrink-0">💊</div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <h3 className="font-semibold text-sm text-foreground truncate">{p.name}</h3>
+                      {p.is_24_7 && (
+                        <span className="text-[9px] bg-green-500/20 text-green-500 px-1.5 py-0.5 rounded-full flex-shrink-0 font-bold">24/7</span>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {p.wilayas?.name_ar}
+                      {fmtKm(p._distanceKm) && <span className="ms-2 font-bold text-primary">· {fmtKm(p._distanceKm)}</span>}
+                    </p>
+                  </div>
+                  {p.phone && (
+                    <a href={`tel:${p.phone}`} className="w-9 h-9 bg-primary/10 rounded-lg flex items-center justify-center cursor-pointer flex-shrink-0">
+                      <Phone className="w-4 h-4 text-primary" />
+                    </a>
+                  )}
+                </motion.div>
+              ))}
+            </div>
+          </motion.section>
 
-        <div className="h-8" />
+          {/* Footer */}
+          <motion.div variants={itemVariants} className="flex items-center justify-center gap-2 py-4 text-muted-foreground/40">
+            <Activity className="w-4 h-4" />
+            <span className="text-xs">DZHealth — صحتك، أولويتنا</span>
+          </motion.div>
+        </motion.div>
       </div>
     </AppShell>
   );
 }
 
-function StatCard({ icon: Icon, value, label, color, bg }: any) {
+function DoctorRow({ d }: { d: any }) {
   return (
-    <div className="flex flex-col items-center gap-2 rounded-2xl p-3" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl" style={{ background: bg }}>
-        <Icon className="h-5 w-5" style={{ color }} />
-      </div>
-      <p className="text-sm font-extrabold" style={{ color }}>{value}</p>
-      <p className="text-[10px] text-muted-foreground">{label}</p>
-    </div>
-  );
-}
-
-function DoctorSlide({ d }: { d: any }) {
-  return <DoctorCard d={d} />;
-}
-
-function DoctorCard({ d }: { d: any }) {
-  return (
-    <Link to="/doctors/$id" params={{ id: d.id }} className="block rounded-2xl p-4 active:scale-[0.98] transition" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
+    <Link to="/doctors/$id" params={{ id: d.id }} className="block bg-card rounded-2xl border border-border p-3 active:scale-[0.98] transition">
       <div className="flex items-start gap-3">
         <div className="relative flex-shrink-0">
           {d.photo_url ? (
             <img src={d.photo_url} alt={d.full_name} className="h-20 w-20 rounded-2xl object-cover" />
           ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl text-2xl font-bold" style={{ background: "#cffafe", color: "#0891b2" }}>د</div>
+            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-primary/10 text-primary text-2xl font-bold">د</div>
           )}
           {d.verified && (
-            <div className="absolute -bottom-1 -left-1 flex h-6 w-6 items-center justify-center rounded-full" style={{ background: "#0891b2" }}>
-              <BadgeCheck className="h-4 w-4 text-white" />
+            <div className="absolute -bottom-1 -left-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary">
+              <BadgeCheck className="h-4 w-4 text-primary-foreground" />
             </div>
           )}
         </div>
-        <div className="min-w-0 flex-1 text-right">
-          <h3 className="text-base font-extrabold leading-tight">{d.full_name}</h3>
-          <p className="mt-0.5 text-sm font-semibold" style={{ color: "#0891b2" }}>{d.specialties?.name_ar}</p>
-          <div className="mt-1 flex items-center justify-end gap-1 text-xs text-muted-foreground">
-            {fmtKm(d._distanceKm) && <span className="rounded-full px-1.5 py-0.5 text-[10px] font-bold" style={{ background: "#cffafe", color: "#0891b2" }}>{fmtKm(d._distanceKm)}</span>}
-            <span>{d.wilayas?.name_ar}{d.baladiyas?.name_ar ? ` - ${d.baladiyas?.name_ar}` : ""}</span>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-base font-extrabold leading-tight text-foreground">{d.full_name}</h3>
+          <p className="mt-0.5 text-sm font-semibold text-primary">{d.specialties?.name_ar}</p>
+          <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
             <MapPin className="h-3 w-3" />
+            <span>{d.wilayas?.name_ar}{d.baladiyas?.name_ar ? ` - ${d.baladiyas.name_ar}` : ""}</span>
+            {fmtKm(d._distanceKm) && (
+              <span className="rounded-full px-1.5 py-0.5 text-[10px] font-bold bg-primary/10 text-primary">{fmtKm(d._distanceKm)}</span>
+            )}
           </div>
-
           <div className="mt-2 flex items-center justify-between">
-            <span className="text-xs font-bold" style={{ color: "#0891b2" }}>{d.fee} دج</span>
             <div className="flex items-center gap-1 text-xs">
-              <span className="text-muted-foreground">({d.reviews_count})</span>
-              <span className="font-bold">{d.rating}</span>
               <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+              <span className="font-bold">{d.rating}</span>
+              <span className="text-muted-foreground">({d.reviews_count})</span>
             </div>
+            <span className="text-xs font-bold text-primary">{d.fee} دج</span>
           </div>
         </div>
       </div>
@@ -287,46 +477,26 @@ function DoctorCard({ d }: { d: any }) {
   );
 }
 
-function HospitalCard({ h }: { h: any }) {
+function DoctorCompact({ d }: { d: any }) {
   return (
-    <div className="flex items-stretch gap-3 overflow-hidden rounded-2xl p-3" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
-      {h.photo_url && <img src={h.photo_url} alt={h.name} className="h-24 w-28 flex-shrink-0 rounded-xl object-cover" />}
-      <div className="min-w-0 flex-1 text-right">
-        <h3 className="text-base font-extrabold">{h.name}</h3>
-        <p className="mt-0.5 text-xs text-muted-foreground">{h.wilayas?.name_ar}{h.baladiyas?.name_ar ? ` - ${h.baladiyas?.name_ar}` : ""}</p>
-        <div className="mt-2 flex flex-wrap justify-end gap-1.5">
-          {["طوارئ","جراحة","أطفال"].map((t) => (
-            <span key={t} className="rounded-full px-2.5 py-0.5 text-[10px]" style={{ background: "#cffafe", color: "#0891b2" }}>{t}</span>
-          ))}
+    <Link to="/doctors/$id" params={{ id: d.id }} className="block bg-card rounded-2xl border border-border p-3 h-full">
+      <div className="flex flex-col items-center text-center gap-2">
+        {d.photo_url ? (
+          <img src={d.photo_url} alt={d.full_name} className="h-16 w-16 rounded-2xl object-cover" />
+        ) : (
+          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary text-xl font-bold">د</div>
+        )}
+        <h3 className="text-sm font-bold text-foreground line-clamp-1">{d.full_name}</h3>
+        <p className="text-[11px] text-primary font-semibold line-clamp-1">{d.specialties?.name_ar}</p>
+        <div className="flex items-center gap-1 text-[11px]">
+          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+          <span className="font-bold">{d.rating}</span>
+          <span className="text-muted-foreground">({d.reviews_count})</span>
         </div>
-        {fmtKm(h._distanceKm) && <p className="mt-2 text-[11px] font-bold" style={{ color: "#0891b2" }}>{fmtKm(h._distanceKm)}</p>}
+        {fmtKm(d._distanceKm) && (
+          <span className="text-[10px] font-bold text-primary">{fmtKm(d._distanceKm)}</span>
+        )}
       </div>
-
-      <button className="flex h-10 w-10 flex-shrink-0 items-center justify-center self-end rounded-full" style={{ background: "#e0f2fe" }}>
-        <Phone className="h-4 w-4" style={{ color: "#0891b2" }} />
-      </button>
-    </div>
-  );
-}
-
-function PharmacyCard({ p }: { p: any }) {
-  return (
-    <div className="flex items-center gap-3 rounded-2xl p-3" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
-      <a href={`tel:${p.phone}`} className="flex h-12 w-12 items-center justify-center rounded-2xl" style={{ background: "#e0f2fe" }}>
-        <Phone className="h-5 w-5" style={{ color: "#0891b2" }} />
-      </a>
-      <div className="min-w-0 flex-1 text-right">
-        <div className="flex items-center justify-end gap-2">
-          {p.is_24_7 && <span className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ background: "#dcfce7", color: "#16a34a" }}>24/7</span>}
-          <h3 className="text-base font-extrabold">{p.name}</h3>
-        </div>
-        <p className="mt-0.5 text-xs text-muted-foreground">
-          {p.wilayas?.name_ar}
-          {fmtKm(p._distanceKm) && <span className="ms-2 font-bold" style={{ color: "#0891b2" }}>· {fmtKm(p._distanceKm)}</span>}
-        </p>
-
-      </div>
-      <div className="flex h-12 w-12 items-center justify-center rounded-2xl text-2xl" style={{ background: "#fef3c7" }}>💊</div>
-    </div>
+    </Link>
   );
 }
