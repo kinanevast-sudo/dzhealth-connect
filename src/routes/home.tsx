@@ -160,13 +160,6 @@ function Home() {
     },
   });
 
-  const { data: emergency } = useQuery({
-    queryKey: ["emergency-donor"],
-    queryFn: async () => {
-      const { data } = await supabase.from("blood_donors").select("*,wilayas(name_ar),baladiyas(name_ar)").eq("emergency", true).limit(1).maybeSingle();
-      return data;
-    },
-  });
 
   const doctors = sortByDistance((doctorsRaw ?? []) as any[], origin);
   const featured = doctors.filter((d: any) => d.verified).slice(0, 3);
