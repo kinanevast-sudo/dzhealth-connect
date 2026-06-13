@@ -26,6 +26,7 @@ import { Route as AddHospitalRouteImport } from './routes/add-hospital'
 import { Route as AddEquipmentRouteImport } from './routes/add-equipment'
 import { Route as AddDonorRouteImport } from './routes/add-donor'
 import { Route as AddDoctorRouteImport } from './routes/add-doctor'
+import { Route as AddBloodRequestRouteImport } from './routes/add-blood-request'
 import { Route as AddRouteImport } from './routes/add'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DoctorsIndexRouteImport } from './routes/doctors.index'
@@ -116,6 +117,11 @@ const AddDoctorRoute = AddDoctorRouteImport.update({
   path: '/add-doctor',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AddBloodRequestRoute = AddBloodRequestRouteImport.update({
+  id: '/add-blood-request',
+  path: '/add-blood-request',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AddRoute = AddRouteImport.update({
   id: '/add',
   path: '/add',
@@ -140,6 +146,7 @@ const DoctorsIdRoute = DoctorsIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/add': typeof AddRoute
+  '/add-blood-request': typeof AddBloodRequestRoute
   '/add-doctor': typeof AddDoctorRoute
   '/add-donor': typeof AddDonorRoute
   '/add-equipment': typeof AddEquipmentRoute
@@ -163,6 +170,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/add': typeof AddRoute
+  '/add-blood-request': typeof AddBloodRequestRoute
   '/add-doctor': typeof AddDoctorRoute
   '/add-donor': typeof AddDonorRoute
   '/add-equipment': typeof AddEquipmentRoute
@@ -187,6 +195,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/add': typeof AddRoute
+  '/add-blood-request': typeof AddBloodRequestRoute
   '/add-doctor': typeof AddDoctorRoute
   '/add-donor': typeof AddDonorRoute
   '/add-equipment': typeof AddEquipmentRoute
@@ -212,6 +221,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/add'
+    | '/add-blood-request'
     | '/add-doctor'
     | '/add-donor'
     | '/add-equipment'
@@ -235,6 +245,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/add'
+    | '/add-blood-request'
     | '/add-doctor'
     | '/add-donor'
     | '/add-equipment'
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/add'
+    | '/add-blood-request'
     | '/add-doctor'
     | '/add-donor'
     | '/add-equipment'
@@ -282,6 +294,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AddRoute: typeof AddRoute
+  AddBloodRequestRoute: typeof AddBloodRequestRoute
   AddDoctorRoute: typeof AddDoctorRoute
   AddDonorRoute: typeof AddDonorRoute
   AddEquipmentRoute: typeof AddEquipmentRoute
@@ -424,6 +437,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AddDoctorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/add-blood-request': {
+      id: '/add-blood-request'
+      path: '/add-blood-request'
+      fullPath: '/add-blood-request'
+      preLoaderRoute: typeof AddBloodRequestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/add': {
       id: '/add'
       path: '/add'
@@ -458,6 +478,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AddRoute: AddRoute,
+  AddBloodRequestRoute: AddBloodRequestRoute,
   AddDoctorRoute: AddDoctorRoute,
   AddDonorRoute: AddDonorRoute,
   AddEquipmentRoute: AddEquipmentRoute,
@@ -481,3 +502,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
