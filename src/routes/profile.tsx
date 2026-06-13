@@ -419,15 +419,6 @@ function Page() {
                   )}
                 </section>
 
-                {!editing && (
-                  <button
-                    onClick={startEdit}
-                    className="w-full bg-primary text-primary-foreground rounded-2xl py-3.5 font-bold flex items-center justify-center gap-2 cursor-pointer"
-                  >
-                    <Pencil className="w-4 h-4" />
-                    تعديل الملف الشخصي
-                  </button>
-                )}
               </>
             )}
 
