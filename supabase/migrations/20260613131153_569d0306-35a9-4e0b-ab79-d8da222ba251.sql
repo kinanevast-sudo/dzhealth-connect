@@ -1,0 +1,1 @@
+REVOKE EXECUTE ON FUNCTION public.tg_appointment_notify() FROM PUBLIC, anon, authenticated;
