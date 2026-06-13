@@ -65,6 +65,8 @@ function Home() {
   const [locationLoading, setLocationLoading] = useState(true);
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const unreadCount = useUnreadNotifications();
+
 
   useEffect(() => {
     let gotProfileLoc = false;
