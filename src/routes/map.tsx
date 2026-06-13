@@ -13,7 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { haversineKm } from "@/lib/geo";
 
-export const Route = createFileRoute("/map")({ component: MapPage });
+export const Route = createFileRoute("/map")({ component: MapPage, ssr: false });
 
 type Cat = "all" | "doctors" | "hospitals" | "pharmacies";
 
