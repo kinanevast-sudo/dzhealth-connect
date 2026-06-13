@@ -44,6 +44,10 @@ function Donors() {
         </Link>
       </div>
 
+      <div className="px-4 pt-1 pb-2">
+        <BloodRequestsSlider wilayaId={null} limit={5} title="آخر الطلبات المفتوحة" />
+      </div>
+
       <div className="space-y-3 px-4">
         {(data ?? []).map((d: any) => (
           <div key={d.id} className="flex items-center gap-3 rounded-2xl bg-surface card-elevated p-3">
