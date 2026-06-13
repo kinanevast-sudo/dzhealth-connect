@@ -83,6 +83,7 @@ function Page() {
     try {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) { setAvatarLoading(false); return; }
+      setUserId(u.user.id);
       const [{ data }, { data: wls }] = await Promise.all([
         supabase.from("profiles").select("*,wilayas(id,name_ar)").eq("user_id", u.user.id).maybeSingle(),
         supabase.from("wilayas").select("id,name_ar").order("id"),
