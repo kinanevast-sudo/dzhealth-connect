@@ -1,12 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   User as UserIcon, Phone, MapPin, Droplet, Pencil, Star, Stethoscope,
   Calendar, BadgeCheck, LogOut, Camera, Check, X, ChevronDown, Share2,
-  Heart, Mail,
+  Heart, Mail, Trash2, Clock,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { uploadAvatar, getAvatarUrl } from "@/lib/storage";
@@ -22,7 +23,9 @@ const TABS: { id: Tab; label: string }[] = [
 const BLOOD_TYPES = ["A-", "A+", "O-", "O+", "AB-", "AB+", "B-", "B+"] as const;
 
 function Page() {
+  const qc = useQueryClient();
   const [profile, setProfile] = useState<any>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [wilayas, setWilayas] = useState<any[]>([]);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarLoading, setAvatarLoading] = useState(true);
@@ -33,10 +36,54 @@ function Page() {
   const [saving, setSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
+  const { data: appointments = [] } = useQuery({
+    queryKey: ["appointments", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("appointments")
+        .select("id,scheduled_at,visit_type,status,fee,doctor_id,doctors(id,full_name,photo_url,specialties(name_ar))")
+        .eq("user_id", userId!)
+        .order("scheduled_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: favorites = [] } = useQuery({
+    queryKey: ["favorites", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("favorites")
+        .select("id,doctor_id,created_at,doctors(id,full_name,photo_url,rating,specialties(name_ar),wilayas(name_ar))")
+        .eq("user_id", userId!)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const cancelAppointment = async (apptId: string) => {
+    const { error } = await supabase.from("appointments").update({ status: "cancelled" }).eq("id", apptId);
+    if (error) { toast.error(error.message); return; }
+    toast.success("تم إلغاء الموعد");
+    qc.invalidateQueries({ queryKey: ["appointments", userId] });
+  };
+
+  const removeFavorite = async (favId: string) => {
+    const { error } = await supabase.from("favorites").delete().eq("id", favId);
+    if (error) { toast.error(error.message); return; }
+    toast.success("تم الحذف من المفضلة");
+    qc.invalidateQueries({ queryKey: ["favorites", userId] });
+  };
+
+
   const load = async () => {
     try {
       const { data: u } = await supabase.auth.getUser();
       if (!u.user) { setAvatarLoading(false); return; }
+      setUserId(u.user.id);
       const [{ data }, { data: wls }] = await Promise.all([
         supabase.from("profiles").select("*,wilayas(id,name_ar)").eq("user_id", u.user.id).maybeSingle(),
         supabase.from("wilayas").select("id,name_ar").order("id"),
@@ -213,9 +260,9 @@ function Page() {
         {/* Stats card */}
         <div className="mx-4 -mt-2 bg-card rounded-2xl border border-border p-4 grid grid-cols-3 gap-3 z-10 relative">
           {[
-            { icon: Calendar, value: "2", label: "مواعيدي" },
-            { icon: Stethoscope, value: "12", label: "الأطباء" },
-            { icon: Star, value: "8", label: "التقييمات" },
+            { icon: Calendar, value: String(appointments.filter((a: any) => a.status !== "cancelled").length), label: "مواعيدي" },
+            { icon: Heart, value: String(favorites.length), label: "المفضلة" },
+            { icon: Star, value: "0", label: "التقييمات" },
           ].map((s) => (
             <div key={s.label} className="text-center">
               <p className="text-xl font-black text-primary">{s.value}</p>
@@ -376,17 +423,89 @@ function Page() {
             )}
 
             {activeTab === "appointments" && (
-              <section className="bg-card rounded-2xl border border-border p-8 text-center">
-                <Calendar className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground">لا توجد مواعيد بعد</p>
-              </section>
+              appointments.length === 0 ? (
+                <section className="bg-card rounded-2xl border border-border p-8 text-center">
+                  <Calendar className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-sm text-muted-foreground">لا توجد مواعيد بعد</p>
+                </section>
+              ) : (
+                <div className="space-y-2.5">
+                  {appointments.map((a: any) => {
+                    const dt = new Date(a.scheduled_at);
+                    const statusMap: Record<string, { label: string; cls: string }> = {
+                      pending: { label: "قيد الانتظار", cls: "bg-amber-500/15 text-amber-600" },
+                      confirmed: { label: "مؤكد", cls: "bg-green-500/15 text-green-600" },
+                      completed: { label: "مكتمل", cls: "bg-primary/15 text-primary" },
+                      cancelled: { label: "ملغي", cls: "bg-destructive/15 text-destructive" },
+                    };
+                    const st = statusMap[a.status] ?? statusMap.pending;
+                    return (
+                      <div key={a.id} className="bg-card rounded-2xl border border-border p-4">
+                        <div className="flex items-start justify-between gap-3 flex-row-reverse">
+                          <div className="flex items-center gap-3 flex-row-reverse flex-1 min-w-0">
+                            <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
+                              <Stethoscope className="w-5 h-5 text-primary" />
+                            </div>
+                            <div className="text-right min-w-0 flex-1">
+                              <Link to="/doctors/$id" params={{ id: a.doctor_id }} className="text-sm font-bold truncate block">
+                                {a.doctors?.full_name ?? "—"}
+                              </Link>
+                              <p className="text-xs text-muted-foreground truncate">{a.doctors?.specialties?.name_ar ?? ""}</p>
+                            </div>
+                          </div>
+                          <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${st.cls}`}>{st.label}</span>
+                        </div>
+                        <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground flex-row-reverse">
+                          <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {dt.toLocaleDateString("ar-DZ")}</span>
+                          <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {dt.toLocaleTimeString("ar-DZ", { hour: "2-digit", minute: "2-digit" })}</span>
+                          <span>{a.visit_type === "online" ? "عن بعد" : "في العيادة"}</span>
+                        </div>
+                        {a.status !== "cancelled" && a.status !== "completed" && (
+                          <button onClick={() => cancelAppointment(a.id)} className="mt-3 w-full bg-destructive/10 text-destructive rounded-xl py-2 text-xs font-bold flex items-center justify-center gap-1">
+                            <X className="w-3.5 h-3.5" /> إلغاء الموعد
+                          </button>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )
             )}
 
             {activeTab === "favorites" && (
-              <section className="bg-card rounded-2xl border border-border p-8 text-center">
-                <Heart className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                <p className="text-sm text-muted-foreground">لم تقم بإضافة أي عنصر للمفضلة بعد</p>
-              </section>
+              favorites.length === 0 ? (
+                <section className="bg-card rounded-2xl border border-border p-8 text-center">
+                  <Heart className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
+                  <p className="text-sm text-muted-foreground">لم تقم بإضافة أي عنصر للمفضلة بعد</p>
+                </section>
+              ) : (
+                <div className="space-y-2.5">
+                  {favorites.map((f: any) => (
+                    <div key={f.id} className="bg-card rounded-2xl border border-border p-3 flex items-center gap-3 flex-row-reverse">
+                      <div className="w-14 h-14 rounded-xl bg-primary/10 overflow-hidden flex items-center justify-center flex-shrink-0">
+                        {f.doctors?.photo_url ? (
+                          <img src={f.doctors.photo_url} alt="" className="w-full h-full object-cover" />
+                        ) : (
+                          <Stethoscope className="w-6 h-6 text-primary" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0 text-right">
+                        <Link to="/doctors/$id" params={{ id: f.doctor_id }} className="text-sm font-bold block truncate">
+                          {f.doctors?.full_name ?? "—"}
+                        </Link>
+                        <p className="text-xs text-muted-foreground truncate">{f.doctors?.specialties?.name_ar ?? ""}</p>
+                        <div className="flex items-center gap-2 mt-0.5 text-[11px] text-muted-foreground justify-end">
+                          {f.doctors?.wilayas?.name_ar && <span className="flex items-center gap-0.5"><MapPin className="w-3 h-3" /> {f.doctors.wilayas.name_ar}</span>}
+                          {f.doctors?.rating ? <span className="flex items-center gap-0.5"><Star className="w-3 h-3 fill-yellow-500 text-yellow-500" /> {Number(f.doctors.rating).toFixed(1)}</span> : null}
+                        </div>
+                      </div>
+                      <button onClick={() => removeFavorite(f.id)} className="w-9 h-9 rounded-xl bg-destructive/10 text-destructive flex items-center justify-center flex-shrink-0">
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )
             )}
           </motion.div>
         </AnimatePresence>

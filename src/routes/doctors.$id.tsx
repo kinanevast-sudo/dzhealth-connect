@@ -46,13 +46,16 @@ function detectGender(x: any): "male" | "female" {
 
 function Detail() {
   const { id } = Route.useParams();
+  const qc = useQueryClient();
   const [activeTab, setActiveTab] = useState<Tab>("info");
+  const [userId, setUserId] = useState<string | null>(null);
   const [fav, setFav] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [visitType, setVisitType] = useState<"in_person" | "online">("in_person");
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
+  const [booking, setBooking] = useState(false);
   const days = getNextDays(10);
 
   const { data: d, isLoading, isError } = useQuery({
@@ -69,7 +72,14 @@ function Detail() {
   });
 
   useEffect(() => {
-    if (id) setFav(localStorage.getItem(`fav-doctor-${id}`) === "1");
+    supabase.auth.getUser().then(async ({ data }) => {
+      const uid = data.user?.id ?? null;
+      setUserId(uid);
+      if (uid && id) {
+        const { data: f } = await supabase.from("favorites").select("id").eq("user_id", uid).eq("doctor_id", id).maybeSingle();
+        setFav(!!f);
+      }
+    });
   }, [id]);
 
   if (isLoading) {
@@ -98,11 +108,20 @@ function Detail() {
   const wilayaName = x.wilayas?.name_ar ?? "";
   const baladiyaName = x.baladiyas?.name_ar ?? "";
 
-  const toggleFav = () => {
+  const toggleFav = async () => {
+    if (!userId) { toast.error("يجب تسجيل الدخول"); return; }
     const v = !fav;
     setFav(v);
-    localStorage.setItem(`fav-doctor-${id}`, v ? "1" : "0");
-    toast.success(v ? "أضيف إلى المفضلة" : "حُذف من المفضلة");
+    if (v) {
+      const { error } = await supabase.from("favorites").insert({ user_id: userId, doctor_id: id });
+      if (error) { setFav(false); toast.error(error.message); return; }
+      toast.success("أضيف إلى المفضلة");
+    } else {
+      const { error } = await supabase.from("favorites").delete().eq("user_id", userId).eq("doctor_id", id);
+      if (error) { setFav(true); toast.error(error.message); return; }
+      toast.success("حُذف من المفضلة");
+    }
+    qc.invalidateQueries({ queryKey: ["favorites", userId] });
   };
 
   const handleShare = async () => {
@@ -115,9 +134,25 @@ function Detail() {
 
   const formatDateAr = (dd: Date) => `${dd.getDate()} ${MONTH_NAMES_AR[dd.getMonth()]}`;
 
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking = async () => {
     if (!selectedDate || !selectedTime) return;
+    if (!userId) { toast.error("يجب تسجيل الدخول للحجز"); return; }
+    setBooking(true);
+    const [hh, mm] = selectedTime.split(":").map(Number);
+    const dt = new Date(selectedDate);
+    dt.setHours(hh, mm, 0, 0);
+    const { error } = await supabase.from("appointments").insert({
+      user_id: userId,
+      doctor_id: id,
+      scheduled_at: dt.toISOString(),
+      visit_type: visitType,
+      status: "pending",
+      fee: fee + platformFee,
+    });
+    setBooking(false);
+    if (error) { toast.error(error.message); return; }
     setBookingConfirmed(true);
+    qc.invalidateQueries({ queryKey: ["appointments", userId] });
     toast.success("تم تأكيد الموعد");
   };
 
@@ -345,9 +380,9 @@ function Detail() {
                 </section>
 
                 <motion.button whileTap={{ scale: 0.98 }} onClick={handleConfirmBooking}
-                  disabled={!selectedDate || !selectedTime}
-                  className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${selectedDate && selectedTime ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground opacity-60 cursor-not-allowed"}`}>
-                  <Calendar className="w-4 h-4" /> تأكيد الحجز
+                  disabled={!selectedDate || !selectedTime || booking}
+                  className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${selectedDate && selectedTime && !booking ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground opacity-60 cursor-not-allowed"}`}>
+                  <Calendar className="w-4 h-4" /> {booking ? "جارٍ التأكيد..." : "تأكيد الحجز"}
                 </motion.button>
               </>
             )
