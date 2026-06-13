@@ -24,7 +24,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             <Plus className="h-7 w-7" strokeWidth={2.6} />
           </Link>
           <Tab to="/profile" icon={User} label="الملف" />
-          <Tab to="/settings" icon={Settings} label="الإعدادات" />
+          <Tab to="/map" icon={MapIcon} label="الخريطة" />
         </div>
       </nav>
     </div>
