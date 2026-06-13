@@ -150,6 +150,75 @@ export type Database = {
           },
         ]
       }
+      blood_requests: {
+        Row: {
+          baladiya_id: number | null
+          blood_type: Database["public"]["Enums"]["blood_type"]
+          contact_phone: string
+          created_at: string
+          hospital_name: string | null
+          id: string
+          needed_by: string | null
+          notes: string | null
+          patient_name: string | null
+          status: Database["public"]["Enums"]["blood_request_status"]
+          units_needed: number
+          updated_at: string
+          urgency: Database["public"]["Enums"]["blood_urgency"]
+          user_id: string
+          wilaya_id: number | null
+        }
+        Insert: {
+          baladiya_id?: number | null
+          blood_type: Database["public"]["Enums"]["blood_type"]
+          contact_phone: string
+          created_at?: string
+          hospital_name?: string | null
+          id?: string
+          needed_by?: string | null
+          notes?: string | null
+          patient_name?: string | null
+          status?: Database["public"]["Enums"]["blood_request_status"]
+          units_needed?: number
+          updated_at?: string
+          urgency?: Database["public"]["Enums"]["blood_urgency"]
+          user_id: string
+          wilaya_id?: number | null
+        }
+        Update: {
+          baladiya_id?: number | null
+          blood_type?: Database["public"]["Enums"]["blood_type"]
+          contact_phone?: string
+          created_at?: string
+          hospital_name?: string | null
+          id?: string
+          needed_by?: string | null
+          notes?: string | null
+          patient_name?: string | null
+          status?: Database["public"]["Enums"]["blood_request_status"]
+          units_needed?: number
+          updated_at?: string
+          urgency?: Database["public"]["Enums"]["blood_urgency"]
+          user_id?: string
+          wilaya_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blood_requests_baladiya_id_fkey"
+            columns: ["baladiya_id"]
+            isOneToOne: false
+            referencedRelation: "baladiyas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "blood_requests_wilaya_id_fkey"
+            columns: ["wilaya_id"]
+            isOneToOne: false
+            referencedRelation: "wilayas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       doctor_reviews: {
         Row: {
           comment: string | null
@@ -538,6 +607,9 @@ export type Database = {
           language: string
           lat: number | null
           lng: number | null
+          notify_blood_critical_same_baladiya: boolean
+          notify_blood_enabled: boolean
+          notify_blood_match_only: boolean
           phone: string | null
           updated_at: string
           user_id: string
@@ -553,6 +625,9 @@ export type Database = {
           language?: string
           lat?: number | null
           lng?: number | null
+          notify_blood_critical_same_baladiya?: boolean
+          notify_blood_enabled?: boolean
+          notify_blood_match_only?: boolean
           phone?: string | null
           updated_at?: string
           user_id: string
@@ -568,6 +643,9 @@ export type Database = {
           language?: string
           lat?: number | null
           lng?: number | null
+          notify_blood_critical_same_baladiya?: boolean
+          notify_blood_enabled?: boolean
+          notify_blood_match_only?: boolean
           phone?: string | null
           updated_at?: string
           user_id?: string
@@ -716,6 +794,10 @@ export type Database = {
       }
     }
     Functions: {
+      compatible_donor_types: {
+        Args: { _recipient: Database["public"]["Enums"]["blood_type"] }
+        Returns: Database["public"]["Enums"]["blood_type"][]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -727,7 +809,9 @@ export type Database = {
     Enums: {
       app_role: "admin" | "moderator" | "user"
       appointment_status: "pending" | "confirmed" | "completed" | "cancelled"
+      blood_request_status: "open" | "fulfilled" | "cancelled"
       blood_type: "O+" | "O-" | "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-"
+      blood_urgency: "normal" | "urgent" | "critical"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -857,7 +941,9 @@ export const Constants = {
     Enums: {
       app_role: ["admin", "moderator", "user"],
       appointment_status: ["pending", "confirmed", "completed", "cancelled"],
+      blood_request_status: ["open", "fulfilled", "cancelled"],
       blood_type: ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"],
+      blood_urgency: ["normal", "urgent", "critical"],
     },
   },
 } as const
