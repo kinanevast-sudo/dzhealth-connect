@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import { sortByDistance } from "@/lib/geo";
+import { nearestWilaya } from "@/lib/wilayas-coords";
+import { BloodRequestsSlider } from "@/components/BloodRequestsSlider";
 
 export const Route = createFileRoute("/home")({ component: Home });
 
@@ -63,6 +65,7 @@ function Home() {
   const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
   const [locationLabel, setLocationLabel] = useState<{ wilaya?: string; baladiya?: string }>({});
   const [locationLoading, setLocationLoading] = useState(true);
+  const [wilayaId, setWilayaId] = useState<number | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const unreadCount = useUnreadNotifications();
@@ -75,13 +78,15 @@ function Home() {
       const { data: u } = await supabase.auth.getUser();
       let profileLoc: { lat: number; lng: number } | null = null;
       let profileLabel: { wilaya?: string; baladiya?: string } = {};
+      let profileWilayaId: number | null = null;
       if (u.user) {
         const { data: p } = await supabase.from("profiles")
-          .select("full_name,avatar_url,lat,lng,wilayas(name_ar),baladiyas(name_ar)")
+          .select("full_name,avatar_url,lat,lng,wilaya_id,wilayas(name_ar),baladiyas(name_ar)")
           .eq("user_id", u.user.id).maybeSingle();
         if (p?.full_name) setDisplayName(String(p.full_name).split(" ")[0]);
         if (p?.avatar_url) setAvatarUrl(p.avatar_url);
         if (p?.lat && p?.lng) profileLoc = { lat: p.lat, lng: p.lng };
+        if ((p as any)?.wilaya_id) profileWilayaId = (p as any).wilaya_id;
         profileLabel = {
           wilaya: (p as any)?.wilayas?.name_ar,
           baladiya: (p as any)?.baladiyas?.name_ar,
@@ -93,6 +98,7 @@ function Home() {
         if (cancelled) return;
         if (profileLoc) setOrigin(profileLoc);
         setLocationLabel(profileLabel);
+        setWilayaId(profileWilayaId);
         setLocationLoading(false);
       };
 
@@ -105,14 +111,17 @@ function Home() {
           if (cancelled) return;
           const lat = pos.coords.latitude, lng = pos.coords.longitude;
           setOrigin({ lat, lng });
+          // Convert GPS to nearest Algerian wilaya
+          const nearest = nearestWilaya(lat, lng);
+          setWilayaId(nearest.id);
           try {
             const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=ar`);
             const j = await r.json();
-            const wilaya = j.city || j.principalSubdivision || profileLabel.wilaya;
+            const wilaya = j.city || j.principalSubdivision || nearest.name_ar;
             const baladiya = j.locality && j.locality !== wilaya ? j.locality : profileLabel.baladiya;
             if (!cancelled) setLocationLabel({ wilaya, baladiya });
           } catch {
-            if (!cancelled) setLocationLabel(profileLabel);
+            if (!cancelled) setLocationLabel({ wilaya: nearest.name_ar, baladiya: profileLabel.baladiya });
           }
           if (!cancelled) setLocationLoading(false);
         },
@@ -151,13 +160,6 @@ function Home() {
     },
   });
 
-  const { data: emergency } = useQuery({
-    queryKey: ["emergency-donor"],
-    queryFn: async () => {
-      const { data } = await supabase.from("blood_donors").select("*,wilayas(name_ar),baladiyas(name_ar)").eq("emergency", true).limit(1).maybeSingle();
-      return data;
-    },
-  });
 
   const doctors = sortByDistance((doctorsRaw ?? []) as any[], origin);
   const featured = doctors.filter((d: any) => d.verified).slice(0, 3);
@@ -293,46 +295,10 @@ function Home() {
             </AnimatePresence>
           </motion.section>
 
-          {/* Emergency donor */}
-          {emergency && (
-            <motion.div variants={itemVariants}>
-              <motion.div
-                animate={{ boxShadow: ["0 0 0 0px rgba(239,68,68,0)", "0 0 0 4px rgba(239,68,68,0.15)", "0 0 0 0px rgba(239,68,68,0)"] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                className="bg-gradient-to-r from-red-950/80 to-red-900/40 border border-red-800/50 rounded-2xl p-4"
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <Zap className="w-4 h-4 text-red-400" />
-                  <span className="text-xs font-bold text-red-400 uppercase tracking-wider">حاجة عاجلة للدم</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-red-600/20 border border-red-700/40 rounded-xl flex items-center justify-center text-2xl">🩸</div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-2xl font-black ${BLOOD_TYPE_COLORS[(emergency as any).blood_type] ?? "text-red-400"}`}>
-                          {(emergency as any).blood_type}
-                        </span>
-                        <span className="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded-full animate-pulse font-bold">عاجل</span>
-                      </div>
-                      <p className="text-sm font-semibold text-foreground">{(emergency as any).full_name}</p>
-                      <p className="text-xs text-muted-foreground">{(emergency as any).wilayas?.name_ar}</p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2 items-end">
-                    {(emergency as any).phone && (
-                      <a href={`tel:${(emergency as any).phone}`} className="cursor-pointer">
-                        <div className="w-11 h-11 bg-red-600 rounded-xl flex items-center justify-center">
-                          <Phone className="w-5 h-5 text-white" />
-                        </div>
-                      </a>
-                    )}
-                    <Link to="/donors" className="text-[10px] text-red-400 font-medium">عرض الكل</Link>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
+          {/* Urgent blood requests slider — filtered by user's wilaya (GPS → profile fallback) */}
+          <motion.div variants={itemVariants}>
+            <BloodRequestsSlider wilayaId={wilayaId} />
+          </motion.div>
 
           {/* Featured doctors */}
           <motion.section variants={itemVariants}>
