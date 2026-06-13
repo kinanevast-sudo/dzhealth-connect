@@ -477,6 +477,7 @@ export type Database = {
           name: string
           open_until: string | null
           phone: string | null
+          photo_url: string | null
           wilaya_id: number | null
         }
         Insert: {
@@ -491,6 +492,7 @@ export type Database = {
           name: string
           open_until?: string | null
           phone?: string | null
+          photo_url?: string | null
           wilaya_id?: number | null
         }
         Update: {
@@ -505,6 +507,7 @@ export type Database = {
           name?: string
           open_until?: string | null
           phone?: string | null
+          photo_url?: string | null
           wilaya_id?: number | null
         }
         Relationships: [
