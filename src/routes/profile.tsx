@@ -183,12 +183,21 @@ function Page() {
 
           {/* Top nav */}
           <div className="absolute top-6 left-4 right-4 flex justify-between items-center">
-            <button
-              onClick={handleShare}
-              className="w-10 h-10 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center cursor-pointer border border-border"
-            >
-              <Share2 className="w-5 h-5 text-foreground" />
-            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={handleShare}
+                className="w-10 h-10 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center cursor-pointer border border-border"
+              >
+                <Share2 className="w-5 h-5 text-foreground" />
+              </button>
+              <Link
+                to="/settings"
+                className="w-10 h-10 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center cursor-pointer border border-border"
+                aria-label="الإعدادات"
+              >
+                <SettingsIcon className="w-5 h-5 text-foreground" />
+              </Link>
+            </div>
             {!editing ? (
               <button
                 onClick={startEdit}
