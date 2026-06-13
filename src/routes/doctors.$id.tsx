@@ -46,13 +46,16 @@ function detectGender(x: any): "male" | "female" {
 
 function Detail() {
   const { id } = Route.useParams();
+  const qc = useQueryClient();
   const [activeTab, setActiveTab] = useState<Tab>("info");
+  const [userId, setUserId] = useState<string | null>(null);
   const [fav, setFav] = useState(false);
   const [imgError, setImgError] = useState(false);
   const [selectedDate, setSelectedDate] = useState<Date | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [visitType, setVisitType] = useState<"in_person" | "online">("in_person");
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
+  const [booking, setBooking] = useState(false);
   const days = getNextDays(10);
 
   const { data: d, isLoading, isError } = useQuery({
@@ -69,7 +72,14 @@ function Detail() {
   });
 
   useEffect(() => {
-    if (id) setFav(localStorage.getItem(`fav-doctor-${id}`) === "1");
+    supabase.auth.getUser().then(async ({ data }) => {
+      const uid = data.user?.id ?? null;
+      setUserId(uid);
+      if (uid && id) {
+        const { data: f } = await supabase.from("favorites").select("id").eq("user_id", uid).eq("doctor_id", id).maybeSingle();
+        setFav(!!f);
+      }
+    });
   }, [id]);
 
   if (isLoading) {
