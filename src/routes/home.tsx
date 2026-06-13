@@ -78,13 +78,15 @@ function Home() {
       const { data: u } = await supabase.auth.getUser();
       let profileLoc: { lat: number; lng: number } | null = null;
       let profileLabel: { wilaya?: string; baladiya?: string } = {};
+      let profileWilayaId: number | null = null;
       if (u.user) {
         const { data: p } = await supabase.from("profiles")
-          .select("full_name,avatar_url,lat,lng,wilayas(name_ar),baladiyas(name_ar)")
+          .select("full_name,avatar_url,lat,lng,wilaya_id,wilayas(name_ar),baladiyas(name_ar)")
           .eq("user_id", u.user.id).maybeSingle();
         if (p?.full_name) setDisplayName(String(p.full_name).split(" ")[0]);
         if (p?.avatar_url) setAvatarUrl(p.avatar_url);
         if (p?.lat && p?.lng) profileLoc = { lat: p.lat, lng: p.lng };
+        if ((p as any)?.wilaya_id) profileWilayaId = (p as any).wilaya_id;
         profileLabel = {
           wilaya: (p as any)?.wilayas?.name_ar,
           baladiya: (p as any)?.baladiyas?.name_ar,
@@ -96,6 +98,7 @@ function Home() {
         if (cancelled) return;
         if (profileLoc) setOrigin(profileLoc);
         setLocationLabel(profileLabel);
+        setWilayaId(profileWilayaId);
         setLocationLoading(false);
       };
 
@@ -108,14 +111,17 @@ function Home() {
           if (cancelled) return;
           const lat = pos.coords.latitude, lng = pos.coords.longitude;
           setOrigin({ lat, lng });
+          // Convert GPS to nearest Algerian wilaya
+          const nearest = nearestWilaya(lat, lng);
+          setWilayaId(nearest.id);
           try {
             const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=ar`);
             const j = await r.json();
-            const wilaya = j.city || j.principalSubdivision || profileLabel.wilaya;
+            const wilaya = j.city || j.principalSubdivision || nearest.name_ar;
             const baladiya = j.locality && j.locality !== wilaya ? j.locality : profileLabel.baladiya;
             if (!cancelled) setLocationLabel({ wilaya, baladiya });
           } catch {
-            if (!cancelled) setLocationLabel(profileLabel);
+            if (!cancelled) setLocationLabel({ wilaya: nearest.name_ar, baladiya: profileLabel.baladiya });
           }
           if (!cancelled) setLocationLoading(false);
         },
