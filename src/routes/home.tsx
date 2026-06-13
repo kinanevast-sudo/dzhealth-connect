@@ -302,46 +302,10 @@ function Home() {
             </AnimatePresence>
           </motion.section>
 
-          {/* Emergency donor */}
-          {emergency && (
-            <motion.div variants={itemVariants}>
-              <motion.div
-                animate={{ boxShadow: ["0 0 0 0px rgba(239,68,68,0)", "0 0 0 4px rgba(239,68,68,0.15)", "0 0 0 0px rgba(239,68,68,0)"] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
-                className="bg-gradient-to-r from-red-950/80 to-red-900/40 border border-red-800/50 rounded-2xl p-4"
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <Zap className="w-4 h-4 text-red-400" />
-                  <span className="text-xs font-bold text-red-400 uppercase tracking-wider">حاجة عاجلة للدم</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-red-600/20 border border-red-700/40 rounded-xl flex items-center justify-center text-2xl">🩸</div>
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <span className={`text-2xl font-black ${BLOOD_TYPE_COLORS[(emergency as any).blood_type] ?? "text-red-400"}`}>
-                          {(emergency as any).blood_type}
-                        </span>
-                        <span className="text-[10px] bg-red-600 text-white px-2 py-0.5 rounded-full animate-pulse font-bold">عاجل</span>
-                      </div>
-                      <p className="text-sm font-semibold text-foreground">{(emergency as any).full_name}</p>
-                      <p className="text-xs text-muted-foreground">{(emergency as any).wilayas?.name_ar}</p>
-                    </div>
-                  </div>
-                  <div className="flex flex-col gap-2 items-end">
-                    {(emergency as any).phone && (
-                      <a href={`tel:${(emergency as any).phone}`} className="cursor-pointer">
-                        <div className="w-11 h-11 bg-red-600 rounded-xl flex items-center justify-center">
-                          <Phone className="w-5 h-5 text-white" />
-                        </div>
-                      </a>
-                    )}
-                    <Link to="/donors" className="text-[10px] text-red-400 font-medium">عرض الكل</Link>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          )}
+          {/* Urgent blood requests slider — filtered by user's wilaya (GPS → profile fallback) */}
+          <motion.div variants={itemVariants}>
+            <BloodRequestsSlider wilayaId={wilayaId} />
+          </motion.div>
 
           {/* Featured doctors */}
           <motion.section variants={itemVariants}>
