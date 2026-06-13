@@ -46,14 +46,25 @@ export function BloodRequestsSlider({ wilayaId }: { wilayaId: number | null }) {
   const { data: requests = [] } = useQuery({
     queryKey: ["blood-requests-slider", wilayaId],
     queryFn: async () => {
-      let q = supabase
+      const baseSelect = "id,patient_name,blood_type,units_needed,urgency,hospital_name,contact_phone,notes,created_at,wilaya_id,wilayas(name_ar),baladiyas(name_ar)";
+      // 1) Try to fetch open requests in the user's wilaya first.
+      if (wilayaId) {
+        const { data } = await supabase
+          .from("blood_requests")
+          .select(baseSelect)
+          .eq("status", "open")
+          .eq("wilaya_id", wilayaId)
+          .order("created_at", { ascending: false })
+          .limit(10);
+        if (data && data.length > 0) return data as any[];
+      }
+      // 2) Fallback: latest open requests anywhere (so the slider keeps showing).
+      const { data } = await supabase
         .from("blood_requests")
-        .select("id,patient_name,blood_type,units_needed,urgency,hospital_name,contact_phone,notes,created_at,wilaya_id,wilayas(name_ar),baladiyas(name_ar)")
+        .select(baseSelect)
         .eq("status", "open")
         .order("created_at", { ascending: false })
         .limit(10);
-      if (wilayaId) q = q.eq("wilaya_id", wilayaId);
-      const { data } = await q;
       return (data ?? []) as any[];
     },
   });
