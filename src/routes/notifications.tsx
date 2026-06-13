@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Bell, Droplet, CalendarCheck, Info } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Bell, Droplet, CalendarCheck, Info, CheckCheck } from "lucide-react";
+import { useEffect } from "react";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -22,6 +23,7 @@ function timeAgo(iso: string) {
 }
 
 function Page() {
+  const qc = useQueryClient();
   const { data, isLoading, error } = useQuery({
     queryKey: ["notifications"],
     queryFn: async () => {
@@ -38,10 +40,52 @@ function Page() {
     },
   });
 
+  // Realtime subscription + mark-as-read on view
+  useEffect(() => {
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let cancelled = false;
+    (async () => {
+      const { data: u } = await supabase.auth.getUser();
+      if (!u.user || cancelled) return;
+      // mark all as read when opening the page
+      await supabase.from("notifications").update({ read: true }).eq("user_id", u.user.id).eq("read", false);
+      qc.invalidateQueries({ queryKey: ["notifications"] });
+      qc.invalidateQueries({ queryKey: ["notifications", "unread"] });
+      channel = supabase
+        .channel(`notif-${u.user.id}`)
+        .on(
+          "postgres_changes",
+          { event: "INSERT", schema: "public", table: "notifications", filter: `user_id=eq.${u.user.id}` },
+          () => {
+            qc.invalidateQueries({ queryKey: ["notifications"] });
+            qc.invalidateQueries({ queryKey: ["notifications", "unread"] });
+          },
+        )
+        .subscribe();
+    })();
+    return () => {
+      cancelled = true;
+      if (channel) supabase.removeChannel(channel);
+    };
+  }, [qc]);
+
+  const markAllRead = async () => {
+    const { data: u } = await supabase.auth.getUser();
+    if (!u.user) return;
+    await supabase.from("notifications").update({ read: true }).eq("user_id", u.user.id).eq("read", false);
+    qc.invalidateQueries({ queryKey: ["notifications"] });
+    qc.invalidateQueries({ queryKey: ["notifications", "unread"] });
+  };
+
   return (
     <AppShell>
       <ScreenHeader title="الإشعارات" />
       <div dir="rtl" className="space-y-3 px-4 pt-3">
+        {(data?.length ?? 0) > 0 && (
+          <button onClick={markAllRead} className="flex items-center gap-1 text-[11px] text-primary font-semibold">
+            <CheckCheck className="h-3.5 w-3.5" /> تعليم الكل كمقروء
+          </button>
+        )}
         {isLoading && (
           <div className="space-y-3">
             {[1, 2, 3].map((i) => (
