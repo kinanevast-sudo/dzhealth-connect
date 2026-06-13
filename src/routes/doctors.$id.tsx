@@ -170,6 +170,9 @@ function Detail() {
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
 
         <div className="absolute top-6 left-4 right-4 flex justify-between items-center">
+          <Link to="/doctors" className="w-10 h-10 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center order-last">
+            <ArrowRight className="w-5 h-5 text-foreground" />
+          </Link>
           <div className="flex gap-2">
             <button onClick={handleShare} className="w-10 h-10 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center">
               <Share2 className="w-5 h-5 text-foreground" />
@@ -178,9 +181,6 @@ function Detail() {
               <Heart className={`w-5 h-5 transition-colors ${fav ? "text-red-500 fill-red-500" : "text-foreground"}`} />
             </motion.button>
           </div>
-          <Link to="/doctors" className="w-10 h-10 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center">
-            <ArrowRight className="w-5 h-5 text-foreground" />
-          </Link>
         </div>
 
         <div className="absolute bottom-4 left-4 right-4 text-right">
