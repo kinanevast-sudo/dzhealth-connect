@@ -11,6 +11,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import { sortByDistance } from "@/lib/geo";
+import { nearestWilaya } from "@/lib/wilayas-coords";
+import { BloodRequestsSlider } from "@/components/BloodRequestsSlider";
 
 export const Route = createFileRoute("/home")({ component: Home });
 
@@ -63,6 +65,7 @@ function Home() {
   const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
   const [locationLabel, setLocationLabel] = useState<{ wilaya?: string; baladiya?: string }>({});
   const [locationLoading, setLocationLoading] = useState(true);
+  const [wilayaId, setWilayaId] = useState<number | null>(null);
   const [displayName, setDisplayName] = useState<string | null>(null);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const unreadCount = useUnreadNotifications();
