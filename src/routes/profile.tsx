@@ -23,7 +23,9 @@ const TABS: { id: Tab; label: string }[] = [
 const BLOOD_TYPES = ["A-", "A+", "O-", "O+", "AB-", "AB+", "B-", "B+"] as const;
 
 function Page() {
+  const qc = useQueryClient();
   const [profile, setProfile] = useState<any>(null);
+  const [userId, setUserId] = useState<string | null>(null);
   const [wilayas, setWilayas] = useState<any[]>([]);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarLoading, setAvatarLoading] = useState(true);
@@ -33,6 +35,49 @@ function Page() {
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  const { data: appointments = [] } = useQuery({
+    queryKey: ["appointments", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("appointments")
+        .select("id,scheduled_at,visit_type,status,fee,doctor_id,doctors(id,full_name,photo_url,specialties(name_ar))")
+        .eq("user_id", userId!)
+        .order("scheduled_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const { data: favorites = [] } = useQuery({
+    queryKey: ["favorites", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("favorites")
+        .select("id,doctor_id,created_at,doctors(id,full_name,photo_url,rating,specialties(name_ar),wilayas(name_ar))")
+        .eq("user_id", userId!)
+        .order("created_at", { ascending: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+  });
+
+  const cancelAppointment = async (apptId: string) => {
+    const { error } = await supabase.from("appointments").update({ status: "cancelled" }).eq("id", apptId);
+    if (error) { toast.error(error.message); return; }
+    toast.success("تم إلغاء الموعد");
+    qc.invalidateQueries({ queryKey: ["appointments", userId] });
+  };
+
+  const removeFavorite = async (favId: string) => {
+    const { error } = await supabase.from("favorites").delete().eq("id", favId);
+    if (error) { toast.error(error.message); return; }
+    toast.success("تم الحذف من المفضلة");
+    qc.invalidateQueries({ queryKey: ["favorites", userId] });
+  };
+
 
   const load = async () => {
     try {
