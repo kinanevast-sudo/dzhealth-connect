@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Phone, AlertTriangle, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
+import { BloodRequestsSlider } from "@/components/BloodRequestsSlider";
 
 export const Route = createFileRoute("/donors")({ component: Donors });
 const TYPES = ["الكل","O+","O-","A+","A-","B+","B-","AB+","AB-"];
