@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
-import { Bell, Droplet, CalendarCheck, Info } from "lucide-react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Bell, Droplet, CalendarCheck, Info, CheckCheck } from "lucide-react";
+import { useEffect } from "react";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 import { supabase } from "@/integrations/supabase/client";
 
