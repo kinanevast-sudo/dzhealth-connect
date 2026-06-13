@@ -42,12 +42,11 @@ function timeAgo(iso: string) {
   return `قبل ${Math.floor(h / 24)} ي`;
 }
 
-export function BloodRequestsSlider({ wilayaId }: { wilayaId: number | null }) {
+export function BloodRequestsSlider({ wilayaId, limit = 10, title = "طلبات دم في ولايتك" }: { wilayaId: number | null; limit?: number; title?: string }) {
   const { data: requests = [] } = useQuery({
-    queryKey: ["blood-requests-slider", wilayaId],
+    queryKey: ["blood-requests-slider", wilayaId, limit],
     queryFn: async () => {
       const baseSelect = "id,patient_name,blood_type,units_needed,urgency,hospital_name,contact_phone,notes,created_at,wilaya_id,wilayas(name_ar),baladiyas(name_ar)";
-      // 1) Try to fetch open requests in the user's wilaya first.
       if (wilayaId) {
         const { data } = await supabase
           .from("blood_requests")
@@ -55,16 +54,15 @@ export function BloodRequestsSlider({ wilayaId }: { wilayaId: number | null }) {
           .eq("status", "open")
           .eq("wilaya_id", wilayaId)
           .order("created_at", { ascending: false })
-          .limit(10);
+          .limit(limit);
         if (data && data.length > 0) return data as any[];
       }
-      // 2) Fallback: latest open requests anywhere (so the slider keeps showing).
       const { data } = await supabase
         .from("blood_requests")
         .select(baseSelect)
         .eq("status", "open")
         .order("created_at", { ascending: false })
-        .limit(10);
+        .limit(limit);
       return (data ?? []) as any[];
     },
   });

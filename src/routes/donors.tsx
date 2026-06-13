@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Phone, AlertTriangle, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
+import { BloodRequestsSlider } from "@/components/BloodRequestsSlider";
 
 export const Route = createFileRoute("/donors")({ component: Donors });
 const TYPES = ["الكل","O+","O-","A+","A-","B+","B-","AB+","AB-"];
@@ -41,6 +42,10 @@ function Donors() {
           </div>
           <AlertTriangle className="h-5 w-5" />
         </Link>
+      </div>
+
+      <div className="px-4 pt-1 pb-2">
+        <BloodRequestsSlider wilayaId={null} limit={5} title="آخر الطلبات المفتوحة" />
       </div>
 
       <div className="space-y-3 px-4">
