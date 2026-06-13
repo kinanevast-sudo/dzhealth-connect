@@ -217,6 +217,29 @@ function Page() {
           />
         </Section>
 
+        {/* Blood notifications */}
+        <Section label="إشعارات طلبات الدم">
+          <ToggleRow
+            icon={<Droplet className="w-4 h-4" />}
+            label="استقبال إشعارات طلبات الدم"
+            on={bloodPrefs.notify_blood_enabled}
+            onChange={() => updateBloodPref("notify_blood_enabled")}
+          />
+          <ToggleRow
+            icon={<Target className="w-4 h-4" />}
+            label="فصيلتي المتوافقة فقط"
+            on={bloodPrefs.notify_blood_match_only}
+            onChange={() => updateBloodPref("notify_blood_match_only")}
+          />
+          <ToggleRow
+            icon={<Zap className="w-4 h-4" />}
+            label="تنبيه إضافي للحالات الحرجة في بلديتي"
+            on={bloodPrefs.notify_blood_critical_same_baladiya}
+            onChange={() => updateBloodPref("notify_blood_critical_same_baladiya")}
+            last
+          />
+        </Section>
+
         {/* Account / Menu */}
         <Section label="الحساب">
           <div className="overflow-hidden">
