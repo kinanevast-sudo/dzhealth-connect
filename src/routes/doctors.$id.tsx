@@ -380,9 +380,9 @@ function Detail() {
                 </section>
 
                 <motion.button whileTap={{ scale: 0.98 }} onClick={handleConfirmBooking}
-                  disabled={!selectedDate || !selectedTime}
-                  className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${selectedDate && selectedTime ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground opacity-60 cursor-not-allowed"}`}>
-                  <Calendar className="w-4 h-4" /> تأكيد الحجز
+                  disabled={!selectedDate || !selectedTime || booking}
+                  className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${selectedDate && selectedTime && !booking ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground opacity-60 cursor-not-allowed"}`}>
+                  <Calendar className="w-4 h-4" /> {booking ? "جارٍ التأكيد..." : "تأكيد الحجز"}
                 </motion.button>
               </>
             )
