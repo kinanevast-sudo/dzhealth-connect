@@ -108,11 +108,20 @@ function Detail() {
   const wilayaName = x.wilayas?.name_ar ?? "";
   const baladiyaName = x.baladiyas?.name_ar ?? "";
 
-  const toggleFav = () => {
+  const toggleFav = async () => {
+    if (!userId) { toast.error("يجب تسجيل الدخول"); return; }
     const v = !fav;
     setFav(v);
-    localStorage.setItem(`fav-doctor-${id}`, v ? "1" : "0");
-    toast.success(v ? "أضيف إلى المفضلة" : "حُذف من المفضلة");
+    if (v) {
+      const { error } = await supabase.from("favorites").insert({ user_id: userId, doctor_id: id });
+      if (error) { setFav(false); toast.error(error.message); return; }
+      toast.success("أضيف إلى المفضلة");
+    } else {
+      const { error } = await supabase.from("favorites").delete().eq("user_id", userId).eq("doctor_id", id);
+      if (error) { setFav(true); toast.error(error.message); return; }
+      toast.success("حُذف من المفضلة");
+    }
+    qc.invalidateQueries({ queryKey: ["favorites", userId] });
   };
 
   const handleShare = async () => {
@@ -125,9 +134,25 @@ function Detail() {
 
   const formatDateAr = (dd: Date) => `${dd.getDate()} ${MONTH_NAMES_AR[dd.getMonth()]}`;
 
-  const handleConfirmBooking = () => {
+  const handleConfirmBooking = async () => {
     if (!selectedDate || !selectedTime) return;
+    if (!userId) { toast.error("يجب تسجيل الدخول للحجز"); return; }
+    setBooking(true);
+    const [hh, mm] = selectedTime.split(":").map(Number);
+    const dt = new Date(selectedDate);
+    dt.setHours(hh, mm, 0, 0);
+    const { error } = await supabase.from("appointments").insert({
+      user_id: userId,
+      doctor_id: id,
+      scheduled_at: dt.toISOString(),
+      visit_type: visitType,
+      status: "pending",
+      fee: fee + platformFee,
+    });
+    setBooking(false);
+    if (error) { toast.error(error.message); return; }
     setBookingConfirmed(true);
+    qc.invalidateQueries({ queryKey: ["appointments", userId] });
     toast.success("تم تأكيد الموعد");
   };
 
