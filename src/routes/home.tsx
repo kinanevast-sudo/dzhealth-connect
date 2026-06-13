@@ -9,6 +9,7 @@ import {
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
+import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import { sortByDistance } from "@/lib/geo";
 
 export const Route = createFileRoute("/home")({ component: Home });
