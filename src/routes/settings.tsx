@@ -64,7 +64,7 @@ function Page() {
     const next = { ...bloodPrefs, [key]: !bloodPrefs[key] };
     setBloodPrefs(next);
     if (!userId) return;
-    const { error } = await supabase.from("profiles").update({ [key]: next[key] }).eq("user_id", userId);
+    const { error } = await supabase.from("profiles").update({ [key]: next[key] } as any).eq("user_id", userId);
     if (error) toast.error("تعذّر حفظ الإعداد");
   };
 
