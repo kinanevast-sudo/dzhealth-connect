@@ -1,12 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   User as UserIcon, Phone, MapPin, Droplet, Pencil, Star, Stethoscope,
   Calendar, BadgeCheck, LogOut, Camera, Check, X, ChevronDown, Share2,
-  Heart, Mail,
+  Heart, Mail, Trash2, Clock,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { uploadAvatar, getAvatarUrl } from "@/lib/storage";
