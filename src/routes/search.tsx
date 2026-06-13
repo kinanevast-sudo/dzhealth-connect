@@ -90,10 +90,10 @@ function Page() {
 
           {/* Wilaya dropdown */}
           {wOpen && (
-            <div className="mt-2 max-h-64 overflow-y-auto rounded-2xl p-2 shadow-lg" style={{ background: "white", border: "1px solid var(--border)" }}>
+            <div className="mt-2 max-h-64 overflow-y-auto rounded-2xl p-2 shadow-lg" style={{ background: "var(--card)", color: "var(--foreground)", border: "1px solid var(--border)" }}>
               <button
                 onClick={() => { setWilaya(null); setWOpen(false); }}
-                className="block w-full rounded-xl px-3 py-2 text-right text-sm hover:bg-slate-50"
+                className="block w-full rounded-xl px-3 py-2 text-right text-sm hover:bg-muted"
               >
                 كل الولايات
               </button>
@@ -101,7 +101,7 @@ function Page() {
                 <button
                   key={w.id}
                   onClick={() => { setWilaya(w); setWOpen(false); }}
-                  className={`block w-full rounded-xl px-3 py-2 text-right text-sm hover:bg-slate-50 ${wilaya?.id === w.id ? "font-bold" : ""}`}
+                  className={`block w-full rounded-xl px-3 py-2 text-right text-sm hover:bg-muted ${wilaya?.id === w.id ? "font-bold" : ""}`}
                   style={wilaya?.id === w.id ? { background: "#e0f2fe", color: "#0891b2" } : undefined}
                 >
                   {w.name_ar}
@@ -122,10 +122,10 @@ function Page() {
               <Stethoscope className="h-4 w-4 shrink-0" style={{ color: "#0891b2" }} />
             </button>
             {tOpen && (
-              <div className="mt-2 max-h-64 overflow-y-auto rounded-2xl p-2 shadow-lg" style={{ background: "white", border: "1px solid var(--border)" }}>
+              <div className="mt-2 max-h-64 overflow-y-auto rounded-2xl p-2 shadow-lg" style={{ background: "var(--card)", color: "var(--foreground)", border: "1px solid var(--border)" }}>
                 {SUB.map((s) => (
                   <button key={s.id} onClick={() => { setSub(s.id); setTOpen(false); }}
-                    className={`flex w-full items-center justify-end gap-2 rounded-xl px-3 py-2 text-right text-sm hover:bg-slate-50 ${sub === s.id ? "font-bold" : ""}`}
+                    className={`flex w-full items-center justify-end gap-2 rounded-xl px-3 py-2 text-right text-sm hover:bg-muted ${sub === s.id ? "font-bold" : ""}`}
                     style={sub === s.id ? { background: "#e0f2fe", color: "#0891b2" } : undefined}>
                     <span>{s.label}</span>{s.icon && <span>{s.icon}</span>}
                   </button>
