@@ -2,7 +2,7 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import {
   Moon, Sun, Globe, Bell, Shield, HelpCircle, Info,
-  LogOut, Monitor, ChevronRight, Smartphone, Heart, MapPin,
+  LogOut, Monitor, ChevronRight, Smartphone, Heart, MapPin, Droplet, Target, Zap,
 } from "lucide-react";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 import { useTheme, type Theme } from "@/lib/theme";
@@ -25,6 +25,12 @@ function Page() {
   const [lang, setLang] = useState<Lang>("ar");
   const [geoState, setGeoState] = useState<"prompt" | "granted" | "denied">("prompt");
   const [email, setEmail] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [bloodPrefs, setBloodPrefs] = useState({
+    notify_blood_enabled: true,
+    notify_blood_match_only: true,
+    notify_blood_critical_same_baladiya: true,
+  });
 
   useEffect(() => {
     const l = (localStorage.getItem(LANG_KEY) as Lang) || "ar";
@@ -38,8 +44,29 @@ function Page() {
         .then((r) => setGeoState(r.state as any))
         .catch(() => {});
     }
-    supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
+    supabase.auth.getUser().then(async ({ data }) => {
+      setEmail(data.user?.email ?? null);
+      setUserId(data.user?.id ?? null);
+      if (data.user) {
+        const { data: p } = await supabase.from("profiles")
+          .select("notify_blood_enabled,notify_blood_match_only,notify_blood_critical_same_baladiya")
+          .eq("user_id", data.user.id).maybeSingle();
+        if (p) setBloodPrefs({
+          notify_blood_enabled: p.notify_blood_enabled ?? true,
+          notify_blood_match_only: p.notify_blood_match_only ?? true,
+          notify_blood_critical_same_baladiya: p.notify_blood_critical_same_baladiya ?? true,
+        });
+      }
+    });
   }, []);
+
+  const updateBloodPref = async (key: keyof typeof bloodPrefs) => {
+    const next = { ...bloodPrefs, [key]: !bloodPrefs[key] };
+    setBloodPrefs(next);
+    if (!userId) return;
+    const { error } = await supabase.from("profiles").update({ [key]: next[key] } as any).eq("user_id", userId);
+    if (error) toast.error("تعذّر حفظ الإعداد");
+  };
 
   const setLanguage = (k: Lang) => {
     setLang(k);
@@ -186,6 +213,29 @@ function Page() {
             label={geoState === "granted" ? "الموقع مفعّل (GPS)" : "تفعيل الموقع (GPS)"}
             on={geoState === "granted"}
             onChange={requestGeo}
+            last
+          />
+        </Section>
+
+        {/* Blood notifications */}
+        <Section label="إشعارات طلبات الدم">
+          <ToggleRow
+            icon={<Droplet className="w-4 h-4" />}
+            label="استقبال إشعارات طلبات الدم"
+            on={bloodPrefs.notify_blood_enabled}
+            onChange={() => updateBloodPref("notify_blood_enabled")}
+          />
+          <ToggleRow
+            icon={<Target className="w-4 h-4" />}
+            label="فصيلتي المتوافقة فقط"
+            on={bloodPrefs.notify_blood_match_only}
+            onChange={() => updateBloodPref("notify_blood_match_only")}
+          />
+          <ToggleRow
+            icon={<Zap className="w-4 h-4" />}
+            label="تنبيه إضافي للحالات الحرجة في بلديتي"
+            on={bloodPrefs.notify_blood_critical_same_baladiya}
+            onChange={() => updateBloodPref("notify_blood_critical_same_baladiya")}
             last
           />
         </Section>

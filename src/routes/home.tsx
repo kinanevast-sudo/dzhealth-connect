@@ -69,43 +69,58 @@ function Home() {
 
 
   useEffect(() => {
-    let gotProfileLoc = false;
+    let cancelled = false;
     (async () => {
+      // Load profile info first (name, avatar, fallback location/label)
       const { data: u } = await supabase.auth.getUser();
+      let profileLoc: { lat: number; lng: number } | null = null;
+      let profileLabel: { wilaya?: string; baladiya?: string } = {};
       if (u.user) {
         const { data: p } = await supabase.from("profiles")
           .select("full_name,avatar_url,lat,lng,wilayas(name_ar),baladiyas(name_ar)")
           .eq("user_id", u.user.id).maybeSingle();
         if (p?.full_name) setDisplayName(String(p.full_name).split(" ")[0]);
         if (p?.avatar_url) setAvatarUrl(p.avatar_url);
-        if (p?.lat && p?.lng) { setOrigin({ lat: p.lat, lng: p.lng }); gotProfileLoc = true; }
-        const w = (p as any)?.wilayas?.name_ar;
-        const b = (p as any)?.baladiyas?.name_ar;
-        if (w || b) { setLocationLabel({ wilaya: w, baladiya: b }); setLocationLoading(false); }
+        if (p?.lat && p?.lng) profileLoc = { lat: p.lat, lng: p.lng };
+        profileLabel = {
+          wilaya: (p as any)?.wilayas?.name_ar,
+          baladiya: (p as any)?.baladiyas?.name_ar,
+        };
       }
-      if (!gotProfileLoc && typeof navigator !== "undefined" && navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          async (pos) => {
-            const lat = pos.coords.latitude, lng = pos.coords.longitude;
-            setOrigin({ lat, lng });
-            try {
-              const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=ar`);
-              const j = await r.json();
-              const wilaya = j.city || j.principalSubdivision;
-              const baladiya = j.locality && j.locality !== wilaya ? j.locality : undefined;
-              setLocationLabel({ wilaya, baladiya });
-            } catch {}
-            setLocationLoading(false);
-          },
-          () => setLocationLoading(false),
-          { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
-        );
-      } else if (gotProfileLoc) {
+
+      // GPS first → fallback to profile
+      const useFallback = () => {
+        if (cancelled) return;
+        if (profileLoc) setOrigin(profileLoc);
+        setLocationLabel(profileLabel);
         setLocationLoading(false);
-      } else {
-        setLocationLoading(false);
+      };
+
+      if (typeof navigator === "undefined" || !navigator.geolocation) {
+        useFallback();
+        return;
       }
+      navigator.geolocation.getCurrentPosition(
+        async (pos) => {
+          if (cancelled) return;
+          const lat = pos.coords.latitude, lng = pos.coords.longitude;
+          setOrigin({ lat, lng });
+          try {
+            const r = await fetch(`https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=ar`);
+            const j = await r.json();
+            const wilaya = j.city || j.principalSubdivision || profileLabel.wilaya;
+            const baladiya = j.locality && j.locality !== wilaya ? j.locality : profileLabel.baladiya;
+            if (!cancelled) setLocationLabel({ wilaya, baladiya });
+          } catch {
+            if (!cancelled) setLocationLabel(profileLabel);
+          }
+          if (!cancelled) setLocationLoading(false);
+        },
+        () => useFallback(),
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 300000 }
+      );
     })();
+    return () => { cancelled = true; };
   }, []);
 
   const { data: doctorsRaw } = useQuery({

@@ -1,7 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Phone, AlertTriangle } from "lucide-react";
+import { Phone, AlertTriangle, Plus } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 
@@ -31,10 +31,16 @@ function Donors() {
           ))}
         </div>
 
-        <div className="mx-4 mb-3 flex items-center gap-3 rounded-2xl gradient-blood p-3 text-blood-foreground">
+        <Link to="/add-blood-request" className="mx-4 mb-3 flex items-center gap-3 rounded-2xl gradient-blood p-3 text-blood-foreground active:scale-[0.98] transition-transform">
+          <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
+            <Plus className="h-5 w-5" />
+          </div>
+          <div className="flex-1">
+            <p className="text-sm font-bold">طلب دم عاجل</p>
+            <p className="text-[11px] opacity-90">أنشئ طلباً وسيُشعر المتبرعون المتوافقون في ولايتك</p>
+          </div>
           <AlertTriangle className="h-5 w-5" />
-          <div className="flex-1"><p className="text-sm font-bold">حالة طارئة</p><p className="text-[11px] opacity-90">تبرع الآن، يمكن أن تنقذ حياة شخص ما</p></div>
-        </div>
+        </Link>
       </div>
 
       <div className="space-y-3 px-4">
