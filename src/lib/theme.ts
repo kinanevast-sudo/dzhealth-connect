@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 
-export type Theme = "light" | "dark";
+export type Theme = "light" | "dark" | "system";
 const KEY = "dzhealth-theme";
+
+function systemPrefersDark(): boolean {
+  if (typeof window === "undefined") return true;
+  return window.matchMedia?.("(prefers-color-scheme: dark)").matches ?? true;
+}
 
 export function getStoredTheme(): Theme {
   if (typeof window === "undefined") return "dark";
@@ -11,7 +16,8 @@ export function getStoredTheme(): Theme {
 export function applyTheme(t: Theme) {
   if (typeof document === "undefined") return;
   const root = document.documentElement;
-  if (t === "light") root.classList.add("light");
+  const effective = t === "system" ? (systemPrefersDark() ? "dark" : "light") : t;
+  if (effective === "light") root.classList.add("light");
   else root.classList.remove("light");
 }
 
@@ -21,6 +27,12 @@ export function useTheme() {
     const t = getStoredTheme();
     setTheme(t);
     applyTheme(t);
+    if (t === "system" && typeof window !== "undefined") {
+      const mql = window.matchMedia("(prefers-color-scheme: dark)");
+      const handler = () => applyTheme("system");
+      mql.addEventListener?.("change", handler);
+      return () => mql.removeEventListener?.("change", handler);
+    }
   }, []);
   const toggle = () => {
     const next: Theme = theme === "light" ? "dark" : "light";
@@ -33,5 +45,6 @@ export function useTheme() {
     localStorage.setItem(KEY, t);
     applyTheme(t);
   };
-  return { theme, toggle, set };
+  const isDark = theme === "system" ? systemPrefersDark() : theme === "dark";
+  return { theme, toggle, set, isDark };
 }
