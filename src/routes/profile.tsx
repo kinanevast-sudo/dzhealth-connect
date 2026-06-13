@@ -260,9 +260,9 @@ function Page() {
         {/* Stats card */}
         <div className="mx-4 -mt-2 bg-card rounded-2xl border border-border p-4 grid grid-cols-3 gap-3 z-10 relative">
           {[
-            { icon: Calendar, value: "2", label: "مواعيدي" },
-            { icon: Stethoscope, value: "12", label: "الأطباء" },
-            { icon: Star, value: "8", label: "التقييمات" },
+            { icon: Calendar, value: String(appointments.filter((a: any) => a.status !== "cancelled").length), label: "مواعيدي" },
+            { icon: Heart, value: String(favorites.length), label: "المفضلة" },
+            { icon: Star, value: "0", label: "التقييمات" },
           ].map((s) => (
             <div key={s.label} className="text-center">
               <p className="text-xl font-black text-primary">{s.value}</p>
