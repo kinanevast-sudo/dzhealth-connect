@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   User as UserIcon, Phone, MapPin, Droplet, Pencil, Star, Stethoscope,
   Calendar, BadgeCheck, LogOut, Camera, Check, X, ChevronDown, Share2,
-  Heart, Mail, Trash2, Clock,
+  Heart, Mail, Trash2, Clock, Settings as SettingsIcon,
 } from "lucide-react";
 import { toast } from "sonner";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
