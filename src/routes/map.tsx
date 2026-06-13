@@ -3,9 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin, Stethoscope, Building2, Pill, X, Phone, Star,
-  BadgeCheck, Navigation, Loader2, ChevronRight,
+  BadgeCheck, Navigation, Loader2, ChevronRight, Car, Footprints, Route as RouteIcon,
 } from "lucide-react";
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useQuery } from "@tanstack/react-query";
@@ -16,6 +16,7 @@ import { haversineKm } from "@/lib/geo";
 export const Route = createFileRoute("/map")({ component: MapPage, ssr: false });
 
 type Cat = "all" | "doctors" | "hospitals" | "pharmacies";
+type Profile = "driving" | "foot";
 
 function createIcon(color: string, emoji: string) {
   return L.divIcon({
@@ -50,18 +51,35 @@ function RecenterButton({ lat, lng }: { lat: number; lng: number }) {
   const map = useMap();
   return (
     <button
-      onClick={() => map.flyTo([lat, lng], 14, { duration: 0.8 })}
+      onClick={() => map.flyTo([lat, lng], 15, { duration: 0.8 })}
       className="absolute bottom-44 right-4 z-[1000] w-11 h-11 bg-card border border-border rounded-full flex items-center justify-center shadow-lg cursor-pointer"
-      aria-label="Recenter"
+      aria-label="موقعي"
     >
       <Navigation className="w-4 h-4 text-primary" />
     </button>
   );
 }
 
+function FitBounds({ points }: { points: [number, number][] | null }) {
+  const map = useMap();
+  useEffect(() => {
+    if (!points || points.length < 2) return;
+    const b = L.latLngBounds(points);
+    map.fitBounds(b, { padding: [60, 60], maxZoom: 16 });
+  }, [points, map]);
+  return null;
+}
+
 function fmtKm(km?: number) {
   if (km == null || !isFinite(km)) return null;
   return km < 1 ? `${Math.round(km * 1000)} م` : `${km.toFixed(1)} كم`;
+}
+function fmtDur(sec?: number) {
+  if (sec == null || !isFinite(sec)) return null;
+  const m = Math.round(sec / 60);
+  if (m < 60) return `${m} د`;
+  const h = Math.floor(m / 60); const r = m % 60;
+  return `${h}س ${r}د`;
 }
 
 function MapPage() {
@@ -69,27 +87,35 @@ function MapPage() {
   const [selected, setSelected] = useState<Item | null>(null);
   const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
   const [locLoading, setLocLoading] = useState(true);
+  const [locError, setLocError] = useState<string | null>(null);
+  const [profile, setProfile] = useState<Profile>("driving");
+  const [route, setRoute] = useState<{ coords: [number, number][]; distance: number; duration: number } | null>(null);
+  const [routeLoading, setRouteLoading] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      const { data: u } = await supabase.auth.getUser();
-      if (u.user) {
-        const { data: p } = await supabase
-          .from("profiles").select("lat,lng").eq("user_id", u.user.id).maybeSingle();
-        if (p?.lat && p?.lng) { setOrigin({ lat: p.lat, lng: p.lng }); setLocLoading(false); return; }
-      }
-      if (typeof navigator !== "undefined" && navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (pos) => { setOrigin({ lat: pos.coords.latitude, lng: pos.coords.longitude }); setLocLoading(false); },
-          () => { setOrigin({ lat: 36.7538, lng: 3.0588 }); setLocLoading(false); },
-          { enableHighAccuracy: false, timeout: 8000, maximumAge: 600000 }
-        );
-      } else {
+  const requestLocation = () => {
+    setLocLoading(true);
+    setLocError(null);
+    if (typeof navigator === "undefined" || !navigator.geolocation) {
+      setLocError("الموقع الجغرافي غير مدعوم على هذا الجهاز");
+      setOrigin({ lat: 36.7538, lng: 3.0588 });
+      setLocLoading(false);
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setOrigin({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        setLocLoading(false);
+      },
+      (err) => {
+        setLocError(err.code === 1 ? "تم رفض الإذن. فعّل الموقع من إعدادات المتصفح." : "تعذّر تحديد موقعك");
         setOrigin({ lat: 36.7538, lng: 3.0588 });
         setLocLoading(false);
-      }
-    })();
-  }, []);
+      },
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 }
+    );
+  };
+
+  useEffect(() => { requestLocation(); }, []);
 
   const { data: doctors = [] } = useQuery({
     queryKey: ["map-doctors"],
@@ -119,32 +145,63 @@ function MapPage() {
     },
   });
 
-  const items: Item[] = useMemo(() => {
+  const allItems: Item[] = useMemo(() => {
     const arr: Item[] = [];
-    if (cat === "all" || cat === "doctors") {
-      for (const d of doctors as any[]) arr.push({
-        id: `d-${d.id}`, type: "doctor", name: d.full_name,
-        subtitle: d.specialties?.name_ar ?? "طبيب", lat: d.lat, lng: d.lng,
-        phone: d.phone, rating: d.rating, verified: d.verified,
-        detailLink: `/doctors/${d.id}`,
-      });
-    }
-    if (cat === "all" || cat === "hospitals") {
-      for (const h of hospitals as any[]) arr.push({
-        id: `h-${h.id}`, type: "hospital", name: h.name,
-        subtitle: h.wilayas?.name_ar ?? "مستشفى", lat: h.lat, lng: h.lng,
-        phone: h.phone, detailLink: `/hospitals`,
-      });
-    }
-    if (cat === "all" || cat === "pharmacies") {
-      for (const p of pharmacies as any[]) arr.push({
-        id: `p-${p.id}`, type: "pharmacy", name: p.name,
-        subtitle: (p.is_24_7 ? "صيدلية 24/7 · " : "صيدلية · ") + (p.wilayas?.name_ar ?? ""),
-        lat: p.lat, lng: p.lng, phone: p.phone, detailLink: `/pharmacies`,
-      });
-    }
+    for (const d of doctors as any[]) arr.push({
+      id: `d-${d.id}`, type: "doctor", name: d.full_name,
+      subtitle: d.specialties?.name_ar ?? "طبيب", lat: d.lat, lng: d.lng,
+      phone: d.phone, rating: d.rating, verified: d.verified,
+      detailLink: `/doctors/${d.id}`,
+    });
+    for (const h of hospitals as any[]) arr.push({
+      id: `h-${h.id}`, type: "hospital", name: h.name,
+      subtitle: h.wilayas?.name_ar ?? "مستشفى", lat: h.lat, lng: h.lng,
+      phone: h.phone, detailLink: `/hospitals`,
+    });
+    for (const p of pharmacies as any[]) arr.push({
+      id: `p-${p.id}`, type: "pharmacy", name: p.name,
+      subtitle: (p.is_24_7 ? "صيدلية 24/7 · " : "صيدلية · ") + (p.wilayas?.name_ar ?? ""),
+      lat: p.lat, lng: p.lng, phone: p.phone, detailLink: `/pharmacies`,
+    });
     return arr;
-  }, [cat, doctors, hospitals, pharmacies]);
+  }, [doctors, hospitals, pharmacies]);
+
+  // Filter by category + sort by real distance and keep nearest 50
+  const items: Item[] = useMemo(() => {
+    const filtered = allItems.filter((it) => {
+      if (cat === "all") return true;
+      if (cat === "doctors") return it.type === "doctor";
+      if (cat === "hospitals") return it.type === "hospital";
+      return it.type === "pharmacy";
+    });
+    if (!origin) return filtered;
+    return filtered
+      .map((it) => ({ it, d: haversineKm(origin, { lat: it.lat, lng: it.lng }) }))
+      .sort((a, b) => a.d - b.d)
+      .slice(0, 80)
+      .map((x) => x.it);
+  }, [allItems, cat, origin]);
+
+  // Compute route via OSRM when selection or profile changes
+  useEffect(() => {
+    setRoute(null);
+    if (!selected || !origin) return;
+    let cancelled = false;
+    setRouteLoading(true);
+    const url = `https://router.project-osrm.org/route/v1/${profile}/${origin.lng},${origin.lat};${selected.lng},${selected.lat}?overview=full&geometries=geojson`;
+    fetch(url)
+      .then((r) => r.json())
+      .then((d) => {
+        if (cancelled) return;
+        const r0 = d?.routes?.[0];
+        if (!r0) return;
+        const coords: [number, number][] = r0.geometry.coordinates.map((c: number[]) => [c[1], c[0]]);
+        setRoute({ coords, distance: r0.distance / 1000, duration: r0.duration });
+      })
+      .catch(() => {})
+      .finally(() => { if (!cancelled) setRouteLoading(false); });
+    return () => { cancelled = true; };
+  }, [selected, origin, profile]);
 
   const center: [number, number] = origin ? [origin.lat, origin.lng] : [36.7538, 3.0588];
   const distanceKm = selected && origin ? haversineKm(origin, { lat: selected.lat, lng: selected.lng }) : undefined;
@@ -156,15 +213,23 @@ function MapPage() {
     { id: "pharmacies", label: "صيدليات", icon: Pill, color: "bg-green-500" },
   ];
 
+  const openExternalNav = () => {
+    if (!selected || !origin) return;
+    const travel = profile === "foot" ? "walking" : "driving";
+    const url = `https://www.google.com/maps/dir/?api=1&origin=${origin.lat},${origin.lng}&destination=${selected.lat},${selected.lng}&travelmode=${travel}`;
+    window.open(url, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <AppShell>
       <div dir="rtl" className="relative h-[100dvh] w-full overflow-hidden bg-background">
         {locLoading ? (
-          <div className="absolute inset-0 flex items-center justify-center">
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
             <Loader2 className="w-6 h-6 animate-spin text-primary" />
+            <p className="text-xs text-muted-foreground">جارٍ تحديد موقعك...</p>
           </div>
         ) : (
-          <MapContainer center={center} zoom={13} className="absolute inset-0 z-0" zoomControl={false}>
+          <MapContainer center={center} zoom={14} className="absolute inset-0 z-0" zoomControl={false}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; OpenStreetMap'
@@ -178,19 +243,32 @@ function MapPage() {
                 eventHandlers={{ click: () => setSelected(it) }}
               />
             ))}
+            {route && (
+              <>
+                <Polyline positions={route.coords} pathOptions={{ color: "#ffffff", weight: 8, opacity: 0.85 }} />
+                <Polyline positions={route.coords} pathOptions={{ color: "hsl(var(--primary))", weight: 5, opacity: 1 }} />
+                <FitBounds points={route.coords} />
+              </>
+            )}
             {origin && <RecenterButton lat={origin.lat} lng={origin.lng} />}
           </MapContainer>
         )}
 
-        {/* Top chips */}
+        {/* Top bar */}
         <div className="absolute top-0 left-0 right-0 z-[1000] pt-12 pb-3 px-4 bg-gradient-to-b from-background/95 to-transparent">
           <div className="flex items-center gap-2 mb-3">
             <Link to="/home" className="w-9 h-9 bg-card border border-border rounded-xl flex items-center justify-center cursor-pointer">
               <ChevronRight className="w-5 h-5 text-foreground" />
             </Link>
             <h1 className="font-black text-base text-foreground">الخريطة</h1>
-            <span className="text-xs text-muted-foreground mr-auto">{items.length} نتيجة</span>
+            <span className="text-xs text-muted-foreground mr-auto">{items.length} قريبة</span>
           </div>
+          {locError && (
+            <div className="mb-2 flex items-center justify-between gap-2 bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs rounded-xl px-3 py-2">
+              <span className="truncate">{locError}</span>
+              <button onClick={requestLocation} className="font-bold underline shrink-0">إعادة المحاولة</button>
+            </div>
+          )}
           <div className="flex gap-2 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
             {chips.map((c) => {
               const active = cat === c.id;
@@ -214,14 +292,14 @@ function MapPage() {
         <AnimatePresence>
           {selected && (
             <motion.div
-              initial={{ y: 300, opacity: 0 }}
+              initial={{ y: 320, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 300, opacity: 0 }}
+              exit={{ y: 320, opacity: 0 }}
               transition={{ type: "spring", stiffness: 320, damping: 32 }}
               className="absolute bottom-24 left-3 right-3 z-[1000] bg-card border border-border rounded-2xl shadow-2xl p-4"
             >
               <button
-                onClick={() => setSelected(null)}
+                onClick={() => { setSelected(null); setRoute(null); }}
                 className="absolute top-3 left-3 w-8 h-8 rounded-full bg-secondary flex items-center justify-center cursor-pointer"
                 aria-label="إغلاق"
               >
@@ -253,12 +331,44 @@ function MapPage() {
                   </div>
                 </div>
               </div>
+
+              {/* Profile toggle + route stats */}
+              <div className="mt-3 flex items-center gap-2">
+                <div className="flex bg-secondary rounded-xl p-1">
+                  <button
+                    onClick={() => setProfile("driving")}
+                    className={`flex items-center gap-1 px-3 h-8 rounded-lg text-xs font-bold transition-colors ${profile === "driving" ? "bg-card text-primary shadow" : "text-muted-foreground"}`}
+                  >
+                    <Car className="w-3.5 h-3.5" /> سيارة
+                  </button>
+                  <button
+                    onClick={() => setProfile("foot")}
+                    className={`flex items-center gap-1 px-3 h-8 rounded-lg text-xs font-bold transition-colors ${profile === "foot" ? "bg-card text-primary shadow" : "text-muted-foreground"}`}
+                  >
+                    <Footprints className="w-3.5 h-3.5" /> مشي
+                  </button>
+                </div>
+                <div className="flex-1 text-xs text-muted-foreground flex items-center gap-1.5">
+                  <RouteIcon className="w-3.5 h-3.5 text-primary" />
+                  {routeLoading ? "حساب المسار..." :
+                    route ? <span className="font-bold text-foreground">{fmtKm(route.distance)} · {fmtDur(route.duration)}</span> :
+                    !origin ? "فعّل الموقع لحساب المسار" : "—"}
+                </div>
+              </div>
+
               <div className="flex gap-2 mt-3">
+                <button
+                  onClick={openExternalNav}
+                  disabled={!origin}
+                  className="flex-1 h-10 bg-primary text-primary-foreground rounded-xl flex items-center justify-center gap-1.5 text-xs font-bold cursor-pointer disabled:opacity-50"
+                >
+                  <Navigation className="w-4 h-4" /> ابدأ التوجيه
+                </button>
                 <Link
                   to={selected.detailLink as any}
-                  className="flex-1 h-10 bg-primary text-primary-foreground rounded-xl flex items-center justify-center text-xs font-bold cursor-pointer"
+                  className="flex-1 h-10 bg-secondary text-foreground rounded-xl flex items-center justify-center text-xs font-bold cursor-pointer"
                 >
-                  عرض التفاصيل
+                  التفاصيل
                 </Link>
                 {selected.phone && (
                   <a href={`tel:${selected.phone}`} className="w-10 h-10 bg-secondary rounded-xl flex items-center justify-center cursor-pointer">
