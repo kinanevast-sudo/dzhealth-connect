@@ -14,6 +14,7 @@ const TYPES = [
   { id: "doctors", label: "الأطباء", icon: "👨‍⚕️", color: "#0891b2", bg: "#0891b2" },
   { id: "hospitals", label: "المستشفيات", icon: "🏥", color: "#3b82f6", bg: "#dbeafe" },
   { id: "pharmacies", label: "الصيدليات", icon: "💊", color: "#10b981", bg: "#d1fae5" },
+  { id: "oncall", label: "صيدليات مناوبة", icon: "🕒", color: "#16a34a", bg: "#dcfce7" },
   { id: "donors", label: "متبرعو الدم", icon: "🩸", color: "#ef4444", bg: "#fee2e2" },
   { id: "labs", label: "مخابر التحاليل", icon: "🧪", color: "#7c3aed", bg: "#ede9fe" },
   { id: "charities", label: "الجمعيات الخيرية", icon: "🤝", color: "#f59e0b", bg: "#fef3c7" },
@@ -54,7 +55,7 @@ function Page() {
 
   const table =
     type === "hospitals" ? "hospitals" :
-    type === "pharmacies" ? "pharmacies" :
+    type === "pharmacies" || type === "oncall" ? "pharmacies" :
     type === "donors" ? "blood_donors" :
     type === "labs" ? "labs" :
     type === "charities" ? "charities" :
@@ -69,12 +70,29 @@ function Page() {
       ? `id,${nameCol},photo_url,phone,wilayas(name_ar),baladiyas(name_ar)`
       : `id,${nameCol},photo_url,phone,lat,lng,verified,wilayas(name_ar),baladiyas(name_ar)`;
 
-  const { data: rawResults = [] } = useQuery({
-    queryKey: ["search", table, q, wilaya?.id],
+  // On-call pharmacy ids for today
+  const todayISO = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  })();
+  const { data: onCallIds = [] } = useQuery({
+    queryKey: ["on-call-ids", todayISO],
     queryFn: async () => {
+      const { data } = await (supabase.from as any)("pharmacy_on_call")
+        .select("pharmacy_id").eq("on_call_date", todayISO);
+      return (data ?? []).map((r: any) => r.pharmacy_id);
+    },
+    staleTime: 60_000,
+  });
+
+  const { data: rawResults = [] } = useQuery({
+    queryKey: ["search", table, q, wilaya?.id, type === "oncall" ? onCallIds.join(",") : ""],
+    queryFn: async () => {
+      if (type === "oncall" && onCallIds.length === 0) return [];
       let query: any = (supabase.from as any)(table).select(selectCols).limit(30);
       if (q) query = query.ilike(nameCol, `%${q}%`);
       if (wilaya?.id) query = query.eq("wilaya_id", wilaya.id);
+      if (type === "oncall") query = query.in("id", onCallIds);
       const { data } = await query;
       return data ?? [];
     },

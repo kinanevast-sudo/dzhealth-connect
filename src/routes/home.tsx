@@ -14,6 +14,7 @@ import { sortByDistance } from "@/lib/geo";
 import { nearestWilaya } from "@/lib/wilayas-coords";
 import { BloodRequestsSlider } from "@/components/BloodRequestsSlider";
 import { CivilProtectionSlider } from "@/components/CivilProtectionSlider";
+import { OnCallPharmaciesSlider } from "@/components/OnCallPharmaciesSlider";
 import { getAvatarUrl } from "@/lib/storage";
 
 export const Route = createFileRoute("/home")({ component: Home });
@@ -401,6 +402,11 @@ function Home() {
               ))}
             </div>
           </motion.section>
+
+          {/* On-call pharmacies today */}
+          <motion.div variants={itemVariants}>
+            <OnCallPharmaciesSlider origin={origin} />
+          </motion.div>
 
           {/* Nearby pharmacies */}
           <motion.section variants={itemVariants}>

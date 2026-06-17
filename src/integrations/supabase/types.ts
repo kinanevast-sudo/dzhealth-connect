@@ -854,6 +854,35 @@ export type Database = {
           },
         ]
       }
+      pharmacy_on_call: {
+        Row: {
+          created_at: string
+          id: string
+          on_call_date: string
+          pharmacy_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          on_call_date?: string
+          pharmacy_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          on_call_date?: string
+          pharmacy_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pharmacy_on_call_pharmacy_id_fkey"
+            columns: ["pharmacy_id"]
+            isOneToOne: false
+            referencedRelation: "pharmacies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

@@ -6,7 +6,7 @@ import {
   BadgeCheck, Navigation, Loader2, ChevronRight, Car, Footprints, Route as RouteIcon,
   FlaskConical, HandHeart, Truck, Shield,
 } from "lucide-react";
-import { MapContainer, TileLayer, Marker, Polyline, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Polyline, useMap, Tooltip, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useQuery } from "@tanstack/react-query";
@@ -16,7 +16,7 @@ import { haversineKm } from "@/lib/geo";
 
 export const Route = createFileRoute("/map")({ component: MapPage, ssr: false });
 
-type Cat = "all" | "doctors" | "hospitals" | "pharmacies" | "labs" | "charities" | "ambulances" | "civil";
+type Cat = "all" | "doctors" | "hospitals" | "pharmacies" | "oncall" | "labs" | "charities" | "ambulances" | "civil";
 type Profile = "driving" | "foot";
 
 function createIcon(color: string, emoji: string) {
@@ -51,6 +51,7 @@ type Item = {
   rating?: number | null;
   verified?: boolean;
   detailLink: string;
+  onCall?: boolean;
 };
 
 function RecenterButton({ lat, lng }: { lat: number; lng: number }) {
@@ -186,6 +187,19 @@ function MapPage() {
       return data ?? [];
     },
   });
+  const todayISO = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  })();
+  const { data: onCallIds = [] } = useQuery({
+    queryKey: ["map-oncall-ids", todayISO],
+    queryFn: async () => {
+      const { data } = await (supabase.from as any)("pharmacy_on_call")
+        .select("pharmacy_id").eq("on_call_date", todayISO);
+      return new Set((data ?? []).map((r: any) => r.pharmacy_id));
+    },
+    staleTime: 60_000,
+  });
 
   const allItems: Item[] = useMemo(() => {
     const arr: Item[] = [];
@@ -200,11 +214,14 @@ function MapPage() {
       subtitle: h.wilayas?.name_ar ?? "مستشفى", lat: h.lat, lng: h.lng,
       phone: h.phone, detailLink: `/hospitals`,
     });
-    for (const p of pharmacies as any[]) arr.push({
-      id: `p-${p.id}`, type: "pharmacy", name: p.name,
-      subtitle: (p.is_24_7 ? "صيدلية 24/7 · " : "صيدلية · ") + (p.wilayas?.name_ar ?? ""),
-      lat: p.lat, lng: p.lng, phone: p.phone, detailLink: `/pharmacies`,
-    });
+    for (const p of pharmacies as any[]) {
+      const isOnCall = (onCallIds as Set<string>).has?.(p.id) ?? false;
+      arr.push({
+        id: `p-${p.id}`, type: "pharmacy", name: p.name,
+        subtitle: (isOnCall ? "مناوبة اليوم · " : "") + (p.is_24_7 ? "صيدلية 24/7 · " : "صيدلية · ") + (p.wilayas?.name_ar ?? ""),
+        lat: p.lat, lng: p.lng, phone: p.phone, detailLink: `/pharmacies`, onCall: isOnCall,
+      });
+    }
     for (const l of labs as any[]) arr.push({
       id: `l-${l.id}`, type: "lab", name: l.name,
       subtitle: "مخبر تحاليل · " + (l.wilayas?.name_ar ?? ""),
@@ -226,7 +243,7 @@ function MapPage() {
       lat: cv.lat, lng: cv.lng, phone: cv.phone, detailLink: `/civil-protection`,
     });
     return arr;
-  }, [doctors, hospitals, pharmacies, labs, charities, ambulances, civils]);
+  }, [doctors, hospitals, pharmacies, labs, charities, ambulances, civils, onCallIds]);
 
   // Filter by category + sort by real distance and keep nearest 50
   const items: Item[] = useMemo(() => {
@@ -235,6 +252,7 @@ function MapPage() {
       if (cat === "doctors") return it.type === "doctor";
       if (cat === "hospitals") return it.type === "hospital";
       if (cat === "pharmacies") return it.type === "pharmacy";
+      if (cat === "oncall") return it.type === "pharmacy" && it.onCall === true;
       if (cat === "labs") return it.type === "lab";
       if (cat === "charities") return it.type === "charity";
       if (cat === "ambulances") return it.type === "ambulance";
@@ -278,6 +296,7 @@ function MapPage() {
     { id: "doctors", label: "أطباء", icon: Stethoscope, color: "bg-indigo-500" },
     { id: "hospitals", label: "مستشفيات", icon: Building2, color: "bg-blue-500" },
     { id: "pharmacies", label: "صيدليات", icon: Pill, color: "bg-green-500" },
+    { id: "oncall", label: "مناوبة اليوم", icon: Pill, color: "bg-emerald-600" },
     { id: "labs", label: "مخابر", icon: FlaskConical, color: "bg-violet-500" },
     { id: "charities", label: "جمعيات", icon: HandHeart, color: "bg-amber-500" },
     { id: "ambulances", label: "إسعاف", icon: Truck, color: "bg-red-600" },
@@ -312,7 +331,17 @@ function MapPage() {
                 position={[it.lat, it.lng]}
                 icon={ICONS[it.type]}
                 eventHandlers={{ click: () => setSelected(it) }}
-              />
+              >
+                <Tooltip direction="top" offset={[0, -18]} opacity={1} permanent={it.type === "civil"}>
+                  <span style={{ fontWeight: 700, fontSize: 11 }}>{it.name}</span>
+                </Tooltip>
+                <Popup>
+                  <div style={{ direction: "rtl", textAlign: "right", minWidth: 140 }}>
+                    <div style={{ fontWeight: 800, fontSize: 13 }}>{it.name}</div>
+                    <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>{it.subtitle}</div>
+                  </div>
+                </Popup>
+              </Marker>
             ))}
             {route && (
               <>
