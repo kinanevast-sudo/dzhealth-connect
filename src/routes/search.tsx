@@ -27,8 +27,6 @@ const SUB = [
   { id: "pharma", label: "الصيدليات", icon: "💊" },
 ];
 
-const SOON_TYPES = new Set(["labs", "charities", "ambulances"]);
-
 function Page() {
   const [q, setQ] = useState("");
   const [type, setType] = useState("doctors");
@@ -53,21 +51,26 @@ function Page() {
     queryFn: async () => (await supabase.from("wilayas").select("id,name_ar").order("id")).data ?? [],
   });
 
-  const isSoon = SOON_TYPES.has(type);
-  const table = type === "hospitals" ? "hospitals" : type === "pharmacies" ? "pharmacies" : type === "donors" ? "blood_donors" : "doctors";
-  const nameCol = table === "doctors" ? "full_name" : table === "blood_donors" ? "full_name" : "name";
+  const table =
+    type === "hospitals" ? "hospitals" :
+    type === "pharmacies" ? "pharmacies" :
+    type === "donors" ? "blood_donors" :
+    type === "labs" ? "labs" :
+    type === "charities" ? "charities" :
+    type === "ambulances" ? "ambulances" :
+    "doctors";
+  const nameCol = table === "doctors" || table === "blood_donors" ? "full_name" : "name";
 
   const selectCols = table === "doctors"
     ? "id,full_name,photo_url,rating,reviews_count,fee,phone,verified,lat,lng,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)"
     : table === "blood_donors"
       ? `id,${nameCol},photo_url,phone,wilayas(name_ar),baladiyas(name_ar)`
-      : `id,${nameCol},photo_url,phone,lat,lng,wilayas(name_ar),baladiyas(name_ar)`;
+      : `id,${nameCol},photo_url,phone,lat,lng,verified,wilayas(name_ar),baladiyas(name_ar)`;
 
   const { data: rawResults = [] } = useQuery({
-    queryKey: ["search", table, q, wilaya?.id, isSoon],
+    queryKey: ["search", table, q, wilaya?.id],
     queryFn: async () => {
-      if (isSoon) return [];
-      let query: any = supabase.from(table as any).select(selectCols).limit(30);
+      let query: any = (supabase.from as any)(table).select(selectCols).limit(30);
       if (q) query = query.ilike(nameCol, `%${q}%`);
       if (wilaya?.id) query = query.eq("wilaya_id", wilaya.id);
       const { data } = await query;
@@ -77,7 +80,7 @@ function Page() {
 
   const results = sortNearest && origin ? sortByDistance(rawResults as any, origin) : rawResults;
 
-  const detailBase = table === "doctors" ? "/doctors" : table === "hospitals" ? "/hospitals" : table === "pharmacies" ? "/pharmacies" : "/donors";
+  const detailBase = table === "doctors" ? "/doctors" : table === "hospitals" ? "/hospitals" : table === "pharmacies" ? "/pharmacies" : table === "blood_donors" ? "/donors" : "";
 
   return (
     <AppShell>
@@ -182,17 +185,11 @@ function Page() {
         </header>
 
         <section className="px-5 pb-24 space-y-3">
-          {isSoon && (
-            <div className="rounded-2xl p-6 text-center" style={{ background: "var(--card)", border: "1px dashed var(--border)" }}>
-              <p className="text-sm font-bold mb-1">قيد التطوير</p>
-              <p className="text-xs text-muted-foreground">سيتم تفعيل هذا القسم قريباً</p>
-            </div>
-          )}
-          {!isSoon && results.length === 0 && (
+          {results.length === 0 && (
             <p className="py-8 text-center text-sm text-muted-foreground">لا توجد نتائج</p>
           )}
           {results.map((r: any) => {
-            const href = table === "doctors" ? `/doctors/${r.id}` : `${detailBase}/${r.id}`;
+            const href = detailBase ? `${detailBase}/${r.id}` : "#";
             const name = r[nameCol];
             const loc = `${r.wilayas?.name_ar ?? ""}${r.baladiyas?.name_ar ? ` - ${r.baladiyas.name_ar}` : ""}`;
             const dist = r._distanceKm;

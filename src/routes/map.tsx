@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin, Stethoscope, Building2, Pill, X, Phone, Star,
   BadgeCheck, Navigation, Loader2, ChevronRight, Car, Footprints, Route as RouteIcon,
+  FlaskConical, HandHeart, Truck,
 } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
@@ -15,7 +16,7 @@ import { haversineKm } from "@/lib/geo";
 
 export const Route = createFileRoute("/map")({ component: MapPage, ssr: false });
 
-type Cat = "all" | "doctors" | "hospitals" | "pharmacies";
+type Cat = "all" | "doctors" | "hospitals" | "pharmacies" | "labs" | "charities" | "ambulances";
 type Profile = "driving" | "foot";
 
 function createIcon(color: string, emoji: string) {
@@ -31,12 +32,16 @@ const ICONS = {
   doctor: createIcon("#6366f1", "🩺"),
   hospital: createIcon("#3b82f6", "🏥"),
   pharmacy: createIcon("#22c55e", "💊"),
+  lab: createIcon("#7c3aed", "🧪"),
+  charity: createIcon("#f59e0b", "🤝"),
+  ambulance: createIcon("#dc2626", "🚑"),
   user: createIcon("#ef4444", "📍"),
 };
 
+type ItemType = "doctor" | "hospital" | "pharmacy" | "lab" | "charity" | "ambulance";
 type Item = {
   id: string;
-  type: "doctor" | "hospital" | "pharmacy";
+  type: ItemType;
   name: string;
   subtitle: string;
   lat: number;
@@ -144,6 +149,33 @@ function MapPage() {
       return data ?? [];
     },
   });
+  const { data: labs = [] } = useQuery({
+    queryKey: ["map-labs"],
+    queryFn: async () => {
+      const { data } = await (supabase.from as any)("labs")
+        .select("id,name,phone,lat,lng,wilayas(name_ar)")
+        .not("lat", "is", null).not("lng", "is", null).limit(200);
+      return data ?? [];
+    },
+  });
+  const { data: charities = [] } = useQuery({
+    queryKey: ["map-charities"],
+    queryFn: async () => {
+      const { data } = await (supabase.from as any)("charities")
+        .select("id,name,phone,lat,lng,wilayas(name_ar)")
+        .not("lat", "is", null).not("lng", "is", null).limit(200);
+      return data ?? [];
+    },
+  });
+  const { data: ambulances = [] } = useQuery({
+    queryKey: ["map-ambulances"],
+    queryFn: async () => {
+      const { data } = await (supabase.from as any)("ambulances")
+        .select("id,name,phone,lat,lng,is_24_7,wilayas(name_ar)")
+        .not("lat", "is", null).not("lng", "is", null).limit(200);
+      return data ?? [];
+    },
+  });
 
   const allItems: Item[] = useMemo(() => {
     const arr: Item[] = [];
@@ -163,8 +195,23 @@ function MapPage() {
       subtitle: (p.is_24_7 ? "صيدلية 24/7 · " : "صيدلية · ") + (p.wilayas?.name_ar ?? ""),
       lat: p.lat, lng: p.lng, phone: p.phone, detailLink: `/pharmacies`,
     });
+    for (const l of labs as any[]) arr.push({
+      id: `l-${l.id}`, type: "lab", name: l.name,
+      subtitle: "مخبر تحاليل · " + (l.wilayas?.name_ar ?? ""),
+      lat: l.lat, lng: l.lng, phone: l.phone, detailLink: `/search`,
+    });
+    for (const c of charities as any[]) arr.push({
+      id: `c-${c.id}`, type: "charity", name: c.name,
+      subtitle: "جمعية خيرية · " + (c.wilayas?.name_ar ?? ""),
+      lat: c.lat, lng: c.lng, phone: c.phone, detailLink: `/search`,
+    });
+    for (const a of ambulances as any[]) arr.push({
+      id: `a-${a.id}`, type: "ambulance", name: a.name,
+      subtitle: (a.is_24_7 ? "إسعاف 24/7 · " : "إسعاف · ") + (a.wilayas?.name_ar ?? ""),
+      lat: a.lat, lng: a.lng, phone: a.phone, detailLink: `/search`,
+    });
     return arr;
-  }, [doctors, hospitals, pharmacies]);
+  }, [doctors, hospitals, pharmacies, labs, charities, ambulances]);
 
   // Filter by category + sort by real distance and keep nearest 50
   const items: Item[] = useMemo(() => {
@@ -172,7 +219,11 @@ function MapPage() {
       if (cat === "all") return true;
       if (cat === "doctors") return it.type === "doctor";
       if (cat === "hospitals") return it.type === "hospital";
-      return it.type === "pharmacy";
+      if (cat === "pharmacies") return it.type === "pharmacy";
+      if (cat === "labs") return it.type === "lab";
+      if (cat === "charities") return it.type === "charity";
+      if (cat === "ambulances") return it.type === "ambulance";
+      return true;
     });
     if (!origin) return filtered;
     return filtered
@@ -211,6 +262,9 @@ function MapPage() {
     { id: "doctors", label: "أطباء", icon: Stethoscope, color: "bg-indigo-500" },
     { id: "hospitals", label: "مستشفيات", icon: Building2, color: "bg-blue-500" },
     { id: "pharmacies", label: "صيدليات", icon: Pill, color: "bg-green-500" },
+    { id: "labs", label: "مخابر", icon: FlaskConical, color: "bg-violet-500" },
+    { id: "charities", label: "جمعيات", icon: HandHeart, color: "bg-amber-500" },
+    { id: "ambulances", label: "إسعاف", icon: Truck, color: "bg-red-600" },
   ];
 
   const openExternalNav = () => {
@@ -307,9 +361,18 @@ function MapPage() {
               </button>
               <div className="flex gap-3 items-start">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${
-                  selected.type === "doctor" ? "bg-indigo-500/15" : selected.type === "hospital" ? "bg-blue-500/15" : "bg-green-500/15"
+                  selected.type === "doctor" ? "bg-indigo-500/15" :
+                  selected.type === "hospital" ? "bg-blue-500/15" :
+                  selected.type === "pharmacy" ? "bg-green-500/15" :
+                  selected.type === "lab" ? "bg-violet-500/15" :
+                  selected.type === "charity" ? "bg-amber-500/15" :
+                  "bg-red-600/15"
                 }`}>
-                  {selected.type === "doctor" ? "🩺" : selected.type === "hospital" ? "🏥" : "💊"}
+                  {selected.type === "doctor" ? "🩺" :
+                   selected.type === "hospital" ? "🏥" :
+                   selected.type === "pharmacy" ? "💊" :
+                   selected.type === "lab" ? "🧪" :
+                   selected.type === "charity" ? "🤝" : "🚑"}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">

@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { HandHeart } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { CascadingLocation } from "@/components/CascadingLocation";
 import { FormShell, Field, inputCls } from "@/components/FormShell";
 import { ImageUploader } from "@/components/ImageUploader";
@@ -10,6 +11,7 @@ import { LocationPickerField } from "@/components/LocationPickerField";
 export const Route = createFileRoute("/add-charity")({ component: Page, ssr: false });
 
 function Page() {
+  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [f, setF] = useState({
@@ -22,17 +24,21 @@ function Page() {
     e.preventDefault();
     if (!f.name || !f.phone) { toast.error("املأ الحقول الأساسية"); return; }
     setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
-      toast.success("تم استلام معلومات الجمعية. سيتم تفعيل القسم قريباً");
-    }, 600);
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await (supabase.from as any)("charities").insert({
+      owner_id: user?.id ?? null, photo_url: photoUrl, ...f,
+    });
+    setSubmitting(false);
+    if (error) { toast.error("تعذّر الحفظ: " + error.message); return; }
+    toast.success("تمت إضافة الجمعية بنجاح");
+    navigate({ to: "/search" });
   };
 
   return (
     <FormShell title="إضافة جمعية خيرية" onSubmit={submit} submitting={submitting}>
       <div className="flex items-center gap-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 p-3 text-amber-700 dark:text-amber-300">
         <HandHeart className="h-5 w-5 flex-shrink-0" />
-        <p className="text-xs">قسم الجمعيات الخيرية قيد التطوير. سجّل جمعيتك الآن وسنضيفها عند الإطلاق.</p>
+        <p className="text-xs">أضف معلومات الجمعية لتظهر مباشرة في البحث والخريطة.</p>
       </div>
       <ImageUploader value={photoUrl} onChange={setPhotoUrl} folder="pharmacies" />
       <Field label="اسم الجمعية *"><input className={inputCls} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} required /></Field>

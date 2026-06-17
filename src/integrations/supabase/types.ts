@@ -14,6 +14,72 @@ export type Database = {
   }
   public: {
     Tables: {
+      ambulances: {
+        Row: {
+          baladiya_id: number | null
+          coverage_area: string | null
+          created_at: string
+          id: string
+          is_24_7: boolean
+          lat: number | null
+          lng: number | null
+          name: string
+          owner_id: string | null
+          phone: string | null
+          photo_url: string | null
+          updated_at: string
+          verified: boolean
+          wilaya_id: number | null
+        }
+        Insert: {
+          baladiya_id?: number | null
+          coverage_area?: string | null
+          created_at?: string
+          id?: string
+          is_24_7?: boolean
+          lat?: number | null
+          lng?: number | null
+          name: string
+          owner_id?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          updated_at?: string
+          verified?: boolean
+          wilaya_id?: number | null
+        }
+        Update: {
+          baladiya_id?: number | null
+          coverage_area?: string | null
+          created_at?: string
+          id?: string
+          is_24_7?: boolean
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          owner_id?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          updated_at?: string
+          verified?: boolean
+          wilaya_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ambulances_baladiya_id_fkey"
+            columns: ["baladiya_id"]
+            isOneToOne: false
+            referencedRelation: "baladiyas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ambulances_wilaya_id_fkey"
+            columns: ["wilaya_id"]
+            isOneToOne: false
+            referencedRelation: "wilayas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointments: {
         Row: {
           created_at: string
@@ -212,6 +278,72 @@ export type Database = {
           },
           {
             foreignKeyName: "blood_requests_wilaya_id_fkey"
+            columns: ["wilaya_id"]
+            isOneToOne: false
+            referencedRelation: "wilayas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      charities: {
+        Row: {
+          address: string | null
+          baladiya_id: number | null
+          created_at: string
+          description: string | null
+          id: string
+          lat: number | null
+          lng: number | null
+          name: string
+          owner_id: string | null
+          phone: string | null
+          photo_url: string | null
+          updated_at: string
+          verified: boolean
+          wilaya_id: number | null
+        }
+        Insert: {
+          address?: string | null
+          baladiya_id?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name: string
+          owner_id?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          updated_at?: string
+          verified?: boolean
+          wilaya_id?: number | null
+        }
+        Update: {
+          address?: string | null
+          baladiya_id?: number | null
+          created_at?: string
+          description?: string | null
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          owner_id?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          updated_at?: string
+          verified?: boolean
+          wilaya_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "charities_baladiya_id_fkey"
+            columns: ["baladiya_id"]
+            isOneToOne: false
+            referencedRelation: "baladiyas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "charities_wilaya_id_fkey"
             columns: ["wilaya_id"]
             isOneToOne: false
             referencedRelation: "wilayas"
@@ -496,6 +628,69 @@ export type Database = {
           },
           {
             foreignKeyName: "hospitals_wilaya_id_fkey"
+            columns: ["wilaya_id"]
+            isOneToOne: false
+            referencedRelation: "wilayas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      labs: {
+        Row: {
+          address: string | null
+          baladiya_id: number | null
+          created_at: string
+          id: string
+          lat: number | null
+          lng: number | null
+          name: string
+          owner_id: string | null
+          phone: string | null
+          photo_url: string | null
+          updated_at: string
+          verified: boolean
+          wilaya_id: number | null
+        }
+        Insert: {
+          address?: string | null
+          baladiya_id?: number | null
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name: string
+          owner_id?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          updated_at?: string
+          verified?: boolean
+          wilaya_id?: number | null
+        }
+        Update: {
+          address?: string | null
+          baladiya_id?: number | null
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          owner_id?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          updated_at?: string
+          verified?: boolean
+          wilaya_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "labs_baladiya_id_fkey"
+            columns: ["baladiya_id"]
+            isOneToOne: false
+            referencedRelation: "baladiyas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "labs_wilaya_id_fkey"
             columns: ["wilaya_id"]
             isOneToOne: false
             referencedRelation: "wilayas"
