@@ -59,6 +59,7 @@ function Page() {
     type === "labs" ? "labs" :
     type === "charities" ? "charities" :
     type === "ambulances" ? "ambulances" :
+    type === "civil" ? "civil_protection_centers" :
     "doctors";
   const nameCol = table === "doctors" || table === "blood_donors" ? "full_name" : "name";
 
