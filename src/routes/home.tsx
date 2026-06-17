@@ -336,7 +336,7 @@ function Home() {
           <motion.section variants={itemVariants}>
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-black text-base text-foreground">أطباء قريبون</h2>
-              <Link to="/doctors" className="flex items-center gap-1 text-primary text-xs font-medium">
+              <Link to="/nearby-doctors" className="flex items-center gap-1 text-primary text-xs font-medium">
                 عرض الكل <ChevronRight className="w-3 h-3 rotate-180" />
               </Link>
             </div>
