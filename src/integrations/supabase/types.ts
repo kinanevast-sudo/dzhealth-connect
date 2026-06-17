@@ -351,6 +351,69 @@ export type Database = {
           },
         ]
       }
+      civil_protection_centers: {
+        Row: {
+          address: string | null
+          baladiya_id: number | null
+          created_at: string
+          id: string
+          lat: number | null
+          lng: number | null
+          name: string
+          owner_id: string | null
+          phone: string | null
+          photo_url: string | null
+          updated_at: string
+          verified: boolean
+          wilaya_id: number | null
+        }
+        Insert: {
+          address?: string | null
+          baladiya_id?: number | null
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name: string
+          owner_id?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          updated_at?: string
+          verified?: boolean
+          wilaya_id?: number | null
+        }
+        Update: {
+          address?: string | null
+          baladiya_id?: number | null
+          created_at?: string
+          id?: string
+          lat?: number | null
+          lng?: number | null
+          name?: string
+          owner_id?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          updated_at?: string
+          verified?: boolean
+          wilaya_id?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "civil_protection_centers_baladiya_id_fkey"
+            columns: ["baladiya_id"]
+            isOneToOne: false
+            referencedRelation: "baladiyas"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "civil_protection_centers_wilaya_id_fkey"
+            columns: ["wilaya_id"]
+            isOneToOne: false
+            referencedRelation: "wilayas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       doctor_reviews: {
         Row: {
           comment: string | null
