@@ -214,11 +214,14 @@ function MapPage() {
       subtitle: h.wilayas?.name_ar ?? "مستشفى", lat: h.lat, lng: h.lng,
       phone: h.phone, detailLink: `/hospitals`,
     });
-    for (const p of pharmacies as any[]) arr.push({
-      id: `p-${p.id}`, type: "pharmacy", name: p.name,
-      subtitle: (p.is_24_7 ? "صيدلية 24/7 · " : "صيدلية · ") + (p.wilayas?.name_ar ?? ""),
-      lat: p.lat, lng: p.lng, phone: p.phone, detailLink: `/pharmacies`,
-    });
+    for (const p of pharmacies as any[]) {
+      const isOnCall = (onCallIds as Set<string>).has?.(p.id) ?? false;
+      arr.push({
+        id: `p-${p.id}`, type: "pharmacy", name: p.name,
+        subtitle: (isOnCall ? "مناوبة اليوم · " : "") + (p.is_24_7 ? "صيدلية 24/7 · " : "صيدلية · ") + (p.wilayas?.name_ar ?? ""),
+        lat: p.lat, lng: p.lng, phone: p.phone, detailLink: `/pharmacies`, onCall: isOnCall,
+      });
+    }
     for (const l of labs as any[]) arr.push({
       id: `l-${l.id}`, type: "lab", name: l.name,
       subtitle: "مخبر تحاليل · " + (l.wilayas?.name_ar ?? ""),
