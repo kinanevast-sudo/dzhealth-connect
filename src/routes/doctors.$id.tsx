@@ -247,10 +247,7 @@ function Detail() {
         >
           {activeTab === "info" && (
             <>
-              <section className="bg-card rounded-2xl border border-border p-4 text-right">
-                <h2 className="font-bold text-sm text-muted-foreground mb-2">نبذة عن الطبيب</h2>
-                <p className="text-sm text-foreground leading-relaxed">{x.about ?? "أستاذ محاضر، متخصص في تشخيص وعلاج الأمراض ضمن مجال التخصص."}</p>
-              </section>
+              <BioSection about={x.about ?? "أستاذ محاضر، متخصص في تشخيص وعلاج الأمراض ضمن مجال التخصص."} />
 
               <section className="bg-card rounded-2xl border border-border p-4 text-right">
                 <h2 className="font-bold text-sm text-muted-foreground mb-3">التخصص</h2>
