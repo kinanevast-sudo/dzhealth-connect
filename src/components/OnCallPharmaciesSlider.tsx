@@ -25,6 +25,7 @@ function shiftLabel(st?: string) {
 function fmtKm(km?: number) {
   if (km == null || !isFinite(km)) return null;
   return km < 1 ? `${Math.round(km * 1000)} م` : `${km.toFixed(1)} كم`;
+}
 
 export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng: number } | null }) {
   const [index, setIndex] = useState(0);
