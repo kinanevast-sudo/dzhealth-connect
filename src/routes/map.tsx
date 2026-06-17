@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin, Stethoscope, Building2, Pill, X, Phone, Star,
   BadgeCheck, Navigation, Loader2, ChevronRight, Car, Footprints, Route as RouteIcon,
+  FlaskConical, HandHeart, Truck,
 } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
@@ -15,7 +16,7 @@ import { haversineKm } from "@/lib/geo";
 
 export const Route = createFileRoute("/map")({ component: MapPage, ssr: false });
 
-type Cat = "all" | "doctors" | "hospitals" | "pharmacies";
+type Cat = "all" | "doctors" | "hospitals" | "pharmacies" | "labs" | "charities" | "ambulances";
 type Profile = "driving" | "foot";
 
 function createIcon(color: string, emoji: string) {
@@ -31,12 +32,16 @@ const ICONS = {
   doctor: createIcon("#6366f1", "🩺"),
   hospital: createIcon("#3b82f6", "🏥"),
   pharmacy: createIcon("#22c55e", "💊"),
+  lab: createIcon("#7c3aed", "🧪"),
+  charity: createIcon("#f59e0b", "🤝"),
+  ambulance: createIcon("#dc2626", "🚑"),
   user: createIcon("#ef4444", "📍"),
 };
 
+type ItemType = "doctor" | "hospital" | "pharmacy" | "lab" | "charity" | "ambulance";
 type Item = {
   id: string;
-  type: "doctor" | "hospital" | "pharmacy";
+  type: ItemType;
   name: string;
   subtitle: string;
   lat: number;
