@@ -12,7 +12,7 @@ const items: Item[] = [
   { icon: Pill, label: "إضافة صيدلية", to: "/add-pharmacy", color: "#10b981", bg: "#d1fae5" },
   { icon: Droplet, label: "تسجيل متبرع جديد", to: "/add-donor", color: "#ef4444", bg: "#fee2e2" },
   { icon: Accessibility, label: "إضافة معدات طبية", to: "/add-equipment", color: "#8b5cf6", bg: "#ede9fe" },
-  { icon: Shield, label: "إضافة مركز حماية مدنية", to: "/civil-protection", color: "#dc2626", bg: "#fee2e2", soon: true },
+  { icon: Shield, label: "إضافة مركز حماية مدنية", to: "/add-civil-protection", color: "#dc2626", bg: "#fee2e2" },
   { icon: FlaskConical, label: "إضافة مخبر تحاليل", to: "/add-lab", color: "#0ea5e9", bg: "#e0f2fe" },
   { icon: HandHeart, label: "إضافة جمعية خيرية", to: "/add-charity", color: "#f59e0b", bg: "#fef3c7" },
   { icon: Truck, label: "إضافة سيارة إسعاف", to: "/add-ambulance", color: "#f97316", bg: "#ffedd5" },

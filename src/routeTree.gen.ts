@@ -29,6 +29,7 @@ import { Route as AddHospitalRouteImport } from './routes/add-hospital'
 import { Route as AddEquipmentRouteImport } from './routes/add-equipment'
 import { Route as AddDonorRouteImport } from './routes/add-donor'
 import { Route as AddDoctorRouteImport } from './routes/add-doctor'
+import { Route as AddCivilProtectionRouteImport } from './routes/add-civil-protection'
 import { Route as AddCharityRouteImport } from './routes/add-charity'
 import { Route as AddBloodRequestRouteImport } from './routes/add-blood-request'
 import { Route as AddAmbulanceRouteImport } from './routes/add-ambulance'
@@ -137,6 +138,11 @@ const AddDoctorRoute = AddDoctorRouteImport.update({
   path: '/add-doctor',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AddCivilProtectionRoute = AddCivilProtectionRouteImport.update({
+  id: '/add-civil-protection',
+  path: '/add-civil-protection',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AddCharityRoute = AddCharityRouteImport.update({
   id: '/add-charity',
   path: '/add-charity',
@@ -179,6 +185,7 @@ export interface FileRoutesByFullPath {
   '/add-ambulance': typeof AddAmbulanceRoute
   '/add-blood-request': typeof AddBloodRequestRoute
   '/add-charity': typeof AddCharityRoute
+  '/add-civil-protection': typeof AddCivilProtectionRoute
   '/add-doctor': typeof AddDoctorRoute
   '/add-donor': typeof AddDonorRoute
   '/add-equipment': typeof AddEquipmentRoute
@@ -208,6 +215,7 @@ export interface FileRoutesByTo {
   '/add-ambulance': typeof AddAmbulanceRoute
   '/add-blood-request': typeof AddBloodRequestRoute
   '/add-charity': typeof AddCharityRoute
+  '/add-civil-protection': typeof AddCivilProtectionRoute
   '/add-doctor': typeof AddDoctorRoute
   '/add-donor': typeof AddDonorRoute
   '/add-equipment': typeof AddEquipmentRoute
@@ -238,6 +246,7 @@ export interface FileRoutesById {
   '/add-ambulance': typeof AddAmbulanceRoute
   '/add-blood-request': typeof AddBloodRequestRoute
   '/add-charity': typeof AddCharityRoute
+  '/add-civil-protection': typeof AddCivilProtectionRoute
   '/add-doctor': typeof AddDoctorRoute
   '/add-donor': typeof AddDonorRoute
   '/add-equipment': typeof AddEquipmentRoute
@@ -269,6 +278,7 @@ export interface FileRouteTypes {
     | '/add-ambulance'
     | '/add-blood-request'
     | '/add-charity'
+    | '/add-civil-protection'
     | '/add-doctor'
     | '/add-donor'
     | '/add-equipment'
@@ -298,6 +308,7 @@ export interface FileRouteTypes {
     | '/add-ambulance'
     | '/add-blood-request'
     | '/add-charity'
+    | '/add-civil-protection'
     | '/add-doctor'
     | '/add-donor'
     | '/add-equipment'
@@ -327,6 +338,7 @@ export interface FileRouteTypes {
     | '/add-ambulance'
     | '/add-blood-request'
     | '/add-charity'
+    | '/add-civil-protection'
     | '/add-doctor'
     | '/add-donor'
     | '/add-equipment'
@@ -357,6 +369,7 @@ export interface RootRouteChildren {
   AddAmbulanceRoute: typeof AddAmbulanceRoute
   AddBloodRequestRoute: typeof AddBloodRequestRoute
   AddCharityRoute: typeof AddCharityRoute
+  AddCivilProtectionRoute: typeof AddCivilProtectionRoute
   AddDoctorRoute: typeof AddDoctorRoute
   AddDonorRoute: typeof AddDonorRoute
   AddEquipmentRoute: typeof AddEquipmentRoute
@@ -523,6 +536,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AddDoctorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/add-civil-protection': {
+      id: '/add-civil-protection'
+      path: '/add-civil-protection'
+      fullPath: '/add-civil-protection'
+      preLoaderRoute: typeof AddCivilProtectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/add-charity': {
       id: '/add-charity'
       path: '/add-charity'
@@ -581,6 +601,7 @@ const rootRouteChildren: RootRouteChildren = {
   AddAmbulanceRoute: AddAmbulanceRoute,
   AddBloodRequestRoute: AddBloodRequestRoute,
   AddCharityRoute: AddCharityRoute,
+  AddCivilProtectionRoute: AddCivilProtectionRoute,
   AddDoctorRoute: AddDoctorRoute,
   AddDonorRoute: AddDonorRoute,
   AddEquipmentRoute: AddEquipmentRoute,
