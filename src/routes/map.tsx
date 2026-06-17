@@ -296,6 +296,7 @@ function MapPage() {
     { id: "doctors", label: "أطباء", icon: Stethoscope, color: "bg-indigo-500" },
     { id: "hospitals", label: "مستشفيات", icon: Building2, color: "bg-blue-500" },
     { id: "pharmacies", label: "صيدليات", icon: Pill, color: "bg-green-500" },
+    { id: "oncall", label: "مناوبة اليوم", icon: Pill, color: "bg-emerald-600" },
     { id: "labs", label: "مخابر", icon: FlaskConical, color: "bg-violet-500" },
     { id: "charities", label: "جمعيات", icon: HandHeart, color: "bg-amber-500" },
     { id: "ambulances", label: "إسعاف", icon: Truck, color: "bg-red-600" },
