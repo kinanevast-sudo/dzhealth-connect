@@ -39,7 +39,7 @@ const ICONS = {
   user: createIcon("#ef4444", "📍"),
 };
 
-type ItemType = "doctor" | "hospital" | "pharmacy" | "lab" | "charity" | "ambulance";
+type ItemType = "doctor" | "hospital" | "pharmacy" | "lab" | "charity" | "ambulance" | "civil";
 type Item = {
   id: string;
   type: ItemType;
