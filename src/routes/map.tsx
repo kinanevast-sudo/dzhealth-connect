@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin, Stethoscope, Building2, Pill, X, Phone, Star,
   BadgeCheck, Navigation, Loader2, ChevronRight, Car, Footprints, Route as RouteIcon,
-  FlaskConical, HandHeart, Truck,
+  FlaskConical, HandHeart, Truck, Shield,
 } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
