@@ -37,6 +37,7 @@ import { Route as AddAmbulanceRouteImport } from './routes/add-ambulance'
 import { Route as AddRouteImport } from './routes/add'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DoctorsIndexRouteImport } from './routes/doctors.index'
+import { Route as PharmaciesIdRouteImport } from './routes/pharmacies.$id'
 import { Route as DoctorsIdRouteImport } from './routes/doctors.$id'
 
 const SettingsRoute = SettingsRouteImport.update({
@@ -179,6 +180,11 @@ const DoctorsIndexRoute = DoctorsIndexRouteImport.update({
   path: '/doctors/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PharmaciesIdRoute = PharmaciesIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => PharmaciesRoute,
+} as any)
 const DoctorsIdRoute = DoctorsIdRouteImport.update({
   id: '/doctors/$id',
   path: '/doctors/$id',
@@ -209,11 +215,12 @@ export interface FileRoutesByFullPath {
   '/notifications': typeof NotificationsRoute
   '/on-call-pharmacies': typeof OnCallPharmaciesRoute
   '/onboarding': typeof OnboardingRoute
-  '/pharmacies': typeof PharmaciesRoute
+  '/pharmacies': typeof PharmaciesRouteWithChildren
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/doctors/$id': typeof DoctorsIdRoute
+  '/pharmacies/$id': typeof PharmaciesIdRoute
   '/doctors/': typeof DoctorsIndexRoute
 }
 export interface FileRoutesByTo {
@@ -240,11 +247,12 @@ export interface FileRoutesByTo {
   '/notifications': typeof NotificationsRoute
   '/on-call-pharmacies': typeof OnCallPharmaciesRoute
   '/onboarding': typeof OnboardingRoute
-  '/pharmacies': typeof PharmaciesRoute
+  '/pharmacies': typeof PharmaciesRouteWithChildren
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/doctors/$id': typeof DoctorsIdRoute
+  '/pharmacies/$id': typeof PharmaciesIdRoute
   '/doctors': typeof DoctorsIndexRoute
 }
 export interface FileRoutesById {
@@ -272,11 +280,12 @@ export interface FileRoutesById {
   '/notifications': typeof NotificationsRoute
   '/on-call-pharmacies': typeof OnCallPharmaciesRoute
   '/onboarding': typeof OnboardingRoute
-  '/pharmacies': typeof PharmaciesRoute
+  '/pharmacies': typeof PharmaciesRouteWithChildren
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
   '/doctors/$id': typeof DoctorsIdRoute
+  '/pharmacies/$id': typeof PharmaciesIdRoute
   '/doctors/': typeof DoctorsIndexRoute
 }
 export interface FileRouteTypes {
@@ -310,6 +319,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/doctors/$id'
+    | '/pharmacies/$id'
     | '/doctors/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -341,6 +351,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/doctors/$id'
+    | '/pharmacies/$id'
     | '/doctors'
   id:
     | '__root__'
@@ -372,6 +383,7 @@ export interface FileRouteTypes {
     | '/search'
     | '/settings'
     | '/doctors/$id'
+    | '/pharmacies/$id'
     | '/doctors/'
   fileRoutesById: FileRoutesById
 }
@@ -399,7 +411,7 @@ export interface RootRouteChildren {
   NotificationsRoute: typeof NotificationsRoute
   OnCallPharmaciesRoute: typeof OnCallPharmaciesRoute
   OnboardingRoute: typeof OnboardingRoute
-  PharmaciesRoute: typeof PharmaciesRoute
+  PharmaciesRoute: typeof PharmaciesRouteWithChildren
   ProfileRoute: typeof ProfileRoute
   SearchRoute: typeof SearchRoute
   SettingsRoute: typeof SettingsRoute
@@ -605,6 +617,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DoctorsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pharmacies/$id': {
+      id: '/pharmacies/$id'
+      path: '/$id'
+      fullPath: '/pharmacies/$id'
+      preLoaderRoute: typeof PharmaciesIdRouteImport
+      parentRoute: typeof PharmaciesRoute
+    }
     '/doctors/$id': {
       id: '/doctors/$id'
       path: '/doctors/$id'
@@ -614,6 +633,18 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface PharmaciesRouteChildren {
+  PharmaciesIdRoute: typeof PharmaciesIdRoute
+}
+
+const PharmaciesRouteChildren: PharmaciesRouteChildren = {
+  PharmaciesIdRoute: PharmaciesIdRoute,
+}
+
+const PharmaciesRouteWithChildren = PharmaciesRoute._addFileChildren(
+  PharmaciesRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -639,7 +670,7 @@ const rootRouteChildren: RootRouteChildren = {
   NotificationsRoute: NotificationsRoute,
   OnCallPharmaciesRoute: OnCallPharmaciesRoute,
   OnboardingRoute: OnboardingRoute,
-  PharmaciesRoute: PharmaciesRoute,
+  PharmaciesRoute: PharmaciesRouteWithChildren,
   ProfileRoute: ProfileRoute,
   SearchRoute: SearchRoute,
   SettingsRoute: SettingsRoute,
@@ -649,13 +680,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
