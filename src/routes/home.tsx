@@ -332,7 +332,7 @@ function Home() {
             )}
           </motion.section>
 
-          {/* Nearby doctors — same style as featured, distance instead of fee */}
+          {/* Nearby doctors — horizontal scroll, real GPS distance */}
           <motion.section variants={itemVariants}>
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-black text-base text-foreground">أطباء قريبون</h2>
@@ -340,17 +340,22 @@ function Home() {
                 عرض الكل <ChevronRight className="w-3 h-3 rotate-180" />
               </Link>
             </div>
-            <div className="space-y-3">
-              {nearbyDoctors.slice(0, 3).map((doc, i) => (
-                <motion.div
-                  key={doc.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.05 + i * 0.07, duration: 0.35 }}
-                >
-                  <DoctorRow d={doc} showDistanceAsPrice />
-                </motion.div>
-              ))}
+            <div className="-mx-4 px-4 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+              <div className="flex gap-3 pb-1" style={{ width: "max-content" }}>
+                {nearbyDoctors.map((doc: any, i: number) => (
+                  <motion.div
+                    key={doc.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 + i * 0.05, duration: 0.3 }}
+                  >
+                    <DoctorNearbyCard d={doc} />
+                  </motion.div>
+                ))}
+                {nearbyDoctors.length === 0 && !isLoading && (
+                  <div className="text-xs text-muted-foreground py-8 px-4">لا يوجد أطباء قريبون</div>
+                )}
+              </div>
             </div>
           </motion.section>
 
@@ -482,6 +487,42 @@ function DoctorRow({ d, showDistanceAsPrice = false }: { d: any; showDistanceAsP
             )}
           </div>
         </div>
+      </div>
+    </Link>
+  );
+}
+
+function DoctorNearbyCard({ d }: { d: any }) {
+  const dist = fmtKm(d._distanceKm);
+  return (
+    <Link
+      to="/doctors/$id"
+      params={{ id: d.id }}
+      className="block w-44 bg-card rounded-2xl border border-border p-3 active:scale-[0.98] transition"
+    >
+      <div className="relative">
+        {d.photo_url ? (
+          <img src={d.photo_url} alt={d.full_name} className="h-24 w-full rounded-xl object-cover" />
+        ) : (
+          <div className="flex h-24 w-full items-center justify-center rounded-xl bg-primary/10 text-primary text-3xl font-bold">د</div>
+        )}
+        {d.verified && (
+          <div className="absolute -bottom-1 -left-1 flex h-6 w-6 items-center justify-center rounded-full bg-primary">
+            <BadgeCheck className="h-4 w-4 text-primary-foreground" />
+          </div>
+        )}
+      </div>
+      <h3 className="mt-2 text-sm font-extrabold leading-tight text-foreground truncate">{d.full_name}</h3>
+      <p className="mt-0.5 text-xs font-semibold text-primary truncate">{d.specialties?.name_ar}</p>
+      <div className="mt-1.5 flex items-center justify-between">
+        <div className="flex items-center gap-1 text-[11px]">
+          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+          <span className="font-bold">{d.rating}</span>
+        </div>
+        <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-black text-primary">
+          <MapPin className="h-3 w-3" />
+          {dist ?? "—"}
+        </span>
       </div>
     </Link>
   );
