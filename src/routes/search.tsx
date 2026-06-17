@@ -18,6 +18,7 @@ const TYPES = [
   { id: "labs", label: "مخابر التحاليل", icon: "🧪", color: "#7c3aed", bg: "#ede9fe" },
   { id: "charities", label: "الجمعيات الخيرية", icon: "🤝", color: "#f59e0b", bg: "#fef3c7" },
   { id: "ambulances", label: "سيارات الإسعاف", icon: "🚑", color: "#dc2626", bg: "#fee2e2" },
+  { id: "civil", label: "الحماية المدنية", icon: "🛡️", color: "#ea580c", bg: "#ffedd5" },
 ];
 
 const SUB = [
@@ -58,6 +59,7 @@ function Page() {
     type === "labs" ? "labs" :
     type === "charities" ? "charities" :
     type === "ambulances" ? "ambulances" :
+    type === "civil" ? "civil_protection_centers" :
     "doctors";
   const nameCol = table === "doctors" || table === "blood_donors" ? "full_name" : "name";
 
@@ -80,7 +82,7 @@ function Page() {
 
   const results = sortNearest && origin ? sortByDistance(rawResults as any, origin) : rawResults;
 
-  const detailBase = table === "doctors" ? "/doctors" : table === "hospitals" ? "/hospitals" : table === "pharmacies" ? "/pharmacies" : table === "blood_donors" ? "/donors" : "";
+  const detailBase = table === "doctors" ? "/doctors" : table === "hospitals" ? "/hospitals" : table === "pharmacies" ? "/pharmacies" : table === "blood_donors" ? "/donors" : table === "civil_protection_centers" ? "/civil-protection" : "";
 
   return (
     <AppShell>

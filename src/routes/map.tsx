@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin, Stethoscope, Building2, Pill, X, Phone, Star,
   BadgeCheck, Navigation, Loader2, ChevronRight, Car, Footprints, Route as RouteIcon,
-  FlaskConical, HandHeart, Truck,
+  FlaskConical, HandHeart, Truck, Shield,
 } from "lucide-react";
 import { MapContainer, TileLayer, Marker, Polyline, useMap } from "react-leaflet";
 import L from "leaflet";
@@ -16,7 +16,7 @@ import { haversineKm } from "@/lib/geo";
 
 export const Route = createFileRoute("/map")({ component: MapPage, ssr: false });
 
-type Cat = "all" | "doctors" | "hospitals" | "pharmacies" | "labs" | "charities" | "ambulances";
+type Cat = "all" | "doctors" | "hospitals" | "pharmacies" | "labs" | "charities" | "ambulances" | "civil";
 type Profile = "driving" | "foot";
 
 function createIcon(color: string, emoji: string) {
@@ -35,10 +35,11 @@ const ICONS = {
   lab: createIcon("#7c3aed", "🧪"),
   charity: createIcon("#f59e0b", "🤝"),
   ambulance: createIcon("#dc2626", "🚑"),
+  civil: createIcon("#ea580c", "🛡️"),
   user: createIcon("#ef4444", "📍"),
 };
 
-type ItemType = "doctor" | "hospital" | "pharmacy" | "lab" | "charity" | "ambulance";
+type ItemType = "doctor" | "hospital" | "pharmacy" | "lab" | "charity" | "ambulance" | "civil";
 type Item = {
   id: string;
   type: ItemType;
@@ -176,6 +177,15 @@ function MapPage() {
       return data ?? [];
     },
   });
+  const { data: civils = [] } = useQuery({
+    queryKey: ["map-civil"],
+    queryFn: async () => {
+      const { data } = await (supabase.from as any)("civil_protection_centers")
+        .select("id,name,phone,lat,lng,wilayas(name_ar)")
+        .not("lat", "is", null).not("lng", "is", null).limit(200);
+      return data ?? [];
+    },
+  });
 
   const allItems: Item[] = useMemo(() => {
     const arr: Item[] = [];
@@ -210,8 +220,13 @@ function MapPage() {
       subtitle: (a.is_24_7 ? "إسعاف 24/7 · " : "إسعاف · ") + (a.wilayas?.name_ar ?? ""),
       lat: a.lat, lng: a.lng, phone: a.phone, detailLink: `/search`,
     });
+    for (const cv of civils as any[]) arr.push({
+      id: `cv-${cv.id}`, type: "civil", name: cv.name,
+      subtitle: "حماية مدنية · " + (cv.wilayas?.name_ar ?? ""),
+      lat: cv.lat, lng: cv.lng, phone: cv.phone, detailLink: `/civil-protection`,
+    });
     return arr;
-  }, [doctors, hospitals, pharmacies, labs, charities, ambulances]);
+  }, [doctors, hospitals, pharmacies, labs, charities, ambulances, civils]);
 
   // Filter by category + sort by real distance and keep nearest 50
   const items: Item[] = useMemo(() => {
@@ -223,6 +238,7 @@ function MapPage() {
       if (cat === "labs") return it.type === "lab";
       if (cat === "charities") return it.type === "charity";
       if (cat === "ambulances") return it.type === "ambulance";
+      if (cat === "civil") return it.type === "civil";
       return true;
     });
     if (!origin) return filtered;
@@ -265,6 +281,7 @@ function MapPage() {
     { id: "labs", label: "مخابر", icon: FlaskConical, color: "bg-violet-500" },
     { id: "charities", label: "جمعيات", icon: HandHeart, color: "bg-amber-500" },
     { id: "ambulances", label: "إسعاف", icon: Truck, color: "bg-red-600" },
+    { id: "civil", label: "حماية مدنية", icon: Shield, color: "bg-orange-600" },
   ];
 
   const openExternalNav = () => {
@@ -366,13 +383,15 @@ function MapPage() {
                   selected.type === "pharmacy" ? "bg-green-500/15" :
                   selected.type === "lab" ? "bg-violet-500/15" :
                   selected.type === "charity" ? "bg-amber-500/15" :
-                  "bg-red-600/15"
+                  selected.type === "ambulance" ? "bg-red-600/15" :
+                  "bg-orange-600/15"
                 }`}>
                   {selected.type === "doctor" ? "🩺" :
                    selected.type === "hospital" ? "🏥" :
                    selected.type === "pharmacy" ? "💊" :
                    selected.type === "lab" ? "🧪" :
-                   selected.type === "charity" ? "🤝" : "🚑"}
+                   selected.type === "charity" ? "🤝" :
+                   selected.type === "ambulance" ? "🚑" : "🛡️"}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
