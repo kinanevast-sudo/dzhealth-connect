@@ -361,9 +361,18 @@ function MapPage() {
               </button>
               <div className="flex gap-3 items-start">
                 <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-2xl flex-shrink-0 ${
-                  selected.type === "doctor" ? "bg-indigo-500/15" : selected.type === "hospital" ? "bg-blue-500/15" : "bg-green-500/15"
+                  selected.type === "doctor" ? "bg-indigo-500/15" :
+                  selected.type === "hospital" ? "bg-blue-500/15" :
+                  selected.type === "pharmacy" ? "bg-green-500/15" :
+                  selected.type === "lab" ? "bg-violet-500/15" :
+                  selected.type === "charity" ? "bg-amber-500/15" :
+                  "bg-red-600/15"
                 }`}>
-                  {selected.type === "doctor" ? "🩺" : selected.type === "hospital" ? "🏥" : "💊"}
+                  {selected.type === "doctor" ? "🩺" :
+                   selected.type === "hospital" ? "🏥" :
+                   selected.type === "pharmacy" ? "💊" :
+                   selected.type === "lab" ? "🧪" :
+                   selected.type === "charity" ? "🤝" : "🚑"}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
