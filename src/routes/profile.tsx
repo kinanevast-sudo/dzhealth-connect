@@ -447,7 +447,7 @@ function Page() {
                           </div>
                           <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${st.cls}`}>{st.label}</span>
                         </div>
-                        <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground flex-row-reverse">
+                        <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
                           <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {dt.toLocaleDateString("ar-DZ")}</span>
                           <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {dt.toLocaleTimeString("ar-DZ", { hour: "2-digit", minute: "2-digit" })}</span>
                           <span>{a.visit_type === "online" ? "عن بعد" : "في العيادة"}</span>
