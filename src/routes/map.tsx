@@ -281,6 +281,7 @@ function MapPage() {
     { id: "labs", label: "مخابر", icon: FlaskConical, color: "bg-violet-500" },
     { id: "charities", label: "جمعيات", icon: HandHeart, color: "bg-amber-500" },
     { id: "ambulances", label: "إسعاف", icon: Truck, color: "bg-red-600" },
+    { id: "civil", label: "حماية مدنية", icon: Shield, color: "bg-orange-600" },
   ];
 
   const openExternalNav = () => {
