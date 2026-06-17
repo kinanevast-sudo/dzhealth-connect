@@ -160,15 +160,8 @@ function Page() {
     }
   };
 
-  const handleShare = async () => {
-    const text = `${profile?.full_name ?? "ملفي"} على DZHealth`;
-    if (navigator.share) {
-      navigator.share({ title: "ملفي الشخصي", text }).catch(() => null);
-    } else {
-      await navigator.clipboard.writeText(text);
-      toast.success("تم النسخ");
-    }
-  };
+
+
 
   const wilayaName = profile?.wilayas?.name_ar ?? "—";
   const selectedWilaya = wilayas.find((w) => w.id === form.wilaya_id);
