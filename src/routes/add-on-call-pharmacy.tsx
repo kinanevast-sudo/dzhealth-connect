@@ -21,6 +21,7 @@ function Page() {
   const [q, setQ] = useState("");
   const [pharmacyId, setPharmacyId] = useState<string | null>(null);
   const [date, setDate] = useState<string>(todayISO());
+  const [shift, setShift] = useState<"day" | "night" | "full">("full");
 
   const { data: pharmacies = [], isLoading } = useQuery({
     queryKey: ["pharmacies-picker"],
