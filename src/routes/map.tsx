@@ -252,6 +252,7 @@ function MapPage() {
       if (cat === "doctors") return it.type === "doctor";
       if (cat === "hospitals") return it.type === "hospital";
       if (cat === "pharmacies") return it.type === "pharmacy";
+      if (cat === "oncall") return it.type === "pharmacy" && it.onCall === true;
       if (cat === "labs") return it.type === "lab";
       if (cat === "charities") return it.type === "charity";
       if (cat === "ambulances") return it.type === "ambulance";
