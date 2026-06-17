@@ -433,8 +433,8 @@ function Page() {
                     const st = statusMap[a.status] ?? statusMap.pending;
                     return (
                       <div key={a.id} className="bg-card rounded-2xl border border-border p-4">
-                        <div className="flex items-start justify-between gap-3 flex-row-reverse">
-                          <div className="flex items-center gap-3 flex-row-reverse flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
                             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                               <Stethoscope className="w-5 h-5 text-primary" />
                             </div>
