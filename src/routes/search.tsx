@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Search as SearchIcon, ChevronUp, MapPin, Mic, Stethoscope, Star, Phone, BadgeCheck, Map as MapIcon } from "lucide-react";
-import { useState } from "react";
+import { Search as SearchIcon, ChevronUp, MapPin, Mic, Stethoscope, Star, Phone, BadgeCheck, Map as MapIcon, Navigation } from "lucide-react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { openMap } from "@/lib/map";
+import { sortByDistance } from "@/lib/geo";
 
 export const Route = createFileRoute("/search")({ component: Page });
 
@@ -14,6 +15,9 @@ const TYPES = [
   { id: "hospitals", label: "المستشفيات", icon: "🏥", color: "#3b82f6", bg: "#dbeafe" },
   { id: "pharmacies", label: "الصيدليات", icon: "💊", color: "#10b981", bg: "#d1fae5" },
   { id: "donors", label: "متبرعو الدم", icon: "🩸", color: "#ef4444", bg: "#fee2e2" },
+  { id: "labs", label: "مخابر التحاليل", icon: "🧪", color: "#7c3aed", bg: "#ede9fe" },
+  { id: "charities", label: "الجمعيات الخيرية", icon: "🤝", color: "#f59e0b", bg: "#fef3c7" },
+  { id: "ambulances", label: "سيارات الإسعاف", icon: "🚑", color: "#dc2626", bg: "#fee2e2" },
 ];
 
 const SUB = [
@@ -23,6 +27,8 @@ const SUB = [
   { id: "pharma", label: "الصيدليات", icon: "💊" },
 ];
 
+const SOON_TYPES = new Set(["labs", "charities", "ambulances"]);
+
 function Page() {
   const [q, setQ] = useState("");
   const [type, setType] = useState("doctors");
@@ -30,12 +36,24 @@ function Page() {
   const [wOpen, setWOpen] = useState(false);
   const [tOpen, setTOpen] = useState(false);
   const [wilaya, setWilaya] = useState<{ id: number; name_ar: string } | null>(null);
+  const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
+  const [sortNearest, setSortNearest] = useState(false);
+
+  useEffect(() => {
+    if (!sortNearest || origin || typeof navigator === "undefined" || !navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (p) => setOrigin({ lat: p.coords.latitude, lng: p.coords.longitude }),
+      () => setSortNearest(false),
+      { enableHighAccuracy: true, timeout: 8000 }
+    );
+  }, [sortNearest, origin]);
 
   const { data: wilayas = [] } = useQuery({
     queryKey: ["wilayas"],
     queryFn: async () => (await supabase.from("wilayas").select("id,name_ar").order("id")).data ?? [],
   });
 
+  const isSoon = SOON_TYPES.has(type);
   const table = type === "hospitals" ? "hospitals" : type === "pharmacies" ? "pharmacies" : type === "donors" ? "blood_donors" : "doctors";
   const nameCol = table === "doctors" ? "full_name" : table === "blood_donors" ? "full_name" : "name";
 
@@ -45,9 +63,10 @@ function Page() {
       ? `id,${nameCol},photo_url,phone,wilayas(name_ar),baladiyas(name_ar)`
       : `id,${nameCol},photo_url,phone,lat,lng,wilayas(name_ar),baladiyas(name_ar)`;
 
-  const { data: results = [] } = useQuery({
-    queryKey: ["search", table, q, wilaya?.id],
+  const { data: rawResults = [] } = useQuery({
+    queryKey: ["search", table, q, wilaya?.id, isSoon],
     queryFn: async () => {
+      if (isSoon) return [];
       let query: any = supabase.from(table as any).select(selectCols).limit(30);
       if (q) query = query.ilike(nameCol, `%${q}%`);
       if (wilaya?.id) query = query.eq("wilaya_id", wilaya.id);
@@ -55,6 +74,8 @@ function Page() {
       return data ?? [];
     },
   });
+
+  const results = sortNearest && origin ? sortByDistance(rawResults as any, origin) : rawResults;
 
   const detailBase = table === "doctors" ? "/doctors" : table === "hospitals" ? "/hospitals" : table === "pharmacies" ? "/pharmacies" : "/donors";
 
@@ -64,9 +85,7 @@ function Page() {
         <header className="px-5 pt-8 pb-3">
           <h1 className="text-2xl font-extrabold text-right">بحث</h1>
 
-          {/* Row: search input + wilaya pill */}
           <div className="mt-4 flex items-center gap-2">
-            {/* Search input (flex-1) */}
             <div className="relative flex-1 flex items-center rounded-2xl px-3 py-3" style={{ background: "#e0f2fe" }}>
               <SearchIcon className="h-4 w-4 shrink-0" style={{ color: "#64748b" }} />
               <input
@@ -79,7 +98,6 @@ function Page() {
                 <Mic className="h-3.5 w-3.5" style={{ color: "#0891b2" }} />
               </button>
             </div>
-            {/* Wilaya pill */}
             <button
               onClick={() => setWOpen((v) => !v)}
               className="shrink-0 flex items-center gap-1.5 rounded-2xl px-3 py-3"
@@ -91,7 +109,6 @@ function Page() {
             </button>
           </div>
 
-          {/* Wilaya dropdown */}
           {wOpen && (
             <div className="mt-2 max-h-64 overflow-y-auto rounded-2xl p-2 shadow-lg" style={{ background: "var(--card)", color: "var(--foreground)", border: "1px solid var(--border)" }}>
               <button
@@ -113,7 +130,6 @@ function Page() {
             </div>
           )}
 
-          {/* Type field (same design: internal icon + dropdown below the field) */}
           <div className="mt-3">
             <button
               onClick={() => setTOpen((v) => !v)}
@@ -137,7 +153,6 @@ function Page() {
             )}
           </div>
 
-          {/* Type chips */}
           <div dir="rtl" className="mt-3 flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
             {TYPES.map((t) => {
               const active = type === t.id;
@@ -153,17 +168,34 @@ function Page() {
               );
             })}
           </div>
+
+          <div className="mt-3 flex justify-end">
+            <button
+              onClick={() => setSortNearest((v) => !v)}
+              className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold"
+              style={sortNearest ? { background: "#0891b2", color: "white" } : { background: "#e0f2fe", color: "#0891b2" }}
+            >
+              <Navigation className="h-3.5 w-3.5" />
+              {sortNearest ? "مُرتّب حسب الأقرب" : "ترتيب حسب الأقرب"}
+            </button>
+          </div>
         </header>
 
-        {/* Results */}
         <section className="px-5 pb-24 space-y-3">
-          {results.length === 0 && (
+          {isSoon && (
+            <div className="rounded-2xl p-6 text-center" style={{ background: "var(--card)", border: "1px dashed var(--border)" }}>
+              <p className="text-sm font-bold mb-1">قيد التطوير</p>
+              <p className="text-xs text-muted-foreground">سيتم تفعيل هذا القسم قريباً</p>
+            </div>
+          )}
+          {!isSoon && results.length === 0 && (
             <p className="py-8 text-center text-sm text-muted-foreground">لا توجد نتائج</p>
           )}
           {results.map((r: any) => {
             const href = table === "doctors" ? `/doctors/${r.id}` : `${detailBase}/${r.id}`;
             const name = r[nameCol];
             const loc = `${r.wilayas?.name_ar ?? ""}${r.baladiyas?.name_ar ? ` - ${r.baladiyas.name_ar}` : ""}`;
+            const dist = r._distanceKm;
             return (
               <div key={r.id} className="rounded-2xl p-4" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
                 <a href={href} className="block">
@@ -194,7 +226,11 @@ function Page() {
                         </div>
                       )}
                       <div className="mt-2 flex items-center justify-between">
-                        {r.fee != null ? (
+                        {dist != null && isFinite(dist) ? (
+                          <span className="text-xs font-bold" style={{ color: "#0891b2" }}>
+                            {dist < 1 ? `${Math.round(dist * 1000)} م` : `${dist.toFixed(1)} كم`}
+                          </span>
+                        ) : r.fee != null ? (
                           <span className="text-xs font-bold" style={{ color: "#0891b2" }}>{r.fee} دج</span>
                         ) : <span />}
                         {r.rating != null && (
