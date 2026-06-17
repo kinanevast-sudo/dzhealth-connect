@@ -20,6 +20,7 @@ import { Route as HospitalsRouteImport } from './routes/hospitals'
 import { Route as HomeRouteImport } from './routes/home'
 import { Route as EquipmentRouteImport } from './routes/equipment'
 import { Route as DonorsRouteImport } from './routes/donors'
+import { Route as CivilProtectionRouteImport } from './routes/civil-protection'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AddPharmacyRouteImport } from './routes/add-pharmacy'
 import { Route as AddHospitalRouteImport } from './routes/add-hospital'
@@ -85,6 +86,11 @@ const EquipmentRoute = EquipmentRouteImport.update({
 const DonorsRoute = DonorsRouteImport.update({
   id: '/donors',
   path: '/donors',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CivilProtectionRoute = CivilProtectionRouteImport.update({
+  id: '/civil-protection',
+  path: '/civil-protection',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthRoute = AuthRouteImport.update({
@@ -153,6 +159,7 @@ export interface FileRoutesByFullPath {
   '/add-hospital': typeof AddHospitalRoute
   '/add-pharmacy': typeof AddPharmacyRoute
   '/auth': typeof AuthRoute
+  '/civil-protection': typeof CivilProtectionRoute
   '/donors': typeof DonorsRoute
   '/equipment': typeof EquipmentRoute
   '/home': typeof HomeRoute
@@ -177,6 +184,7 @@ export interface FileRoutesByTo {
   '/add-hospital': typeof AddHospitalRoute
   '/add-pharmacy': typeof AddPharmacyRoute
   '/auth': typeof AuthRoute
+  '/civil-protection': typeof CivilProtectionRoute
   '/donors': typeof DonorsRoute
   '/equipment': typeof EquipmentRoute
   '/home': typeof HomeRoute
@@ -202,6 +210,7 @@ export interface FileRoutesById {
   '/add-hospital': typeof AddHospitalRoute
   '/add-pharmacy': typeof AddPharmacyRoute
   '/auth': typeof AuthRoute
+  '/civil-protection': typeof CivilProtectionRoute
   '/donors': typeof DonorsRoute
   '/equipment': typeof EquipmentRoute
   '/home': typeof HomeRoute
@@ -228,6 +237,7 @@ export interface FileRouteTypes {
     | '/add-hospital'
     | '/add-pharmacy'
     | '/auth'
+    | '/civil-protection'
     | '/donors'
     | '/equipment'
     | '/home'
@@ -252,6 +262,7 @@ export interface FileRouteTypes {
     | '/add-hospital'
     | '/add-pharmacy'
     | '/auth'
+    | '/civil-protection'
     | '/donors'
     | '/equipment'
     | '/home'
@@ -276,6 +287,7 @@ export interface FileRouteTypes {
     | '/add-hospital'
     | '/add-pharmacy'
     | '/auth'
+    | '/civil-protection'
     | '/donors'
     | '/equipment'
     | '/home'
@@ -301,6 +313,7 @@ export interface RootRouteChildren {
   AddHospitalRoute: typeof AddHospitalRoute
   AddPharmacyRoute: typeof AddPharmacyRoute
   AuthRoute: typeof AuthRoute
+  CivilProtectionRoute: typeof CivilProtectionRoute
   DonorsRoute: typeof DonorsRoute
   EquipmentRoute: typeof EquipmentRoute
   HomeRoute: typeof HomeRoute
@@ -395,6 +408,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DonorsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/civil-protection': {
+      id: '/civil-protection'
+      path: '/civil-protection'
+      fullPath: '/civil-protection'
+      preLoaderRoute: typeof CivilProtectionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth': {
       id: '/auth'
       path: '/auth'
@@ -485,6 +505,7 @@ const rootRouteChildren: RootRouteChildren = {
   AddHospitalRoute: AddHospitalRoute,
   AddPharmacyRoute: AddPharmacyRoute,
   AuthRoute: AuthRoute,
+  CivilProtectionRoute: CivilProtectionRoute,
   DonorsRoute: DonorsRoute,
   EquipmentRoute: EquipmentRoute,
   HomeRoute: HomeRoute,

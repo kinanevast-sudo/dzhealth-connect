@@ -1,9 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
-import { Search as SearchIcon, ChevronUp, MapPin, Mic, Stethoscope, Star, Phone, BadgeCheck } from "lucide-react";
+import { Search as SearchIcon, ChevronUp, MapPin, Mic, Stethoscope, Star, Phone, BadgeCheck, Map as MapIcon } from "lucide-react";
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
+import { openMap } from "@/lib/map";
 
 export const Route = createFileRoute("/search")({ component: Page });
 
@@ -39,8 +40,10 @@ function Page() {
   const nameCol = table === "doctors" ? "full_name" : table === "blood_donors" ? "full_name" : "name";
 
   const selectCols = table === "doctors"
-    ? "id,full_name,photo_url,rating,reviews_count,fee,phone,verified,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)"
-    : `id,${nameCol},photo_url,phone,wilayas(name_ar),baladiyas(name_ar)`;
+    ? "id,full_name,photo_url,rating,reviews_count,fee,phone,verified,lat,lng,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)"
+    : table === "blood_donors"
+      ? `id,${nameCol},photo_url,phone,wilayas(name_ar),baladiyas(name_ar)`
+      : `id,${nameCol},photo_url,phone,lat,lng,wilayas(name_ar),baladiyas(name_ar)`;
 
   const { data: results = [] } = useQuery({
     queryKey: ["search", table, q, wilaya?.id],
@@ -206,9 +209,14 @@ function Page() {
                   </div>
                 </a>
                 <div className="mt-3 grid grid-cols-2 gap-2.5 border-t pt-3" style={{ borderColor: "var(--border)" }}>
-                  <a href={href} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0891b2" }}>
-                    احجز موعد
-                  </a>
+                  <button
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); openMap(r.lat, r.lng, `${name} ${loc}`.trim()); }}
+                    className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white"
+                    style={{ background: "#0891b2" }}
+                  >
+                    <MapIcon className="h-4 w-4" /> موقع على الخريطة
+                  </button>
                   <a href={r.phone ? `tel:${r.phone}` : "#"} onClick={(e) => { if (!r.phone) e.preventDefault(); }} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold" style={{ background: "#e0f2fe", color: "#0891b2" }}>
                     <Phone className="h-4 w-4" /> اتصال
                   </a>
