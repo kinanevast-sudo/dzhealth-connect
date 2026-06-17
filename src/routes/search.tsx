@@ -185,13 +185,7 @@ function Page() {
         </header>
 
         <section className="px-5 pb-24 space-y-3">
-          {isSoon && (
-            <div className="rounded-2xl p-6 text-center" style={{ background: "var(--card)", border: "1px dashed var(--border)" }}>
-              <p className="text-sm font-bold mb-1">قيد التطوير</p>
-              <p className="text-xs text-muted-foreground">سيتم تفعيل هذا القسم قريباً</p>
-            </div>
-          )}
-          {!isSoon && results.length === 0 && (
+          {results.length === 0 && (
             <p className="py-8 text-center text-sm text-muted-foreground">لا توجد نتائج</p>
           )}
           {results.map((r: any) => {
