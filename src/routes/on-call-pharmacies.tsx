@@ -118,7 +118,7 @@ function Card({ p, onMap }: { p: any; onMap: () => void }) {
           <div className="mt-2 flex items-center justify-between">
             {distLabel && <span className="text-xs font-bold" style={{ color: "#0891b2" }}>{distLabel}</span>}
             <div className="flex gap-1.5">
-              <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold bg-red-500/15 text-red-600">مناوبة اليوم</span>
+              <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold bg-red-500/15 text-red-600">{shiftLabel(p.shift_type)}</span>
               {p.is_24_7 && (
                 <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold" style={{ background: "color-mix(in oklab, var(--success) 25%, transparent)", color: "var(--success)" }}>24/7</span>
               )}
