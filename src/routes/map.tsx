@@ -331,7 +331,17 @@ function MapPage() {
                 position={[it.lat, it.lng]}
                 icon={ICONS[it.type]}
                 eventHandlers={{ click: () => setSelected(it) }}
-              />
+              >
+                <Tooltip direction="top" offset={[0, -18]} opacity={1} permanent={it.type === "civil"}>
+                  <span style={{ fontWeight: 700, fontSize: 11 }}>{it.name}</span>
+                </Tooltip>
+                <Popup>
+                  <div style={{ direction: "rtl", textAlign: "right", minWidth: 140 }}>
+                    <div style={{ fontWeight: 800, fontSize: 13 }}>{it.name}</div>
+                    <div style={{ fontSize: 11, color: "#64748b", marginTop: 2 }}>{it.subtitle}</div>
+                  </div>
+                </Popup>
+              </Marker>
             ))}
             {route && (
               <>
