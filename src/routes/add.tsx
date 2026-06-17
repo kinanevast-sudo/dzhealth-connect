@@ -13,9 +13,9 @@ const items: Item[] = [
   { icon: Droplet, label: "تسجيل متبرع جديد", to: "/add-donor", color: "#ef4444", bg: "#fee2e2" },
   { icon: Accessibility, label: "إضافة معدات طبية", to: "/add-equipment", color: "#8b5cf6", bg: "#ede9fe" },
   { icon: Shield, label: "إضافة مركز حماية مدنية", to: "/civil-protection", color: "#dc2626", bg: "#fee2e2", soon: true },
-  { icon: FlaskConical, label: "إضافة مخبر تحاليل", to: "/add", color: "#0ea5e9", bg: "#e0f2fe", soon: true },
-  { icon: HandHeart, label: "إضافة جمعية خيرية", to: "/add", color: "#f59e0b", bg: "#fef3c7", soon: true },
-  { icon: Truck, label: "إضافة سيارة إسعاف", to: "/add", color: "#f97316", bg: "#ffedd5", soon: true },
+  { icon: FlaskConical, label: "إضافة مخبر تحاليل", to: "/add-lab", color: "#0ea5e9", bg: "#e0f2fe", soon: true },
+  { icon: HandHeart, label: "إضافة جمعية خيرية", to: "/add-charity", color: "#f59e0b", bg: "#fef3c7", soon: true },
+  { icon: Truck, label: "إضافة سيارة إسعاف", to: "/add-ambulance", color: "#f97316", bg: "#ffedd5", soon: true },
 ];
 
 function Page() {
