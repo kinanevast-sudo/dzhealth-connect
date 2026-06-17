@@ -63,7 +63,7 @@ export function CivilProtectionSlider({ wilayaName }: { wilayaName?: string }) {
           <Shield className="w-4 h-4 text-red-600" />
           الحماية المدنية قريبة منك
         </h2>
-        <Link to="/search" className="text-primary text-xs font-medium flex items-center gap-1">
+        <Link to="/civil-protection" className="text-primary text-xs font-medium flex items-center gap-1">
           عرض الكل <ChevronLeft className="w-3 h-3" />
         </Link>
       </div>
