@@ -106,7 +106,7 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
                   {p.baladiyas?.name_ar ? `${p.baladiyas.name_ar} - ` : ""}{p.wilayas?.name_ar ?? ""}
                 </p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-green-600 text-white">مناوبة اليوم</span>
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-green-600 text-white">{shiftLabel(p.shift_type)}</span>
                   {dist && <span className="text-[11px] font-bold text-green-200">{dist}</span>}
                 </div>
               </div>
