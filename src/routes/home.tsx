@@ -487,26 +487,3 @@ function DoctorRow({ d, showDistanceAsPrice = false }: { d: any; showDistanceAsP
   );
 }
 
-function DoctorCompact({ d }: { d: any }) {
-  return (
-    <Link to="/doctors/$id" params={{ id: d.id }} className="block bg-card rounded-2xl border border-border p-3 h-full">
-      <div className="flex flex-col items-center text-center gap-2">
-        {d.photo_url ? (
-          <img src={d.photo_url} alt={d.full_name} className="h-16 w-16 rounded-2xl object-cover" />
-        ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary text-xl font-bold">د</div>
-        )}
-        <h3 className="text-sm font-bold text-foreground line-clamp-1">{d.full_name}</h3>
-        <p className="text-[11px] text-primary font-semibold line-clamp-1">{d.specialties?.name_ar}</p>
-        <div className="flex items-center gap-1 text-[11px]">
-          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-          <span className="font-bold">{d.rating}</span>
-          <span className="text-muted-foreground">({d.reviews_count})</span>
-        </div>
-        {fmtKm(d._distanceKm) && (
-          <span className="text-[10px] font-bold text-primary">{fmtKm(d._distanceKm)}</span>
-        )}
-      </div>
-    </Link>
-  );
-}
