@@ -14,6 +14,7 @@ const TYPES = [
   { id: "doctors", label: "الأطباء", icon: "👨‍⚕️", color: "#0891b2", bg: "#0891b2" },
   { id: "hospitals", label: "المستشفيات", icon: "🏥", color: "#3b82f6", bg: "#dbeafe" },
   { id: "pharmacies", label: "الصيدليات", icon: "💊", color: "#10b981", bg: "#d1fae5" },
+  { id: "oncall", label: "صيدليات مناوبة", icon: "🕒", color: "#16a34a", bg: "#dcfce7" },
   { id: "donors", label: "متبرعو الدم", icon: "🩸", color: "#ef4444", bg: "#fee2e2" },
   { id: "labs", label: "مخابر التحاليل", icon: "🧪", color: "#7c3aed", bg: "#ede9fe" },
   { id: "charities", label: "الجمعيات الخيرية", icon: "🤝", color: "#f59e0b", bg: "#fef3c7" },
