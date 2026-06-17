@@ -67,7 +67,7 @@ function Page() {
   };
 
   return (
-    <FormShell title="تسجيل صيدلية مناوبة" onSubmit={submit} submitting={submitting} submitLabel="تسجيل المناوبة">
+    <FormShell title="تسجيل صيدلية مناوبة" onSubmit={submit} submitting={submitting}>
       <Field label="تاريخ المناوبة *">
         <input type="date" className={inputCls} value={date} onChange={(e) => setDate(e.target.value)} required />
         <p className="mt-1 text-[11px] text-muted-foreground">الافتراضي اليوم. الصيدلية تبقى مسجلة مرة واحدة فقط، ويتم إنشاء سجل مناوبة لكل تاريخ.</p>
