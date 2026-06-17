@@ -40,8 +40,8 @@ function Page() {
   const nameCol = table === "doctors" ? "full_name" : table === "blood_donors" ? "full_name" : "name";
 
   const selectCols = table === "doctors"
-    ? "id,full_name,photo_url,rating,reviews_count,fee,phone,verified,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)"
-    : `id,${nameCol},photo_url,phone,wilayas(name_ar),baladiyas(name_ar)`;
+    ? "id,full_name,photo_url,rating,reviews_count,fee,phone,verified,lat,lng,specialties(name_ar),wilayas(name_ar),baladiyas(name_ar)"
+    : `id,${nameCol},photo_url,phone,lat,lng,wilayas(name_ar),baladiyas(name_ar)`;
 
   const { data: results = [] } = useQuery({
     queryKey: ["search", table, q, wilaya?.id],
