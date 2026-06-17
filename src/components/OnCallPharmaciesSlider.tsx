@@ -19,7 +19,7 @@ function todayISO() {
 function shiftLabel(st?: string) {
   if (st === "day") return "صباحية من 08:00 إلى 19:00";
   if (st === "night") return "مسائية من 19:00 إلى 08:00";
-  return "24 ساعة من 00:00 إلى 23:59";
+  return "24/24";
 }
 
 function fmtKm(km?: number) {
@@ -111,7 +111,7 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex flex-col gap-1.5 shrink-0">
               {p.phone && (
                 <a href={`tel:${p.phone}`} onClick={(e) => e.stopPropagation()} className="w-10 h-10 rounded-xl bg-green-600 text-white flex items-center justify-center active:scale-95" aria-label="اتصال">
                   <Phone className="w-4 h-4" />
