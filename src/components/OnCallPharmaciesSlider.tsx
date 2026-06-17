@@ -16,9 +16,10 @@ function todayISO() {
   return `${d.getFullYear()}-${m}-${day}`;
 }
 
-function fmtKm(km?: number) {
-  if (km == null || !isFinite(km)) return null;
-  return km < 1 ? `${Math.round(km * 1000)} م` : `${km.toFixed(1)} كم`;
+function shiftLabel(st?: string) {
+  if (st === "day") return "صباحية من 08:00 إلى 19:00";
+  if (st === "night") return "مسائية من 19:00 إلى 08:00";
+  return "24/24";
 }
 
 export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng: number } | null }) {
