@@ -13,6 +13,7 @@ import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import { sortByDistance } from "@/lib/geo";
 import { nearestWilaya } from "@/lib/wilayas-coords";
 import { BloodRequestsSlider } from "@/components/BloodRequestsSlider";
+import { CivilProtectionSlider } from "@/components/CivilProtectionSlider";
 import { getAvatarUrl } from "@/lib/storage";
 
 export const Route = createFileRoute("/home")({ component: Home });
@@ -331,20 +332,32 @@ function Home() {
             )}
           </motion.section>
 
-          {/* Nearby doctors — horizontal */}
+          {/* Nearby doctors — same style as featured, distance instead of fee */}
           <motion.section variants={itemVariants}>
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-black text-base text-foreground">أطباء قريبون</h2>
-              <Link to="/doctors" className="flex items-center gap-1 text-primary text-xs font-medium">عرض الكل</Link>
+              <Link to="/doctors" className="flex items-center gap-1 text-primary text-xs font-medium">
+                عرض الكل <ChevronRight className="w-3 h-3 rotate-180" />
+              </Link>
             </div>
-            <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4" style={{ scrollbarWidth: "none" }}>
-              {nearbyDoctors.map((doc) => (
-                <div key={doc.id} className="min-w-[200px] max-w-[200px]">
-                  <DoctorCompact d={doc} />
-                </div>
+            <div className="space-y-3">
+              {nearbyDoctors.slice(0, 3).map((doc, i) => (
+                <motion.div
+                  key={doc.id}
+                  initial={{ opacity: 0, x: 20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.05 + i * 0.07, duration: 0.35 }}
+                >
+                  <DoctorRow d={doc} showDistanceAsPrice />
+                </motion.div>
               ))}
             </div>
           </motion.section>
+
+          {/* Civil protection nearby */}
+          <motion.div variants={itemVariants}>
+            <CivilProtectionSlider wilayaName={locationLabel.wilaya} />
+          </motion.div>
 
           {/* Nearby hospitals */}
           <motion.section variants={itemVariants}>
@@ -429,7 +442,8 @@ function Home() {
   );
 }
 
-function DoctorRow({ d }: { d: any }) {
+function DoctorRow({ d, showDistanceAsPrice = false }: { d: any; showDistanceAsPrice?: boolean }) {
+  const dist = fmtKm(d._distanceKm);
   return (
     <Link to="/doctors/$id" params={{ id: d.id }} className="block bg-card rounded-2xl border border-border p-3 active:scale-[0.98] transition">
       <div className="flex items-start gap-3">
@@ -451,9 +465,6 @@ function DoctorRow({ d }: { d: any }) {
           <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
             <MapPin className="h-3 w-3" />
             <span>{d.wilayas?.name_ar}{d.baladiyas?.name_ar ? ` - ${d.baladiyas.name_ar}` : ""}</span>
-            {fmtKm(d._distanceKm) && (
-              <span className="rounded-full px-1.5 py-0.5 text-[10px] font-bold bg-primary/10 text-primary">{fmtKm(d._distanceKm)}</span>
-            )}
           </div>
           <div className="mt-2 flex items-center justify-between">
             <div className="flex items-center gap-1 text-xs">
@@ -461,7 +472,14 @@ function DoctorRow({ d }: { d: any }) {
               <span className="font-bold">{d.rating}</span>
               <span className="text-muted-foreground">({d.reviews_count})</span>
             </div>
-            <span className="text-xs font-bold text-primary">{d.fee} دج</span>
+            {showDistanceAsPrice ? (
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[11px] font-black text-primary">
+                <MapPin className="h-3 w-3" />
+                {dist ?? "—"}
+              </span>
+            ) : (
+              <span className="text-xs font-bold text-primary">{d.fee} دج</span>
+            )}
           </div>
         </div>
       </div>
@@ -469,26 +487,3 @@ function DoctorRow({ d }: { d: any }) {
   );
 }
 
-function DoctorCompact({ d }: { d: any }) {
-  return (
-    <Link to="/doctors/$id" params={{ id: d.id }} className="block bg-card rounded-2xl border border-border p-3 h-full">
-      <div className="flex flex-col items-center text-center gap-2">
-        {d.photo_url ? (
-          <img src={d.photo_url} alt={d.full_name} className="h-16 w-16 rounded-2xl object-cover" />
-        ) : (
-          <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 text-primary text-xl font-bold">د</div>
-        )}
-        <h3 className="text-sm font-bold text-foreground line-clamp-1">{d.full_name}</h3>
-        <p className="text-[11px] text-primary font-semibold line-clamp-1">{d.specialties?.name_ar}</p>
-        <div className="flex items-center gap-1 text-[11px]">
-          <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-          <span className="font-bold">{d.rating}</span>
-          <span className="text-muted-foreground">({d.reviews_count})</span>
-        </div>
-        {fmtKm(d._distanceKm) && (
-          <span className="text-[10px] font-bold text-primary">{fmtKm(d._distanceKm)}</span>
-        )}
-      </div>
-    </Link>
-  );
-}
