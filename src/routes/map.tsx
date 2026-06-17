@@ -149,6 +149,33 @@ function MapPage() {
       return data ?? [];
     },
   });
+  const { data: labs = [] } = useQuery({
+    queryKey: ["map-labs"],
+    queryFn: async () => {
+      const { data } = await (supabase.from as any)("labs")
+        .select("id,name,phone,lat,lng,wilayas(name_ar)")
+        .not("lat", "is", null).not("lng", "is", null).limit(200);
+      return data ?? [];
+    },
+  });
+  const { data: charities = [] } = useQuery({
+    queryKey: ["map-charities"],
+    queryFn: async () => {
+      const { data } = await (supabase.from as any)("charities")
+        .select("id,name,phone,lat,lng,wilayas(name_ar)")
+        .not("lat", "is", null).not("lng", "is", null).limit(200);
+      return data ?? [];
+    },
+  });
+  const { data: ambulances = [] } = useQuery({
+    queryKey: ["map-ambulances"],
+    queryFn: async () => {
+      const { data } = await (supabase.from as any)("ambulances")
+        .select("id,name,phone,lat,lng,is_24_7,wilayas(name_ar)")
+        .not("lat", "is", null).not("lng", "is", null).limit(200);
+      return data ?? [];
+    },
+  });
 
   const allItems: Item[] = useMemo(() => {
     const arr: Item[] = [];
@@ -168,8 +195,23 @@ function MapPage() {
       subtitle: (p.is_24_7 ? "صيدلية 24/7 · " : "صيدلية · ") + (p.wilayas?.name_ar ?? ""),
       lat: p.lat, lng: p.lng, phone: p.phone, detailLink: `/pharmacies`,
     });
+    for (const l of labs as any[]) arr.push({
+      id: `l-${l.id}`, type: "lab", name: l.name,
+      subtitle: "مخبر تحاليل · " + (l.wilayas?.name_ar ?? ""),
+      lat: l.lat, lng: l.lng, phone: l.phone, detailLink: `/search`,
+    });
+    for (const c of charities as any[]) arr.push({
+      id: `c-${c.id}`, type: "charity", name: c.name,
+      subtitle: "جمعية خيرية · " + (c.wilayas?.name_ar ?? ""),
+      lat: c.lat, lng: c.lng, phone: c.phone, detailLink: `/search`,
+    });
+    for (const a of ambulances as any[]) arr.push({
+      id: `a-${a.id}`, type: "ambulance", name: a.name,
+      subtitle: (a.is_24_7 ? "إسعاف 24/7 · " : "إسعاف · ") + (a.wilayas?.name_ar ?? ""),
+      lat: a.lat, lng: a.lng, phone: a.phone, detailLink: `/search`,
+    });
     return arr;
-  }, [doctors, hospitals, pharmacies]);
+  }, [doctors, hospitals, pharmacies, labs, charities, ambulances]);
 
   // Filter by category + sort by real distance and keep nearest 50
   const items: Item[] = useMemo(() => {
@@ -177,7 +219,11 @@ function MapPage() {
       if (cat === "all") return true;
       if (cat === "doctors") return it.type === "doctor";
       if (cat === "hospitals") return it.type === "hospital";
-      return it.type === "pharmacy";
+      if (cat === "pharmacies") return it.type === "pharmacy";
+      if (cat === "labs") return it.type === "lab";
+      if (cat === "charities") return it.type === "charity";
+      if (cat === "ambulances") return it.type === "ambulance";
+      return true;
     });
     if (!origin) return filtered;
     return filtered
