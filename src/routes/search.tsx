@@ -209,9 +209,14 @@ function Page() {
                   </div>
                 </a>
                 <div className="mt-3 grid grid-cols-2 gap-2.5 border-t pt-3" style={{ borderColor: "var(--border)" }}>
-                  <a href={href} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0891b2" }}>
-                    احجز موعد
-                  </a>
+                  <button
+                    type="button"
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); openMap(r.lat, r.lng, `${name} ${loc}`.trim()); }}
+                    className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white"
+                    style={{ background: "#0891b2" }}
+                  >
+                    <MapIcon className="h-4 w-4" /> موقع على الخريطة
+                  </button>
                   <a href={r.phone ? `tel:${r.phone}` : "#"} onClick={(e) => { if (!r.phone) e.preventDefault(); }} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold" style={{ background: "#e0f2fe", color: "#0891b2" }}>
                     <Phone className="h-4 w-4" /> اتصال
                   </a>
