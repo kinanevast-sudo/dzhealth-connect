@@ -85,7 +85,9 @@ function Home() {
           .select("full_name,avatar_url,lat,lng,wilaya_id,wilayas(name_ar),baladiyas(name_ar)")
           .eq("user_id", u.user.id).maybeSingle();
         if (p?.full_name) setDisplayName(String(p.full_name).split(" ")[0]);
-        if (p?.avatar_url) setAvatarUrl(p.avatar_url);
+        if (p?.avatar_url) {
+          try { setAvatarUrl(await getAvatarUrl(p.avatar_url)); } catch { setAvatarUrl(null); }
+        }
         if (p?.lat && p?.lng) profileLoc = { lat: p.lat, lng: p.lng };
         if ((p as any)?.wilaya_id) profileWilayaId = (p as any).wilaya_id;
         profileLabel = {
