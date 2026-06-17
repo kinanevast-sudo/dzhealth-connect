@@ -14,6 +14,7 @@ import { Route as SearchRouteImport } from './routes/search'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PharmaciesRouteImport } from './routes/pharmacies'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
+import { Route as OnCallPharmaciesRouteImport } from './routes/on-call-pharmacies'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as NearbyDoctorsRouteImport } from './routes/nearby-doctors'
 import { Route as MapRouteImport } from './routes/map'
@@ -61,6 +62,11 @@ const PharmaciesRoute = PharmaciesRouteImport.update({
 const OnboardingRoute = OnboardingRouteImport.update({
   id: '/onboarding',
   path: '/onboarding',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OnCallPharmaciesRoute = OnCallPharmaciesRouteImport.update({
+  id: '/on-call-pharmacies',
+  path: '/on-call-pharmacies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NotificationsRoute = NotificationsRouteImport.update({
@@ -201,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/map': typeof MapRoute
   '/nearby-doctors': typeof NearbyDoctorsRoute
   '/notifications': typeof NotificationsRoute
+  '/on-call-pharmacies': typeof OnCallPharmaciesRoute
   '/onboarding': typeof OnboardingRoute
   '/pharmacies': typeof PharmaciesRoute
   '/profile': typeof ProfileRoute
@@ -231,6 +238,7 @@ export interface FileRoutesByTo {
   '/map': typeof MapRoute
   '/nearby-doctors': typeof NearbyDoctorsRoute
   '/notifications': typeof NotificationsRoute
+  '/on-call-pharmacies': typeof OnCallPharmaciesRoute
   '/onboarding': typeof OnboardingRoute
   '/pharmacies': typeof PharmaciesRoute
   '/profile': typeof ProfileRoute
@@ -262,6 +270,7 @@ export interface FileRoutesById {
   '/map': typeof MapRoute
   '/nearby-doctors': typeof NearbyDoctorsRoute
   '/notifications': typeof NotificationsRoute
+  '/on-call-pharmacies': typeof OnCallPharmaciesRoute
   '/onboarding': typeof OnboardingRoute
   '/pharmacies': typeof PharmaciesRoute
   '/profile': typeof ProfileRoute
@@ -294,6 +303,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/nearby-doctors'
     | '/notifications'
+    | '/on-call-pharmacies'
     | '/onboarding'
     | '/pharmacies'
     | '/profile'
@@ -324,6 +334,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/nearby-doctors'
     | '/notifications'
+    | '/on-call-pharmacies'
     | '/onboarding'
     | '/pharmacies'
     | '/profile'
@@ -354,6 +365,7 @@ export interface FileRouteTypes {
     | '/map'
     | '/nearby-doctors'
     | '/notifications'
+    | '/on-call-pharmacies'
     | '/onboarding'
     | '/pharmacies'
     | '/profile'
@@ -385,6 +397,7 @@ export interface RootRouteChildren {
   MapRoute: typeof MapRoute
   NearbyDoctorsRoute: typeof NearbyDoctorsRoute
   NotificationsRoute: typeof NotificationsRoute
+  OnCallPharmaciesRoute: typeof OnCallPharmaciesRoute
   OnboardingRoute: typeof OnboardingRoute
   PharmaciesRoute: typeof PharmaciesRoute
   ProfileRoute: typeof ProfileRoute
@@ -429,6 +442,13 @@ declare module '@tanstack/react-router' {
       path: '/onboarding'
       fullPath: '/onboarding'
       preLoaderRoute: typeof OnboardingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/on-call-pharmacies': {
+      id: '/on-call-pharmacies'
+      path: '/on-call-pharmacies'
+      fullPath: '/on-call-pharmacies'
+      preLoaderRoute: typeof OnCallPharmaciesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/notifications': {
@@ -617,6 +637,7 @@ const rootRouteChildren: RootRouteChildren = {
   MapRoute: MapRoute,
   NearbyDoctorsRoute: NearbyDoctorsRoute,
   NotificationsRoute: NotificationsRoute,
+  OnCallPharmaciesRoute: OnCallPharmaciesRoute,
   OnboardingRoute: OnboardingRoute,
   PharmaciesRoute: PharmaciesRoute,
   ProfileRoute: ProfileRoute,
