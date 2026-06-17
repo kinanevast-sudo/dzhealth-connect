@@ -861,6 +861,7 @@ export type Database = {
           id: string
           on_call_date: string
           pharmacy_id: string
+          shift_type: Database["public"]["Enums"]["pharmacy_shift_type"]
         }
         Insert: {
           created_at?: string
@@ -868,6 +869,7 @@ export type Database = {
           id?: string
           on_call_date?: string
           pharmacy_id: string
+          shift_type?: Database["public"]["Enums"]["pharmacy_shift_type"]
         }
         Update: {
           created_at?: string
@@ -875,6 +877,7 @@ export type Database = {
           id?: string
           on_call_date?: string
           pharmacy_id?: string
+          shift_type?: Database["public"]["Enums"]["pharmacy_shift_type"]
         }
         Relationships: [
           {
@@ -1102,6 +1105,7 @@ export type Database = {
       blood_request_status: "open" | "fulfilled" | "cancelled"
       blood_type: "O+" | "O-" | "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-"
       blood_urgency: "normal" | "urgent" | "critical"
+      pharmacy_shift_type: "day" | "night" | "full"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1234,6 +1238,7 @@ export const Constants = {
       blood_request_status: ["open", "fulfilled", "cancelled"],
       blood_type: ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"],
       blood_urgency: ["normal", "urgent", "critical"],
+      pharmacy_shift_type: ["day", "night", "full"],
     },
   },
 } as const
