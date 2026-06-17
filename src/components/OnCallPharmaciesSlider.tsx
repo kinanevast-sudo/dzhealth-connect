@@ -43,7 +43,25 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
     return () => clearInterval(t);
   }, [sorted.length]);
 
-  if (sorted.length === 0) return null;
+  if (sorted.length === 0) {
+    return (
+      <section>
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="font-black text-base text-foreground flex items-center gap-1.5">
+            <Clock className="w-4 h-4 text-green-600" />
+            الصيدليات المناوبة اليوم
+          </h2>
+          <Link to="/on-call-pharmacies" className="text-primary text-xs font-medium flex items-center gap-1">
+            عرض الكل <ChevronLeft className="w-3 h-3" />
+          </Link>
+        </div>
+        <div className="bg-card border border-border rounded-2xl px-4 py-6 text-center">
+          <Pill className="w-8 h-8 text-muted-foreground mx-auto mb-2 opacity-50" />
+          <p className="text-sm text-muted-foreground">لا توجد صيدليات مناوبة مسجلة لهذا اليوم</p>
+        </div>
+      </section>
+    );
+  }
   const p: any = sorted[index % sorted.length];
   const dist = fmtKm(p._distanceKm);
 
