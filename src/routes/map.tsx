@@ -186,6 +186,19 @@ function MapPage() {
       return data ?? [];
     },
   });
+  const todayISO = (() => {
+    const d = new Date();
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  })();
+  const { data: onCallIds = [] } = useQuery({
+    queryKey: ["map-oncall-ids", todayISO],
+    queryFn: async () => {
+      const { data } = await (supabase.from as any)("pharmacy_on_call")
+        .select("pharmacy_id").eq("on_call_date", todayISO);
+      return new Set((data ?? []).map((r: any) => r.pharmacy_id));
+    },
+    staleTime: 60_000,
+  });
 
   const allItems: Item[] = useMemo(() => {
     const arr: Item[] = [];
