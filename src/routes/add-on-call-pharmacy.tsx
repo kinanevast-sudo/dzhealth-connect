@@ -75,6 +75,30 @@ function Page() {
         <p className="mt-1 text-[11px] text-muted-foreground">الافتراضي اليوم. الصيدلية تبقى مسجلة مرة واحدة فقط، ويتم إنشاء سجل مناوبة لكل تاريخ.</p>
       </Field>
 
+      <Field label="فترة المناوبة *">
+        <div className="grid grid-cols-3 gap-2">
+          {([
+            { v: "day", label: "نهارية", hint: "08:00 - 19:00" },
+            { v: "night", label: "ليلية", hint: "19:00 - 08:00" },
+            { v: "full", label: "24/24", hint: "نهار وليل" },
+          ] as const).map((o) => {
+            const active = shift === o.v;
+            return (
+              <button
+                key={o.v}
+                type="button"
+                onClick={() => setShift(o.v)}
+                className={`rounded-xl border px-2 py-2.5 text-center transition ${active ? "bg-green-500/10 border-green-500" : "bg-background border-border"}`}
+              >
+                <p className="text-xs font-bold">{o.label}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{o.hint}</p>
+              </button>
+            );
+          })}
+        </div>
+      </Field>
+
+
       <div className="bg-card rounded-2xl border border-border p-4 space-y-3">
         <div className="flex items-center justify-between">
           <p className="text-sm font-semibold">اختر الصيدلية *</p>
