@@ -243,7 +243,7 @@ function MapPage() {
       lat: cv.lat, lng: cv.lng, phone: cv.phone, detailLink: `/civil-protection`,
     });
     return arr;
-  }, [doctors, hospitals, pharmacies, labs, charities, ambulances, civils]);
+  }, [doctors, hospitals, pharmacies, labs, charities, ambulances, civils, onCallIds]);
 
   // Filter by category + sort by real distance and keep nearest 50
   const items: Item[] = useMemo(() => {
