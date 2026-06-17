@@ -238,6 +238,7 @@ function MapPage() {
       if (cat === "labs") return it.type === "lab";
       if (cat === "charities") return it.type === "charity";
       if (cat === "ambulances") return it.type === "ambulance";
+      if (cat === "civil") return it.type === "civil";
       return true;
     });
     if (!origin) return filtered;
