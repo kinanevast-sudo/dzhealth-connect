@@ -189,7 +189,7 @@ function Page() {
             <p className="py-8 text-center text-sm text-muted-foreground">لا توجد نتائج</p>
           )}
           {results.map((r: any) => {
-            const href = table === "doctors" ? `/doctors/${r.id}` : `${detailBase}/${r.id}`;
+            const href = detailBase ? `${detailBase}/${r.id}` : "#";
             const name = r[nameCol];
             const loc = `${r.wilayas?.name_ar ?? ""}${r.baladiyas?.name_ar ? ` - ${r.baladiyas.name_ar}` : ""}`;
             const dist = r._distanceKm;
