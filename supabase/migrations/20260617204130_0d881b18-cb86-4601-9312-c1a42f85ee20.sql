@@ -1,0 +1,1 @@
+ALTER TABLE public.pharmacy_on_call ADD COLUMN IF NOT EXISTS created_by uuid REFERENCES auth.users(id) ON DELETE SET NULL;
