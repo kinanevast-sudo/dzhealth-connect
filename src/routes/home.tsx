@@ -332,7 +332,7 @@ function Home() {
             )}
           </motion.section>
 
-          {/* Nearby doctors — same style as featured, distance instead of fee */}
+          {/* Nearby doctors — horizontal scroll, real GPS distance */}
           <motion.section variants={itemVariants}>
             <div className="flex items-center justify-between mb-3">
               <h2 className="font-black text-base text-foreground">أطباء قريبون</h2>
@@ -340,17 +340,22 @@ function Home() {
                 عرض الكل <ChevronRight className="w-3 h-3 rotate-180" />
               </Link>
             </div>
-            <div className="space-y-3">
-              {nearbyDoctors.slice(0, 3).map((doc, i) => (
-                <motion.div
-                  key={doc.id}
-                  initial={{ opacity: 0, x: 20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.05 + i * 0.07, duration: 0.35 }}
-                >
-                  <DoctorRow d={doc} showDistanceAsPrice />
-                </motion.div>
-              ))}
+            <div className="-mx-4 px-4 overflow-x-auto scrollbar-hide">
+              <div className="flex gap-3 pb-1" style={{ width: "max-content" }}>
+                {nearbyDoctors.map((doc: any, i: number) => (
+                  <motion.div
+                    key={doc.id}
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.05 + i * 0.05, duration: 0.3 }}
+                  >
+                    <DoctorNearbyCard d={doc} />
+                  </motion.div>
+                ))}
+                {nearbyDoctors.length === 0 && !isLoading && (
+                  <div className="text-xs text-muted-foreground py-8 px-4">لا يوجد أطباء قريبون</div>
+                )}
+              </div>
             </div>
           </motion.section>
 
