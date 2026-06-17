@@ -67,7 +67,7 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
             transition={{ duration: 0.45 }}
             className="relative bg-gradient-to-br from-green-700/30 via-emerald-900/70 to-teal-900/40 border border-green-600/50 rounded-2xl px-4 py-3 ring-2 ring-green-500/30 shadow-[0_8px_40px_-8px_rgba(34,197,94,0.45)]"
           >
-            <div className="flex items-center justify-between gap-3">
+            <Link to="/pharmacies/$id" params={{ id: p.id }} className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shrink-0 border-2 border-green-600/60">
                   <Pill className="w-6 h-6 text-green-600" />
@@ -86,15 +86,15 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
               </div>
               <div className="flex flex-col gap-1.5 shrink-0">
                 {p.phone && (
-                  <a href={`tel:${p.phone}`} className="w-10 h-10 rounded-xl bg-green-600 text-white flex items-center justify-center active:scale-95" aria-label="اتصال">
+                  <a href={`tel:${p.phone}`} onClick={(e) => e.stopPropagation()} className="w-10 h-10 rounded-xl bg-green-600 text-white flex items-center justify-center active:scale-95" aria-label="اتصال">
                     <Phone className="w-4 h-4" />
                   </a>
                 )}
-                <button onClick={() => openMap(p.lat, p.lng, p.name)} className="w-10 h-10 rounded-xl bg-cyan-700 text-white flex items-center justify-center active:scale-95" aria-label="الخريطة">
+                <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); openMap(p.lat, p.lng, p.name); }} className="w-10 h-10 rounded-xl bg-cyan-700 text-white flex items-center justify-center active:scale-95" aria-label="الخريطة">
                   <MapIcon className="w-4 h-4" />
                 </button>
               </div>
-            </div>
+            </Link>
           </motion.div>
         </AnimatePresence>
 

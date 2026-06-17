@@ -93,7 +93,7 @@ function Card({ p, onMap }: { p: any; onMap: () => void }) {
   const dist = p._distanceKm;
   const distLabel = dist != null && isFinite(dist) ? (dist < 1 ? `${Math.round(dist * 1000)} م` : `${dist.toFixed(1)} كم`) : null;
   return (
-    <Link to="/pharmacies" className="block rounded-2xl p-4 active:scale-[0.98] transition" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
+    <Link to="/pharmacies/$id" params={{ id: p.id }} className="block rounded-2xl p-4 active:scale-[0.98] transition" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
       <div className="flex items-start gap-3">
         {p.photo_url ? (
           <img src={p.photo_url} alt={p.name} loading="lazy" className="h-20 w-20 rounded-2xl object-cover" />
