@@ -63,7 +63,7 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
         <AnimatePresence mode="wait">
           <MotionLink
             to="/pharmacies/$id"
-            params={{ id: p.id }}
+            params={{ id: p.id } as any}
             key={p.id}
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
