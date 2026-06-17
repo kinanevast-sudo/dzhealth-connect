@@ -533,3 +533,24 @@ function RatingsTab({ doctor }: { doctor: any }) {
     </>
   );
 }
+
+function BioSection({ about }: { about: string }) {
+  const [expanded, setExpanded] = useState(false);
+  const LIMIT = 180;
+  const isLong = about.length > LIMIT;
+  const shown = !isLong || expanded ? about : about.slice(0, LIMIT) + "…";
+  return (
+    <section className="bg-card rounded-2xl border border-border p-4 text-right">
+      <h2 className="font-bold text-sm text-muted-foreground mb-2">نبذة عن الطبيب</h2>
+      <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{shown}</p>
+      {isLong && (
+        <button
+          onClick={() => setExpanded((v) => !v)}
+          className="mt-2 text-xs font-bold text-primary hover:underline"
+        >
+          {expanded ? "عرض أقل" : "عرض المزيد"}
+        </button>
+      )}
+    </section>
+  );
+}
