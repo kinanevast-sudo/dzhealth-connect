@@ -16,7 +16,7 @@ import { haversineKm } from "@/lib/geo";
 
 export const Route = createFileRoute("/map")({ component: MapPage, ssr: false });
 
-type Cat = "all" | "doctors" | "hospitals" | "pharmacies" | "labs" | "charities" | "ambulances";
+type Cat = "all" | "doctors" | "hospitals" | "pharmacies" | "labs" | "charities" | "ambulances" | "civil";
 type Profile = "driving" | "foot";
 
 function createIcon(color: string, emoji: string) {
