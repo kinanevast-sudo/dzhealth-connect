@@ -340,7 +340,7 @@ function Home() {
                 عرض الكل <ChevronRight className="w-3 h-3 rotate-180" />
               </Link>
             </div>
-            <div className="-mx-4 px-4 overflow-x-auto scrollbar-hide">
+            <div className="-mx-4 px-4 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
               <div className="flex gap-3 pb-1" style={{ width: "max-content" }}>
                 {nearbyDoctors.map((doc: any, i: number) => (
                   <motion.div
