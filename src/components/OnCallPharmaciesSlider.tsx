@@ -28,9 +28,9 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
     queryKey: ["on-call-home", todayISO()],
     queryFn: async () => {
       const { data } = await (supabase.from as any)("pharmacy_on_call")
-        .select("pharmacies(id,name,phone,lat,lng,is_24_7,wilayas(name_ar),baladiyas(name_ar))")
+        .select("shift_type, pharmacies(id,name,phone,lat,lng,is_24_7,wilayas(name_ar),baladiyas(name_ar))")
         .eq("on_call_date", todayISO());
-      return (data ?? []).map((r: any) => r.pharmacies).filter(Boolean);
+      return (data ?? []).map((r: any) => ({ ...r.pharmacies, shift_type: r.shift_type })).filter((x: any) => x.id);
     },
     staleTime: 60_000,
   });
