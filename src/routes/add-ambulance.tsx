@@ -1,7 +1,8 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
 import { Truck } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { CascadingLocation } from "@/components/CascadingLocation";
 import { FormShell, Field, inputCls } from "@/components/FormShell";
 import { ImageUploader } from "@/components/ImageUploader";
@@ -10,6 +11,7 @@ import { LocationPickerField } from "@/components/LocationPickerField";
 export const Route = createFileRoute("/add-ambulance")({ component: Page, ssr: false });
 
 function Page() {
+  const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [f, setF] = useState({
@@ -22,17 +24,25 @@ function Page() {
     e.preventDefault();
     if (!f.name || !f.phone) { toast.error("املأ الحقول الأساسية"); return; }
     setSubmitting(true);
-    setTimeout(() => {
-      setSubmitting(false);
-      toast.success("تم استلام معلومات سيارة الإسعاف. سيتم تفعيل القسم قريباً");
-    }, 600);
+    const { data: { user } } = await supabase.auth.getUser();
+    const { error } = await (supabase.from as any)("ambulances").insert({
+      owner_id: user?.id ?? null, photo_url: photoUrl,
+      name: f.name, phone: f.phone, is_24_7: f.is_24_7,
+      coverage_area: f.address || null,
+      wilaya_id: f.wilaya_id, baladiya_id: f.baladiya_id,
+      lat: f.lat, lng: f.lng,
+    });
+    setSubmitting(false);
+    if (error) { toast.error("تعذّر الحفظ: " + error.message); return; }
+    toast.success("تمت إضافة سيارة الإسعاف بنجاح");
+    navigate({ to: "/search" });
   };
 
   return (
     <FormShell title="إضافة سيارة إسعاف" onSubmit={submit} submitting={submitting}>
       <div className="flex items-center gap-3 rounded-2xl bg-orange-500/10 border border-orange-500/20 p-3 text-orange-700 dark:text-orange-300">
         <Truck className="h-5 w-5 flex-shrink-0" />
-        <p className="text-xs">قسم سيارات الإسعاف قيد التطوير. سجّل سيارتك الآن وسنضيفها عند الإطلاق.</p>
+        <p className="text-xs">أضف معلومات سيارة الإسعاف لتظهر مباشرة في البحث والخريطة.</p>
       </div>
       <ImageUploader value={photoUrl} onChange={setPhotoUrl} folder="pharmacies" />
       <Field label="اسم الخدمة / المالك *"><input className={inputCls} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} required /></Field>
