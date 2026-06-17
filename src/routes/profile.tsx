@@ -473,7 +473,7 @@ function Page() {
               ) : (
                 <div className="space-y-2.5">
                   {favorites.map((f: any) => (
-                    <div key={f.id} className="bg-card rounded-2xl border border-border p-3 flex items-center gap-3 flex-row-reverse">
+                    <div key={f.id} className="bg-card rounded-2xl border border-border p-3 flex items-center gap-3">
                       <div className="w-14 h-14 rounded-xl bg-primary/10 overflow-hidden flex items-center justify-center flex-shrink-0">
                         {f.doctors?.photo_url ? (
                           <img src={f.doctors.photo_url} alt="" className="w-full h-full object-cover" />
