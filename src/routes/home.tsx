@@ -369,11 +369,6 @@ function Home() {
             <CivilProtectionSlider wilayaName={locationLabel.wilaya} />
           </motion.div>
 
-          {/* On-call pharmacies today */}
-          <motion.div variants={itemVariants}>
-            <OnCallPharmaciesSlider origin={origin} />
-          </motion.div>
-
           {/* Nearby hospitals */}
           <motion.section variants={itemVariants}>
             <div className="flex items-center justify-between mb-3">
@@ -408,6 +403,10 @@ function Home() {
             </div>
           </motion.section>
 
+          {/* On-call pharmacies today */}
+          <motion.div variants={itemVariants}>
+            <OnCallPharmaciesSlider origin={origin} />
+          </motion.div>
 
           {/* Nearby pharmacies */}
           <motion.section variants={itemVariants}>
