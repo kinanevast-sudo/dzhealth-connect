@@ -51,6 +51,7 @@ type Item = {
   rating?: number | null;
   verified?: boolean;
   detailLink: string;
+  onCall?: boolean;
 };
 
 function RecenterButton({ lat, lng }: { lat: number; lng: number }) {
