@@ -187,7 +187,7 @@ function Home() {
             <div>
               <div className="flex items-center gap-2">
                 {avatarUrl ? (
-                  <img src={avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-primary/30" />
+                  <img src={avatarUrl} alt="" onError={() => setAvatarUrl(null)} className="w-10 h-10 rounded-full object-cover border-2 border-primary/30" />
                 ) : (
                   <motion.span
                     initial={{ rotate: -20, scale: 0.7 }}
