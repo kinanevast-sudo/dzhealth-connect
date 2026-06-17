@@ -177,6 +177,15 @@ function MapPage() {
       return data ?? [];
     },
   });
+  const { data: civils = [] } = useQuery({
+    queryKey: ["map-civil"],
+    queryFn: async () => {
+      const { data } = await (supabase.from as any)("civil_protection_centers")
+        .select("id,name,phone,lat,lng,wilayas(name_ar)")
+        .not("lat", "is", null).not("lng", "is", null).limit(200);
+      return data ?? [];
+    },
+  });
 
   const allItems: Item[] = useMemo(() => {
     const arr: Item[] = [];
