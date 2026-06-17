@@ -35,6 +35,7 @@ const ICONS = {
   lab: createIcon("#7c3aed", "🧪"),
   charity: createIcon("#f59e0b", "🤝"),
   ambulance: createIcon("#dc2626", "🚑"),
+  civil: createIcon("#ea580c", "🛡️"),
   user: createIcon("#ef4444", "📍"),
 };
 
