@@ -6,7 +6,7 @@ import {
   BadgeCheck, Navigation, Loader2, ChevronRight, Car, Footprints, Route as RouteIcon,
   FlaskConical, HandHeart, Truck, Shield,
 } from "lucide-react";
-import { MapContainer, TileLayer, Marker, Polyline, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Polyline, useMap, Tooltip, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useQuery } from "@tanstack/react-query";
