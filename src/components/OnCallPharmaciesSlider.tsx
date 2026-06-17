@@ -16,6 +16,12 @@ function todayISO() {
   return `${d.getFullYear()}-${m}-${day}`;
 }
 
+function shiftLabel(st?: string) {
+  if (st === "day") return "صباحية من 08:00 إلى 19:00";
+  if (st === "night") return "مسائية من 19:00 إلى 08:00";
+  return "24/24";
+}
+
 function fmtKm(km?: number) {
   if (km == null || !isFinite(km)) return null;
   return km < 1 ? `${Math.round(km * 1000)} م` : `${km.toFixed(1)} كم`;
@@ -28,9 +34,9 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
     queryKey: ["on-call-home", todayISO()],
     queryFn: async () => {
       const { data } = await (supabase.from as any)("pharmacy_on_call")
-        .select("pharmacies(id,name,phone,lat,lng,is_24_7,wilayas(name_ar),baladiyas(name_ar))")
+        .select("shift_type, pharmacies(id,name,phone,lat,lng,is_24_7,wilayas(name_ar),baladiyas(name_ar))")
         .eq("on_call_date", todayISO());
-      return (data ?? []).map((r: any) => r.pharmacies).filter(Boolean);
+      return (data ?? []).map((r: any) => ({ ...r.pharmacies, shift_type: r.shift_type })).filter((x: any) => x.id);
     },
     staleTime: 60_000,
   });
@@ -100,7 +106,7 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
                   {p.baladiyas?.name_ar ? `${p.baladiyas.name_ar} - ` : ""}{p.wilayas?.name_ar ?? ""}
                 </p>
                 <div className="flex items-center gap-2 mt-1">
-                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-green-600 text-white">مناوبة اليوم</span>
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-green-600 text-white">{shiftLabel(p.shift_type)}</span>
                   {dist && <span className="text-[11px] font-bold text-green-200">{dist}</span>}
                 </div>
               </div>

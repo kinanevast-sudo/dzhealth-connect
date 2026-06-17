@@ -10,6 +10,12 @@ import { sortByDistance } from "@/lib/geo";
 
 export const Route = createFileRoute("/on-call-pharmacies")({ component: Page });
 
+function shiftLabel(st?: string) {
+  if (st === "day") return "صباحية من 08:00 إلى 19:00";
+  if (st === "night") return "مسائية من 19:00 إلى 08:00";
+  return "24/24";
+}
+
 function todayISO() {
   const d = new Date();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -38,10 +44,10 @@ function Page() {
     queryKey: ["on-call-pharmacies", todayISO()],
     queryFn: async () => {
       const { data, error } = await (supabase.from as any)("pharmacy_on_call")
-        .select("pharmacy_id, on_call_date, pharmacies(id,name,phone,lat,lng,is_24_7,photo_url,wilayas(name_ar),baladiyas(name_ar))")
+        .select("shift_type, pharmacy_id, on_call_date, pharmacies(id,name,phone,lat,lng,is_24_7,photo_url,wilayas(name_ar),baladiyas(name_ar))")
         .eq("on_call_date", todayISO());
       if (error) throw error;
-      return (data ?? []).map((r: any) => r.pharmacies).filter(Boolean);
+      return (data ?? []).map((r: any) => ({ ...r.pharmacies, shift_type: r.shift_type })).filter((x: any) => x.id);
     },
     staleTime: 60_000,
   });
@@ -112,7 +118,7 @@ function Card({ p, onMap }: { p: any; onMap: () => void }) {
           <div className="mt-2 flex items-center justify-between">
             {distLabel && <span className="text-xs font-bold" style={{ color: "#0891b2" }}>{distLabel}</span>}
             <div className="flex gap-1.5">
-              <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold bg-red-500/15 text-red-600">مناوبة اليوم</span>
+              <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold bg-red-500/15 text-red-600">{shiftLabel(p.shift_type)}</span>
               {p.is_24_7 && (
                 <span className="rounded-full px-2.5 py-0.5 text-[10px] font-bold" style={{ background: "color-mix(in oklab, var(--success) 25%, transparent)", color: "var(--success)" }}>24/7</span>
               )}
