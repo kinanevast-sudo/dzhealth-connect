@@ -13,6 +13,7 @@ import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import { sortByDistance } from "@/lib/geo";
 import { nearestWilaya } from "@/lib/wilayas-coords";
 import { BloodRequestsSlider } from "@/components/BloodRequestsSlider";
+import { getAvatarUrl } from "@/lib/storage";
 
 export const Route = createFileRoute("/home")({ component: Home });
 
