@@ -25,6 +25,7 @@ import { Route as DonorsRouteImport } from './routes/donors'
 import { Route as CivilProtectionRouteImport } from './routes/civil-protection'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AddPharmacyRouteImport } from './routes/add-pharmacy'
+import { Route as AddOnCallPharmacyRouteImport } from './routes/add-on-call-pharmacy'
 import { Route as AddLabRouteImport } from './routes/add-lab'
 import { Route as AddHospitalRouteImport } from './routes/add-hospital'
 import { Route as AddEquipmentRouteImport } from './routes/add-equipment'
@@ -120,6 +121,11 @@ const AddPharmacyRoute = AddPharmacyRouteImport.update({
   path: '/add-pharmacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AddOnCallPharmacyRoute = AddOnCallPharmacyRouteImport.update({
+  id: '/add-on-call-pharmacy',
+  path: '/add-on-call-pharmacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AddLabRoute = AddLabRouteImport.update({
   id: '/add-lab',
   path: '/add-lab',
@@ -203,6 +209,7 @@ export interface FileRoutesByFullPath {
   '/add-equipment': typeof AddEquipmentRoute
   '/add-hospital': typeof AddHospitalRoute
   '/add-lab': typeof AddLabRoute
+  '/add-on-call-pharmacy': typeof AddOnCallPharmacyRoute
   '/add-pharmacy': typeof AddPharmacyRoute
   '/auth': typeof AuthRoute
   '/civil-protection': typeof CivilProtectionRoute
@@ -235,6 +242,7 @@ export interface FileRoutesByTo {
   '/add-equipment': typeof AddEquipmentRoute
   '/add-hospital': typeof AddHospitalRoute
   '/add-lab': typeof AddLabRoute
+  '/add-on-call-pharmacy': typeof AddOnCallPharmacyRoute
   '/add-pharmacy': typeof AddPharmacyRoute
   '/auth': typeof AuthRoute
   '/civil-protection': typeof CivilProtectionRoute
@@ -268,6 +276,7 @@ export interface FileRoutesById {
   '/add-equipment': typeof AddEquipmentRoute
   '/add-hospital': typeof AddHospitalRoute
   '/add-lab': typeof AddLabRoute
+  '/add-on-call-pharmacy': typeof AddOnCallPharmacyRoute
   '/add-pharmacy': typeof AddPharmacyRoute
   '/auth': typeof AuthRoute
   '/civil-protection': typeof CivilProtectionRoute
@@ -302,6 +311,7 @@ export interface FileRouteTypes {
     | '/add-equipment'
     | '/add-hospital'
     | '/add-lab'
+    | '/add-on-call-pharmacy'
     | '/add-pharmacy'
     | '/auth'
     | '/civil-protection'
@@ -334,6 +344,7 @@ export interface FileRouteTypes {
     | '/add-equipment'
     | '/add-hospital'
     | '/add-lab'
+    | '/add-on-call-pharmacy'
     | '/add-pharmacy'
     | '/auth'
     | '/civil-protection'
@@ -366,6 +377,7 @@ export interface FileRouteTypes {
     | '/add-equipment'
     | '/add-hospital'
     | '/add-lab'
+    | '/add-on-call-pharmacy'
     | '/add-pharmacy'
     | '/auth'
     | '/civil-protection'
@@ -399,6 +411,7 @@ export interface RootRouteChildren {
   AddEquipmentRoute: typeof AddEquipmentRoute
   AddHospitalRoute: typeof AddHospitalRoute
   AddLabRoute: typeof AddLabRoute
+  AddOnCallPharmacyRoute: typeof AddOnCallPharmacyRoute
   AddPharmacyRoute: typeof AddPharmacyRoute
   AuthRoute: typeof AuthRoute
   CivilProtectionRoute: typeof CivilProtectionRoute
@@ -533,6 +546,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AddPharmacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/add-on-call-pharmacy': {
+      id: '/add-on-call-pharmacy'
+      path: '/add-on-call-pharmacy'
+      fullPath: '/add-on-call-pharmacy'
+      preLoaderRoute: typeof AddOnCallPharmacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/add-lab': {
       id: '/add-lab'
       path: '/add-lab'
@@ -658,6 +678,7 @@ const rootRouteChildren: RootRouteChildren = {
   AddEquipmentRoute: AddEquipmentRoute,
   AddHospitalRoute: AddHospitalRoute,
   AddLabRoute: AddLabRoute,
+  AddOnCallPharmacyRoute: AddOnCallPharmacyRoute,
   AddPharmacyRoute: AddPharmacyRoute,
   AuthRoute: AuthRoute,
   CivilProtectionRoute: CivilProtectionRoute,
@@ -680,13 +701,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}

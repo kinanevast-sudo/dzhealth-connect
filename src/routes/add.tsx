@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Stethoscope, Building2, Pill, Droplet, Accessibility, Shield, FlaskConical, HandHeart, Truck } from "lucide-react";
+import { Stethoscope, Building2, Pill, Droplet, Accessibility, Shield, FlaskConical, HandHeart, Truck, Clock } from "lucide-react";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 
 export const Route = createFileRoute("/add")({ component: Page });
@@ -10,6 +10,7 @@ const items: Item[] = [
   { icon: Stethoscope, label: "إضافة طبيب", to: "/add-doctor", color: "#0891b2", bg: "#cffafe" },
   { icon: Building2, label: "إضافة مستشفى", to: "/add-hospital", color: "#3b82f6", bg: "#dbeafe" },
   { icon: Pill, label: "إضافة صيدلية", to: "/add-pharmacy", color: "#10b981", bg: "#d1fae5" },
+  { icon: Clock, label: "تسجيل صيدلية مناوبة", to: "/add-on-call-pharmacy", color: "#059669", bg: "#d1fae5" },
   { icon: Droplet, label: "تسجيل متبرع جديد", to: "/add-donor", color: "#ef4444", bg: "#fee2e2" },
   { icon: Accessibility, label: "إضافة معدات طبية", to: "/add-equipment", color: "#8b5cf6", bg: "#ede9fe" },
   { icon: Shield, label: "إضافة مركز حماية مدنية", to: "/add-civil-protection", color: "#dc2626", bg: "#fee2e2" },
