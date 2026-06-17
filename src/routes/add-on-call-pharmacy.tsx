@@ -21,6 +21,7 @@ function Page() {
   const [q, setQ] = useState("");
   const [pharmacyId, setPharmacyId] = useState<string | null>(null);
   const [date, setDate] = useState<string>(todayISO());
+  const [shift, setShift] = useState<"day" | "night" | "full">("full");
 
   const { data: pharmacies = [], isLoading } = useQuery({
     queryKey: ["pharmacies-picker"],
@@ -54,11 +55,12 @@ function Page() {
     const { error } = await (supabase.from as any)("pharmacy_on_call").insert({
       pharmacy_id: pharmacyId,
       on_call_date: date,
+      shift_type: shift,
       created_by: u.user?.id ?? null,
     });
     setSubmitting(false);
     if (error) {
-      if (error.code === "23505") { toast.error("هذه الصيدلية مسجلة مناوبة في هذا التاريخ"); return; }
+      if (error.code === "23505") { toast.error("هذه الصيدلية مسجلة مناوبة لنفس التاريخ والفترة"); return; }
       toast.error(error.message);
       return;
     }
@@ -72,6 +74,30 @@ function Page() {
         <input type="date" className={inputCls} value={date} onChange={(e) => setDate(e.target.value)} required />
         <p className="mt-1 text-[11px] text-muted-foreground">الافتراضي اليوم. الصيدلية تبقى مسجلة مرة واحدة فقط، ويتم إنشاء سجل مناوبة لكل تاريخ.</p>
       </Field>
+
+      <Field label="فترة المناوبة *">
+        <div className="grid grid-cols-3 gap-2">
+          {([
+            { v: "day", label: "نهارية", hint: "08:00 - 19:00" },
+            { v: "night", label: "ليلية", hint: "19:00 - 08:00" },
+            { v: "full", label: "24/24", hint: "نهار وليل" },
+          ] as const).map((o) => {
+            const active = shift === o.v;
+            return (
+              <button
+                key={o.v}
+                type="button"
+                onClick={() => setShift(o.v)}
+                className={`rounded-xl border px-2 py-2.5 text-center transition ${active ? "bg-green-500/10 border-green-500" : "bg-background border-border"}`}
+              >
+                <p className="text-xs font-bold">{o.label}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{o.hint}</p>
+              </button>
+            );
+          })}
+        </div>
+      </Field>
+
 
       <div className="bg-card rounded-2xl border border-border p-4 space-y-3">
         <div className="flex items-center justify-between">
