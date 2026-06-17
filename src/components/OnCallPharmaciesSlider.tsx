@@ -7,6 +7,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { sortByDistance } from "@/lib/geo";
 import { openMap } from "@/lib/map";
 
+const MotionLink = motion(Link);
+
 function todayISO() {
   const d = new Date();
   const m = String(d.getMonth() + 1).padStart(2, "0");
@@ -59,43 +61,43 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
 
       <div className="relative overflow-hidden rounded-2xl">
         <AnimatePresence mode="wait">
-          <motion.div
+          <MotionLink
+            to="/pharmacies/$id"
+            params={{ id: p.id } as any}
             key={p.id}
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -30 }}
             transition={{ duration: 0.45 }}
-            className="relative bg-gradient-to-br from-green-700/30 via-emerald-900/70 to-teal-900/40 border border-green-600/50 rounded-2xl px-4 py-3 ring-2 ring-green-500/30 shadow-[0_8px_40px_-8px_rgba(34,197,94,0.45)]"
+            className="relative bg-gradient-to-br from-green-700/30 via-emerald-900/70 to-teal-900/40 border border-green-600/50 rounded-2xl px-4 py-3 ring-2 ring-green-500/30 shadow-[0_8px_40px_-8px_rgba(34,197,94,0.45)] flex items-center justify-between gap-3"
           >
-            <Link to="/pharmacies/$id" params={{ id: p.id }} className="flex items-center justify-between gap-3">
-              <div className="flex items-center gap-3 min-w-0 flex-1">
-                <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shrink-0 border-2 border-green-600/60">
-                  <Pill className="w-6 h-6 text-green-600" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-sm font-extrabold text-foreground truncate">{p.name}</p>
-                  <p className="text-[11px] text-muted-foreground truncate flex items-center gap-1 mt-0.5">
-                    <MapPin className="w-3 h-3" />
-                    {p.baladiyas?.name_ar ? `${p.baladiyas.name_ar} - ` : ""}{p.wilayas?.name_ar ?? ""}
-                  </p>
-                  <div className="flex items-center gap-2 mt-1">
-                    <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-green-600 text-white">مناوبة اليوم</span>
-                    {dist && <span className="text-[11px] font-bold text-green-200">{dist}</span>}
-                  </div>
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-12 h-12 bg-white rounded-2xl flex items-center justify-center shrink-0 border-2 border-green-600/60">
+                <Pill className="w-6 h-6 text-green-600" />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-extrabold text-foreground truncate">{p.name}</p>
+                <p className="text-[11px] text-muted-foreground truncate flex items-center gap-1 mt-0.5">
+                  <MapPin className="w-3 h-3" />
+                  {p.baladiyas?.name_ar ? `${p.baladiyas.name_ar} - ` : ""}{p.wilayas?.name_ar ?? ""}
+                </p>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="text-[10px] font-black px-2 py-0.5 rounded-full bg-green-600 text-white">مناوبة اليوم</span>
+                  {dist && <span className="text-[11px] font-bold text-green-200">{dist}</span>}
                 </div>
               </div>
-              <div className="flex flex-col gap-1.5 shrink-0">
-                {p.phone && (
-                  <a href={`tel:${p.phone}`} onClick={(e) => e.stopPropagation()} className="w-10 h-10 rounded-xl bg-green-600 text-white flex items-center justify-center active:scale-95" aria-label="اتصال">
-                    <Phone className="w-4 h-4" />
-                  </a>
-                )}
-                <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); openMap(p.lat, p.lng, p.name); }} className="w-10 h-10 rounded-xl bg-cyan-700 text-white flex items-center justify-center active:scale-95" aria-label="الخريطة">
-                  <MapIcon className="w-4 h-4" />
-                </button>
-              </div>
-            </Link>
-          </motion.div>
+            </div>
+            <div className="flex flex-col gap-1.5 shrink-0">
+              {p.phone && (
+                <a href={`tel:${p.phone}`} onClick={(e) => e.stopPropagation()} className="w-10 h-10 rounded-xl bg-green-600 text-white flex items-center justify-center active:scale-95" aria-label="اتصال">
+                  <Phone className="w-4 h-4" />
+                </a>
+              )}
+              <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); openMap(p.lat, p.lng, p.name); }} className="w-10 h-10 rounded-xl bg-cyan-700 text-white flex items-center justify-center active:scale-95" aria-label="الخريطة">
+                <MapIcon className="w-4 h-4" />
+              </button>
+            </div>
+          </MotionLink>
         </AnimatePresence>
 
         {sorted.length > 1 && (
@@ -114,3 +116,4 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
     </section>
   );
 }
+
