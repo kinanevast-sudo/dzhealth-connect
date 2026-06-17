@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   User as UserIcon, Phone, MapPin, Droplet, Pencil, Star, Stethoscope,
-  Calendar, BadgeCheck, LogOut, Camera, Check, X, ChevronDown, Share2,
+  Calendar, BadgeCheck, LogOut, Camera, Check, X, ChevronDown,
   Heart, Mail, Trash2, Clock, Settings as SettingsIcon,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -160,44 +160,29 @@ function Page() {
     }
   };
 
-  const handleShare = async () => {
-    const text = `${profile?.full_name ?? "ملفي"} على DZHealth`;
-    if (navigator.share) {
-      navigator.share({ title: "ملفي الشخصي", text }).catch(() => null);
-    } else {
-      await navigator.clipboard.writeText(text);
-      toast.success("تم النسخ");
-    }
-  };
+
+
 
   const wilayaName = profile?.wilayas?.name_ar ?? "—";
   const selectedWilaya = wilayas.find((w) => w.id === form.wilaya_id);
 
   return (
     <AppShell>
-      <div className="min-h-[100dvh] bg-background text-foreground">
+      <div dir="rtl" className="min-h-[100dvh] bg-background text-foreground">
         {/* Hero */}
-        <div className="relative h-64">
+        <div className="relative h-52">
           <div className="w-full h-full bg-gradient-to-br from-primary/30 via-primary/10 to-background" />
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
 
-          {/* Top nav */}
-          <div className="absolute top-6 left-4 right-4 flex justify-between items-center">
-            <div className="flex gap-2">
-              <button
-                onClick={handleShare}
-                className="w-10 h-10 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center cursor-pointer border border-border"
-              >
-                <Share2 className="w-5 h-5 text-foreground" />
-              </button>
-              <Link
-                to="/settings"
-                className="w-10 h-10 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center cursor-pointer border border-border"
-                aria-label="الإعدادات"
-              >
-                <SettingsIcon className="w-5 h-5 text-foreground" />
-              </Link>
-            </div>
+          {/* Top nav — settings on the right (RTL start), edit on the left (RTL end) */}
+          <div className="absolute top-4 left-4 right-4 flex justify-between items-center">
+            <Link
+              to="/settings"
+              className="w-10 h-10 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center cursor-pointer border border-border"
+              aria-label="الإعدادات"
+            >
+              <SettingsIcon className="w-5 h-5 text-foreground" />
+            </Link>
             {!editing ? (
               <button
                 onClick={startEdit}
@@ -441,8 +426,8 @@ function Page() {
                     const st = statusMap[a.status] ?? statusMap.pending;
                     return (
                       <div key={a.id} className="bg-card rounded-2xl border border-border p-4">
-                        <div className="flex items-start justify-between gap-3 flex-row-reverse">
-                          <div className="flex items-center gap-3 flex-row-reverse flex-1 min-w-0">
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3 flex-1 min-w-0">
                             <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center flex-shrink-0">
                               <Stethoscope className="w-5 h-5 text-primary" />
                             </div>
@@ -455,7 +440,7 @@ function Page() {
                           </div>
                           <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${st.cls}`}>{st.label}</span>
                         </div>
-                        <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground flex-row-reverse">
+                        <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
                           <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> {dt.toLocaleDateString("ar-DZ")}</span>
                           <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> {dt.toLocaleTimeString("ar-DZ", { hour: "2-digit", minute: "2-digit" })}</span>
                           <span>{a.visit_type === "online" ? "عن بعد" : "في العيادة"}</span>
@@ -481,7 +466,7 @@ function Page() {
               ) : (
                 <div className="space-y-2.5">
                   {favorites.map((f: any) => (
-                    <div key={f.id} className="bg-card rounded-2xl border border-border p-3 flex items-center gap-3 flex-row-reverse">
+                    <div key={f.id} className="bg-card rounded-2xl border border-border p-3 flex items-center gap-3">
                       <div className="w-14 h-14 rounded-xl bg-primary/10 overflow-hidden flex items-center justify-center flex-shrink-0">
                         {f.doctors?.photo_url ? (
                           <img src={f.doctors.photo_url} alt="" className="w-full h-full object-cover" />

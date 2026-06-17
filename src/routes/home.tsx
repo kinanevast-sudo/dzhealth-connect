@@ -13,6 +13,7 @@ import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
 import { sortByDistance } from "@/lib/geo";
 import { nearestWilaya } from "@/lib/wilayas-coords";
 import { BloodRequestsSlider } from "@/components/BloodRequestsSlider";
+import { getAvatarUrl } from "@/lib/storage";
 
 export const Route = createFileRoute("/home")({ component: Home });
 
@@ -84,7 +85,9 @@ function Home() {
           .select("full_name,avatar_url,lat,lng,wilaya_id,wilayas(name_ar),baladiyas(name_ar)")
           .eq("user_id", u.user.id).maybeSingle();
         if (p?.full_name) setDisplayName(String(p.full_name).split(" ")[0]);
-        if (p?.avatar_url) setAvatarUrl(p.avatar_url);
+        if (p?.avatar_url) {
+          try { setAvatarUrl(await getAvatarUrl(p.avatar_url)); } catch { setAvatarUrl(null); }
+        }
         if (p?.lat && p?.lng) profileLoc = { lat: p.lat, lng: p.lng };
         if ((p as any)?.wilaya_id) profileWilayaId = (p as any).wilaya_id;
         profileLabel = {
@@ -184,7 +187,7 @@ function Home() {
             <div>
               <div className="flex items-center gap-2">
                 {avatarUrl ? (
-                  <img src={avatarUrl} alt="" className="w-10 h-10 rounded-full object-cover border-2 border-primary/30" />
+                  <img src={avatarUrl} alt="" onError={() => setAvatarUrl(null)} className="w-10 h-10 rounded-full object-cover border-2 border-primary/30" />
                 ) : (
                   <motion.span
                     initial={{ rotate: -20, scale: 0.7 }}

@@ -133,16 +133,13 @@ function Page() {
     <div dir="rtl" className="min-h-screen bg-background pb-24">
       {/* Header */}
       <div className="bg-card border-b border-border px-4 pt-12 pb-4 sticky top-0 z-10">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
-            <Link to="/home" className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center active:scale-95 transition-transform">
+        <div className="flex items-center justify-between mb-4 gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <Link to="/home" className="w-9 h-9 rounded-xl bg-secondary flex items-center justify-center active:scale-95 transition-transform shrink-0">
               <ArrowRight className="w-4 h-4" />
             </Link>
-            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-              <Bell className="w-5 h-5 text-primary" />
-            </div>
-            <div>
-              <h1 className="font-black text-lg leading-tight">الإشعارات</h1>
+            <div className="min-w-0">
+              <h1 className="font-black text-lg leading-tight truncate">الإشعارات</h1>
               {unreadCount > 0 && (
                 <p className="text-xs text-muted-foreground">
                   <span className="text-primary font-bold">{unreadCount}</span> غير مقروءة
@@ -150,15 +147,20 @@ function Page() {
               )}
             </div>
           </div>
-          {unreadCount > 0 && (
-            <button
-              onClick={handleMarkAllRead}
-              className="flex items-center gap-1.5 text-xs text-primary font-semibold bg-primary/10 px-3 py-2 rounded-xl cursor-pointer active:scale-95 transition-transform"
-            >
-              <CheckCheck className="w-3.5 h-3.5" />
-              قراءة الكل
-            </button>
-          )}
+          <div className="flex items-center gap-2 shrink-0">
+            {unreadCount > 0 && (
+              <button
+                onClick={handleMarkAllRead}
+                className="flex items-center gap-1.5 text-xs text-primary font-semibold bg-primary/10 px-3 py-2 rounded-xl cursor-pointer active:scale-95 transition-transform"
+              >
+                <CheckCheck className="w-3.5 h-3.5" />
+                قراءة الكل
+              </button>
+            )}
+            <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
+              <Bell className="w-5 h-5 text-primary" />
+            </div>
+          </div>
         </div>
 
         {/* Filter chips */}
