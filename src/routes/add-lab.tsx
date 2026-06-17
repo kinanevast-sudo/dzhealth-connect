@@ -34,7 +34,7 @@ function Page() {
         <FlaskConical className="h-5 w-5 flex-shrink-0" />
         <p className="text-xs">قسم المخابر قيد التطوير. يمكنك تسجيل المخبر الآن وسنضيفه عند الإطلاق.</p>
       </div>
-      <ImageUploader value={photoUrl} onChange={setPhotoUrl} folder="labs" />
+      <ImageUploader value={photoUrl} onChange={setPhotoUrl} folder="pharmacies" />
       <Field label="اسم المخبر *"><input className={inputCls} value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} required /></Field>
       <Field label="رقم الهاتف *"><input dir="ltr" className={inputCls} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} placeholder="0555 XX XX XX" required /></Field>
       <div className="bg-card rounded-2xl border border-border p-4 space-y-3">
