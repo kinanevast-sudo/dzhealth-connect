@@ -55,11 +55,12 @@ function Page() {
     const { error } = await (supabase.from as any)("pharmacy_on_call").insert({
       pharmacy_id: pharmacyId,
       on_call_date: date,
+      shift_type: shift,
       created_by: u.user?.id ?? null,
     });
     setSubmitting(false);
     if (error) {
-      if (error.code === "23505") { toast.error("هذه الصيدلية مسجلة مناوبة في هذا التاريخ"); return; }
+      if (error.code === "23505") { toast.error("هذه الصيدلية مسجلة مناوبة لنفس التاريخ والفترة"); return; }
       toast.error(error.message);
       return;
     }
