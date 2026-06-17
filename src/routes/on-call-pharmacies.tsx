@@ -10,6 +10,12 @@ import { sortByDistance } from "@/lib/geo";
 
 export const Route = createFileRoute("/on-call-pharmacies")({ component: Page });
 
+function shiftLabel(st?: string) {
+  if (st === "day") return "صباحية من 08:00 إلى 19:00";
+  if (st === "night") return "مسائية من 19:00 إلى 08:00";
+  return "24/24";
+}
+
 function todayISO() {
   const d = new Date();
   const m = String(d.getMonth() + 1).padStart(2, "0");
