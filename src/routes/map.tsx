@@ -383,13 +383,15 @@ function MapPage() {
                   selected.type === "pharmacy" ? "bg-green-500/15" :
                   selected.type === "lab" ? "bg-violet-500/15" :
                   selected.type === "charity" ? "bg-amber-500/15" :
-                  "bg-red-600/15"
+                  selected.type === "ambulance" ? "bg-red-600/15" :
+                  "bg-orange-600/15"
                 }`}>
                   {selected.type === "doctor" ? "🩺" :
                    selected.type === "hospital" ? "🏥" :
                    selected.type === "pharmacy" ? "💊" :
                    selected.type === "lab" ? "🧪" :
-                   selected.type === "charity" ? "🤝" : "🚑"}
+                   selected.type === "charity" ? "🤝" :
+                   selected.type === "ambulance" ? "🚑" : "🛡️"}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-1.5">
