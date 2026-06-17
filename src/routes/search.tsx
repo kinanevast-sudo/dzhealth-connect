@@ -18,6 +18,7 @@ const TYPES = [
   { id: "labs", label: "مخابر التحاليل", icon: "🧪", color: "#7c3aed", bg: "#ede9fe" },
   { id: "charities", label: "الجمعيات الخيرية", icon: "🤝", color: "#f59e0b", bg: "#fef3c7" },
   { id: "ambulances", label: "سيارات الإسعاف", icon: "🚑", color: "#dc2626", bg: "#fee2e2" },
+  { id: "civil", label: "الحماية المدنية", icon: "🛡️", color: "#ea580c", bg: "#ffedd5" },
 ];
 
 const SUB = [
