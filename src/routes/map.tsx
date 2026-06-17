@@ -220,8 +220,13 @@ function MapPage() {
       subtitle: (a.is_24_7 ? "إسعاف 24/7 · " : "إسعاف · ") + (a.wilayas?.name_ar ?? ""),
       lat: a.lat, lng: a.lng, phone: a.phone, detailLink: `/search`,
     });
+    for (const cv of civils as any[]) arr.push({
+      id: `cv-${cv.id}`, type: "civil", name: cv.name,
+      subtitle: "حماية مدنية · " + (cv.wilayas?.name_ar ?? ""),
+      lat: cv.lat, lng: cv.lng, phone: cv.phone, detailLink: `/civil-protection`,
+    });
     return arr;
-  }, [doctors, hospitals, pharmacies, labs, charities, ambulances]);
+  }, [doctors, hospitals, pharmacies, labs, charities, ambulances, civils]);
 
   // Filter by category + sort by real distance and keep nearest 50
   const items: Item[] = useMemo(() => {
