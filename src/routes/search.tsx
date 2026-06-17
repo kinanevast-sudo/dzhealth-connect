@@ -82,7 +82,7 @@ function Page() {
 
   const results = sortNearest && origin ? sortByDistance(rawResults as any, origin) : rawResults;
 
-  const detailBase = table === "doctors" ? "/doctors" : table === "hospitals" ? "/hospitals" : table === "pharmacies" ? "/pharmacies" : table === "blood_donors" ? "/donors" : "";
+  const detailBase = table === "doctors" ? "/doctors" : table === "hospitals" ? "/hospitals" : table === "pharmacies" ? "/pharmacies" : table === "blood_donors" ? "/donors" : table === "civil_protection_centers" ? "/civil-protection" : "";
 
   return (
     <AppShell>
