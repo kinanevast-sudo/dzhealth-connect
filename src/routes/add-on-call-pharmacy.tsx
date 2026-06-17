@@ -80,7 +80,7 @@ function Page() {
           {([
             { v: "day", label: "نهارية", hint: "08:00 - 19:00" },
             { v: "night", label: "ليلية", hint: "19:00 - 08:00" },
-            { v: "full", label: "24/24", hint: "نهار وليل" },
+            { v: "full", label: "24/24", hint: "24 ساعة من 00:00 إلى 23:59" },
           ] as const).map((o) => {
             const active = shift === o.v;
             return (
