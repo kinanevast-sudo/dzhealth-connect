@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Pill, Phone, MapPin, Map as MapIcon, Navigation, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 import { SearchInput } from "@/components/SearchInput";
@@ -9,12 +10,6 @@ import { openMap } from "@/lib/map";
 import { sortByDistance } from "@/lib/geo";
 
 export const Route = createFileRoute("/on-call-pharmacies")({ component: Page });
-
-function shiftLabel(st?: string) {
-  if (st === "day") return "صباحية من 08:00 إلى 19:00";
-  if (st === "night") return "مسائية من 19:00 إلى 08:00";
-  return "24/24";
-}
 
 function todayISO() {
   const d = new Date();
@@ -24,6 +19,7 @@ function todayISO() {
 }
 
 function Page() {
+  const { t } = useTranslation();
   const [q, setQ] = useState("");
   const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
   const [locLoading, setLocLoading] = useState(true);
@@ -58,19 +54,30 @@ function Page() {
   );
   const sorted = sortByDistance(filtered as any, origin);
 
+  function fmtDist(km?: number) {
+    if (km == null || !isFinite(km)) return null;
+    return km < 1 ? `${Math.round(km * 1000)} ${t("on-call-pharmacies.meterUnit")}` : `${km.toFixed(1)} ${t("on-call-pharmacies.kmUnit")}`;
+  }
+
+  function shiftLabel(st?: string) {
+    if (st === "day") return t("on-call-pharmacies.dayShift");
+    if (st === "night") return t("on-call-pharmacies.nightShift");
+    return "24/24";
+  }
+
   return (
     <AppShell>
-      <ScreenHeader title="الصيدليات المناوبة اليوم" />
+      <ScreenHeader title={t("on-call-pharmacies.title")} />
       <div className="px-4 pt-3 pb-6">
-        <SearchInput value={q} onChange={setQ} placeholder="ابحث عن صيدلية مناوبة..." />
+        <SearchInput value={q} onChange={setQ} placeholder={t("on-call-pharmacies.searchPlaceholder")} />
 
         <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-          <span>{sorted.length} صيدلية مناوبة</span>
+          <span>{t("on-call-pharmacies.onCallCount", { count: sorted.length })}</span>
           {locLoading ? (
-            <span className="flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> تحديد الموقع</span>
+            <span className="flex items-center gap-1"><Loader2 className="w-3 h-3 animate-spin" /> {t("on-call-pharmacies.locating")}</span>
           ) : origin ? (
-            <span className="flex items-center gap-1"><Navigation className="w-3 h-3 text-primary" /> مُرتّب حسب الأقرب</span>
-          ) : <span>الموقع غير متاح</span>}
+            <span className="flex items-center gap-1"><Navigation className="w-3 h-3 text-primary" /> {t("on-call-pharmacies.sortedByNearest")}</span>
+          ) : <span>{t("on-call-pharmacies.locationUnavailable")}</span>}
         </div>
 
         <div className="mt-3 space-y-3">
@@ -79,15 +86,15 @@ function Page() {
           ))}
           {!isLoading && isError && (
             <div className="rounded-2xl bg-surface card-elevated p-8 text-center text-sm text-muted-foreground">
-              <p>تعذّر تحميل الصيدليات المناوبة.</p>
-              <button onClick={() => refetch()} className="mt-3 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground">إعادة المحاولة</button>
+              <p>{t("on-call-pharmacies.loadError")}</p>
+              <button onClick={() => refetch()} className="mt-3 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground">{t("on-call-pharmacies.retry")}</button>
             </div>
           )}
           {!isLoading && !isError && sorted.map((p: any) => (
-            <Card key={p.id} p={p} onMap={() => openMap(p.lat, p.lng, p.name)} />
+            <Card key={p.id} p={p} onMap={() => openMap(p.lat, p.lng, p.name)} fmtDist={fmtDist} shiftLabel={shiftLabel} />
           ))}
           {!isLoading && !isError && sorted.length === 0 && (
-            <div className="rounded-2xl bg-surface card-elevated p-8 text-center text-sm text-muted-foreground">لا توجد صيدليات مناوبة اليوم</div>
+            <div className="rounded-2xl bg-surface card-elevated p-8 text-center text-sm text-muted-foreground">{t("on-call-pharmacies.noPharmacies")}</div>
           )}
         </div>
       </div>
@@ -95,9 +102,9 @@ function Page() {
   );
 }
 
-function Card({ p, onMap }: { p: any; onMap: () => void }) {
-  const dist = p._distanceKm;
-  const distLabel = dist != null && isFinite(dist) ? (dist < 1 ? `${Math.round(dist * 1000)} م` : `${dist.toFixed(1)} كم`) : null;
+function Card({ p, onMap, fmtDist, shiftLabel }: { p: any; onMap: () => void; fmtDist: (km?: number) => string | null; shiftLabel: (st?: string) => string }) {
+  const { t } = useTranslation();
+  const distLabel = fmtDist(p._distanceKm);
   return (
     <Link to="/pharmacies/$id" params={{ id: p.id }} className="block rounded-2xl p-4 active:scale-[0.98] transition" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
       <div className="flex items-start gap-3">
@@ -110,7 +117,7 @@ function Card({ p, onMap }: { p: any; onMap: () => void }) {
         )}
         <div className="min-w-0 flex-1 text-right">
           <h3 className="text-base font-extrabold leading-tight">{p.name}</h3>
-          <p className="mt-0.5 text-sm font-semibold" style={{ color: "#0891b2" }}>صيدلية مناوبة</p>
+          <p className="mt-0.5 text-sm font-semibold" style={{ color: "#0891b2" }}>{t("on-call-pharmacies.onCallPharmacy")}</p>
           <div className="mt-1 flex items-center justify-end gap-1 text-xs text-muted-foreground">
             <span>{p.wilayas?.name_ar}{p.baladiyas?.name_ar ? ` - ${p.baladiyas.name_ar}` : ""}</span>
             <MapPin className="h-3 w-3" />
@@ -128,10 +135,10 @@ function Card({ p, onMap }: { p: any; onMap: () => void }) {
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2.5 border-t pt-3" style={{ borderColor: "var(--border)" }}>
         <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); onMap(); }} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0e7490" }}>
-          <MapIcon className="h-4 w-4" /> موقع على الخريطة
+          <MapIcon className="h-4 w-4" /> {t("on-call-pharmacies.viewOnMap")}
         </button>
         <a href={p.phone ? `tel:${p.phone}` : "#"} onClick={(e) => { if (!p.phone) e.preventDefault(); e.stopPropagation(); }} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold" style={{ background: "#e0f2fe", color: "#0891b2" }}>
-          <Phone className="h-4 w-4" /> اتصال
+          <Phone className="h-4 w-4" /> {t("on-call-pharmacies.call")}
         </a>
       </div>
     </Link>

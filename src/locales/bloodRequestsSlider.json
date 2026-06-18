@@ -1,0 +1,47 @@
+{
+  "ar": {
+    "default_title": "طلبات الدم القريبة",
+    "time_now": "الآن",
+    "time_minutes": "منذ {{m}} دقيقة",
+    "time_hours": "منذ {{h}} ساعة",
+    "time_days": "منذ {{d}} يوم",
+    "view_all": "عرض الكل",
+    "plea": "نداء استغاثة",
+    "urgency_critical": "حرج",
+    "urgency_urgent": "عاجل",
+    "urgency_normal": "عادي",
+    "patient_needed": "مريض في حاجة",
+    "call": "اتصال",
+    "go_to_request": "الطلب {{n}}"
+  },
+  "fr": {
+    "default_title": "Demandes de sang proches",
+    "time_now": "À l'instant",
+    "time_minutes": "Il y a {{m}} min",
+    "time_hours": "Il y a {{h}} h",
+    "time_days": "Il y a {{d}} j",
+    "view_all": "Voir tout",
+    "plea": "Appel à l'aide",
+    "urgency_critical": "Critique",
+    "urgency_urgent": "Urgent",
+    "urgency_normal": "Normal",
+    "patient_needed": "Patient dans le besoin",
+    "call": "Appeler",
+    "go_to_request": "Demande {{n}}"
+  },
+  "en": {
+    "default_title": "Nearby Blood Requests",
+    "time_now": "Just now",
+    "time_minutes": "{{m}} min ago",
+    "time_hours": "{{h}} h ago",
+    "time_days": "{{d}} d ago",
+    "view_all": "View all",
+    "plea": "Urgent plea",
+    "urgency_critical": "Critical",
+    "urgency_urgent": "Urgent",
+    "urgency_normal": "Normal",
+    "patient_needed": "Patient in need",
+    "call": "Call",
+    "go_to_request": "Request {{n}}"
+  }
+}

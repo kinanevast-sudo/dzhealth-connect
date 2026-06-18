@@ -4,6 +4,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, X, Loader2, LocateFixed, Check } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 const pinIcon = L.divIcon({
   className: "custom-pin",
@@ -39,6 +40,7 @@ export function MapLocationPicker({
   initial?: { lat: number; lng: number } | null;
   onConfirm: (loc: PickedLocation) => void;
 }) {
+  const { t } = useTranslation();
   const [pos, setPos] = useState<{ lat: number; lng: number } | null>(initial ?? null);
   const [reverse, setReverse] = useState<Omit<PickedLocation, "lat" | "lng"> | null>(null);
   const [reverseLoading, setReverseLoading] = useState(false);
@@ -101,7 +103,7 @@ export function MapLocationPicker({
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between px-4 py-3 border-b border-border">
-              <h3 className="font-bold text-sm">اختر الموقع من الخريطة</h3>
+              <h3 className="font-bold text-sm">{t("mapLocationPicker.title")}</h3>
               <button onClick={onClose} className="w-8 h-8 rounded-full bg-secondary flex items-center justify-center"><X className="w-4 h-4" /></button>
             </div>
             <div className="relative flex-1">
@@ -127,7 +129,7 @@ export function MapLocationPicker({
               <div className="flex items-start gap-2 text-xs text-muted-foreground">
                 <MapPin className="w-4 h-4 mt-0.5 text-primary flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  {reverseLoading ? "جارٍ جلب العنوان..." : (
+                  {reverseLoading ? t("mapLocationPicker.fetching_address") : (
                     <>
                       <div className="font-semibold text-foreground truncate">{reverse?.baladiya || "—"} {reverse?.wilaya ? `· ${reverse.wilaya}` : ""}</div>
                       <div className="truncate">{reverse?.address || `${pos?.lat.toFixed(5)}, ${pos?.lng.toFixed(5)}`}</div>
@@ -141,7 +143,7 @@ export function MapLocationPicker({
                 onClick={() => pos && onConfirm({ lat: pos.lat, lng: pos.lng, ...(reverse ?? {}) })}
                 className="w-full h-12 bg-primary text-primary-foreground rounded-xl font-bold flex items-center justify-center gap-2 disabled:opacity-50"
               >
-                <Check className="w-4 h-4" /> تأكيد الموقع
+                <Check className="w-4 h-4" /> {t("mapLocationPicker.confirm_location")}
               </button>
             </div>
           </motion.div>

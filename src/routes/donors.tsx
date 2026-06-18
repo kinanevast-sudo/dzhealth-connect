@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Phone, AlertTriangle, Plus } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 import { BloodRequestsSlider } from "@/components/BloodRequestsSlider";
@@ -10,6 +11,7 @@ export const Route = createFileRoute("/donors")({ component: Donors });
 const TYPES = ["الكل","O+","O-","A+","A-","B+","B-","AB+","AB-"];
 
 function Donors() {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState("الكل");
   const { data } = useQuery({
     queryKey: ["donors", filter],
@@ -24,11 +26,13 @@ function Donors() {
   return (
     <AppShell>
       <div style={{ background: "linear-gradient(180deg, oklch(0.24 0.08 25) 0%, var(--background) 60%)" }}>
-        <ScreenHeader title="متبرعو الدم" />
+        <ScreenHeader title={t("donors.title")} />
         <div className="no-scrollbar flex gap-2 overflow-x-auto px-4 py-3">
-          {TYPES.map((t) => (
-            <button key={t} onClick={() => setFilter(t)}
-              className={`min-w-[52px] rounded-full px-3 py-1.5 text-xs font-bold transition-all ${filter === t ? "gradient-blood text-blood-foreground" : "bg-surface text-muted-foreground"}`}>{t}</button>
+          {TYPES.map((type) => (
+            <button key={type} onClick={() => setFilter(type)}
+              className={`min-w-[52px] rounded-full px-3 py-1.5 text-xs font-bold transition-all ${filter === type ? "gradient-blood text-blood-foreground" : "bg-surface text-muted-foreground"}`}>
+              {type === "الكل" ? t("donors.all") : type}
+            </button>
           ))}
         </div>
 
@@ -37,15 +41,15 @@ function Donors() {
             <Plus className="h-5 w-5" />
           </div>
           <div className="flex-1">
-            <p className="text-sm font-bold">طلب دم عاجل</p>
-            <p className="text-[11px] opacity-90">أنشئ طلباً وسيُشعر المتبرعون المتوافقون في ولايتك</p>
+            <p className="text-sm font-bold">{t("donors.urgentBloodRequest")}</p>
+            <p className="text-[11px] opacity-90">{t("donors.urgentBloodDesc")}</p>
           </div>
           <AlertTriangle className="h-5 w-5" />
         </Link>
       </div>
 
       <div className="px-4 pt-1 pb-2">
-        <BloodRequestsSlider wilayaId={null} limit={5} title="آخر الطلبات المفتوحة" />
+        <BloodRequestsSlider wilayaId={null} limit={5} title={t("donors.latestOpenRequests")} />
       </div>
 
       <div className="space-y-3 px-4">
@@ -55,7 +59,7 @@ function Donors() {
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-bold">{d.full_name}</p>
               <p className="truncate text-[11px] text-muted-foreground">{d.wilayas?.name_ar} - {d.baladiyas?.name_ar}</p>
-              {d.available && <span className="mt-1 inline-block text-[10px] font-bold text-blood">متاح الآن</span>}
+              {d.available && <span className="mt-1 inline-block text-[10px] font-bold text-blood">{t("donors.availableNow")}</span>}
             </div>
             <a href={`tel:${d.phone}`} className="flex h-11 w-11 items-center justify-center rounded-full gradient-blood text-blood-foreground"><Phone className="h-4 w-4" /></a>
           </div>

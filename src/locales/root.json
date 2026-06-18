@@ -1,0 +1,26 @@
+{
+  "ar": {
+    "not_found": "الصفحة التي تبحث عنها غير موجودة",
+    "back_home": "العودة للرئيسية",
+    "error_occurred": "حدث خطأ",
+    "error_message": "حاول مرة أخرى أو عد إلى الصفحة الرئيسية",
+    "retry": "إعادة المحاولة",
+    "home": "الرئيسية"
+  },
+  "fr": {
+    "not_found": "La page que vous cherchez est introuvable",
+    "back_home": "Retour à l'accueil",
+    "error_occurred": "Une erreur est survenue",
+    "error_message": "Veuillez réessayer ou revenir à la page d'accueil",
+    "retry": "Réessayer",
+    "home": "Accueil"
+  },
+  "en": {
+    "not_found": "The page you are looking for does not exist",
+    "back_home": "Back to home",
+    "error_occurred": "Something went wrong",
+    "error_message": "Please try again or return to the home page",
+    "retry": "Retry",
+    "home": "Home"
+  }
+}

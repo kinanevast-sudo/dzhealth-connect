@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { MapPin, Star, BadgeCheck, Loader2, Map as MapIcon, Phone } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 import { sortByDistance } from "@/lib/geo";
@@ -10,20 +11,16 @@ import { openMap } from "@/lib/map";
 
 export const Route = createFileRoute("/nearby-doctors")({ component: Page });
 
-function fmtKm(km?: number) {
-  if (km == null || !isFinite(km)) return null;
-  return km < 1 ? `${Math.round(km * 1000)} م` : `${km.toFixed(1)} كم`;
-}
-
 function Page() {
+  const { t } = useTranslation();
   const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
   const [locating, setLocating] = useState(true);
-  const [geoError, setGeoError] = useState<string | null>(null);
+  const [geoErrorKey, setGeoErrorKey] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof navigator === "undefined" || !navigator.geolocation) {
       setLocating(false);
-      setGeoError("المتصفح لا يدعم تحديد الموقع");
+      setGeoErrorKey("nearby-doctors.geoNotSupported");
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -33,7 +30,7 @@ function Page() {
       },
       () => {
         setLocating(false);
-        setGeoError("تعذّر تحديد موقعك — فعّل إذن الموقع");
+        setGeoErrorKey("nearby-doctors.geoPermissionDenied");
       },
       { enableHighAccuracy: true, timeout: 8000, maximumAge: 300000 }
     );
@@ -54,26 +51,31 @@ function Page() {
     (d: any) => isFinite(d._distanceKm ?? Infinity)
   );
 
+  function fmtKm(km?: number) {
+    if (km == null || !isFinite(km)) return null;
+    return km < 1 ? `${Math.round(km * 1000)} ${t("nearby-doctors.meterUnit")}` : `${km.toFixed(1)} ${t("nearby-doctors.kmUnit")}`;
+  }
+
   return (
     <AppShell>
-      <ScreenHeader title="أطباء قريبون" />
+      <ScreenHeader title={t("nearby-doctors.title")} />
       <div dir="rtl" className="px-4 pb-24">
         <div className="mt-2 mb-4 rounded-2xl bg-primary/5 border border-primary/20 px-3 py-2.5 flex items-center gap-2">
           {locating ? (
             <>
               <Loader2 className="w-4 h-4 text-primary animate-spin" />
-              <span className="text-xs text-muted-foreground">جاري تحديد موقعك...</span>
+              <span className="text-xs text-muted-foreground">{t("nearby-doctors.locating")}</span>
             </>
-          ) : geoError ? (
+          ) : geoErrorKey ? (
             <>
               <MapPin className="w-4 h-4 text-amber-500" />
-              <span className="text-xs text-amber-600">{geoError}</span>
+              <span className="text-xs text-amber-600">{t(geoErrorKey)}</span>
             </>
           ) : (
             <>
               <MapPin className="w-4 h-4 text-primary" />
               <span className="text-xs text-foreground font-semibold">
-                المسافة محسوبة من موقعك الحالي · {sorted.length} طبيب
+                {t("nearby-doctors.distanceInfo", { count: sorted.length })}
               </span>
             </>
           )}
@@ -89,7 +91,7 @@ function Page() {
 
         {!isLoading && !locating && sorted.length === 0 && (
           <div className="rounded-2xl bg-card border border-border p-8 text-center text-sm text-muted-foreground">
-            لا يوجد أطباء قريبون
+            {t("nearby-doctors.noResults")}
           </div>
         )}
 
@@ -101,7 +103,7 @@ function Page() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: Math.min(i * 0.04, 0.4), duration: 0.3 }}
             >
-              <DoctorNearbyRow d={d} />
+              <DoctorNearbyRow d={d} fmtKm={fmtKm} />
             </motion.div>
           ))}
         </div>
@@ -110,7 +112,8 @@ function Page() {
   );
 }
 
-function DoctorNearbyRow({ d }: { d: any }) {
+function DoctorNearbyRow({ d, fmtKm }: { d: any; fmtKm: (km?: number) => string | null }) {
+  const { t } = useTranslation();
   const dist = fmtKm(d._distanceKm);
   return (
     <div className="bg-card rounded-2xl border border-border p-3">
@@ -154,14 +157,14 @@ function DoctorNearbyRow({ d }: { d: any }) {
           onClick={() => openMap(d.lat, d.lng, d.full_name)}
           className="flex items-center justify-center gap-1.5 rounded-full py-2 text-xs font-bold bg-primary text-primary-foreground active:scale-95 transition"
         >
-          <MapIcon className="w-3.5 h-3.5" /> موقع على الخريطة
+          <MapIcon className="w-3.5 h-3.5" /> {t("nearby-doctors.viewOnMap")}
         </button>
         <a
           href={d.phone ? `tel:${d.phone}` : "#"}
           onClick={(e) => { if (!d.phone) e.preventDefault(); }}
           className="flex items-center justify-center gap-1.5 rounded-full py-2 text-xs font-bold bg-primary/10 text-primary active:scale-95 transition"
         >
-          <Phone className="w-3.5 h-3.5" /> اتصال
+          <Phone className="w-3.5 h-3.5" /> {t("nearby-doctors.call")}
         </a>
       </div>
     </div>

@@ -1,0 +1,26 @@
+{
+  "ar": {
+    "title": "متبرعو الدم",
+    "all": "الكل",
+    "urgentBloodRequest": "طلب دم عاجل",
+    "urgentBloodDesc": "أنشئ طلباً وسيُشعر المتبرعون المتوافقون في ولايتك",
+    "latestOpenRequests": "آخر الطلبات المفتوحة",
+    "availableNow": "متاح الآن"
+  },
+  "fr": {
+    "title": "Donneurs de sang",
+    "all": "Tous",
+    "urgentBloodRequest": "Demande de sang urgente",
+    "urgentBloodDesc": "Créez une demande et les donneurs compatibles de votre wilaya seront notifiés",
+    "latestOpenRequests": "Dernières demandes ouvertes",
+    "availableNow": "Disponible maintenant"
+  },
+  "en": {
+    "title": "Blood Donors",
+    "all": "All",
+    "urgentBloodRequest": "Urgent blood request",
+    "urgentBloodDesc": "Create a request and compatible donors in your wilaya will be notified",
+    "latestOpenRequests": "Latest open requests",
+    "availableNow": "Available now"
+  }
+}

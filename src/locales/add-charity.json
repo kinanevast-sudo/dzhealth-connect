@@ -1,0 +1,41 @@
+{
+  "ar": {
+    "title": "إضافة جمعية خيرية",
+    "infoNote": "أضف معلومات الجمعية لتظهر مباشرة في البحث والخريطة.",
+    "fieldName": "اسم الجمعية *",
+    "fieldPhone": "رقم الهاتف *",
+    "fieldDescription": "نبذة عن الجمعية",
+    "descriptionPlaceholder": "مجال النشاط، الخدمات...",
+    "location": "الموقع",
+    "addressPlaceholder": "العنوان التفصيلي",
+    "errorRequired": "املأ الحقول الأساسية",
+    "errorSave": "تعذّر الحفظ: ",
+    "successAdd": "تمت إضافة الجمعية بنجاح"
+  },
+  "fr": {
+    "title": "Ajouter une association caritative",
+    "infoNote": "Ajoutez les informations de l'association pour qu'elle apparaisse directement dans la recherche et sur la carte.",
+    "fieldName": "Nom de l'association *",
+    "fieldPhone": "Numéro de téléphone *",
+    "fieldDescription": "À propos de l'association",
+    "descriptionPlaceholder": "Domaine d'activité, services...",
+    "location": "Localisation",
+    "addressPlaceholder": "Adresse détaillée",
+    "errorRequired": "Veuillez remplir les champs obligatoires",
+    "errorSave": "Échec de l'enregistrement : ",
+    "successAdd": "Association ajoutée avec succès"
+  },
+  "en": {
+    "title": "Add a Charitable Association",
+    "infoNote": "Add the association details to make it appear directly in search and on the map.",
+    "fieldName": "Association Name *",
+    "fieldPhone": "Phone Number *",
+    "fieldDescription": "About the Association",
+    "descriptionPlaceholder": "Field of activity, services...",
+    "location": "Location",
+    "addressPlaceholder": "Detailed address",
+    "errorRequired": "Please fill in the required fields",
+    "errorSave": "Failed to save: ",
+    "successAdd": "Association added successfully"
+  }
+}

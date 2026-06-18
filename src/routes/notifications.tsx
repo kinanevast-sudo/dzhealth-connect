@@ -3,6 +3,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { Bell, BellOff, Trash2, CheckCheck, CalendarCheck, Droplet, Info, ArrowRight } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -20,23 +21,6 @@ type Notif = {
 
 type Cat = "all" | "appointment" | "blood" | "system";
 
-const META: Record<string, { icon: React.ReactNode; color: string; bg: string; label: string }> = {
-  appointment: { icon: <CalendarCheck className="w-4 h-4" />, color: "text-primary", bg: "bg-primary/10", label: "المواعيد" },
-  blood: { icon: <Droplet className="w-4 h-4" />, color: "text-red-500", bg: "bg-red-500/10", label: "تبرع بالدم" },
-  alert: { icon: <Bell className="w-4 h-4" />, color: "text-amber-500", bg: "bg-amber-500/10", label: "تنبيه" },
-  system: { icon: <Info className="w-4 h-4" />, color: "text-muted-foreground", bg: "bg-secondary", label: "النظام" },
-};
-const DEFAULT_META = META.system;
-
-function timeAgo(iso: string) {
-  const d = (Date.now() - new Date(iso).getTime()) / 1000;
-  if (d < 60) return "الآن";
-  if (d < 3600) return `منذ ${Math.floor(d / 60)} د`;
-  if (d < 86400) return `منذ ${Math.floor(d / 3600)} س`;
-  if (d < 604800) return `منذ ${Math.floor(d / 86400)} ي`;
-  return `منذ ${Math.floor(d / 604800)} أ`;
-}
-
 function bucket(kind?: string | null): Cat {
   if (kind === "appointment") return "appointment";
   if (kind === "blood" || kind === "donation") return "blood";
@@ -45,8 +29,26 @@ function bucket(kind?: string | null): Cat {
 }
 
 function Page() {
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [activeFilter, setActiveFilter] = useState<Cat>("all");
+
+  const META: Record<string, { icon: React.ReactNode; color: string; bg: string; label: string }> = {
+    appointment: { icon: <CalendarCheck className="w-4 h-4" />, color: "text-primary", bg: "bg-primary/10", label: t("notifications.metaAppointment") },
+    blood: { icon: <Droplet className="w-4 h-4" />, color: "text-red-500", bg: "bg-red-500/10", label: t("notifications.metaBlood") },
+    alert: { icon: <Bell className="w-4 h-4" />, color: "text-amber-500", bg: "bg-amber-500/10", label: t("notifications.metaAlert") },
+    system: { icon: <Info className="w-4 h-4" />, color: "text-muted-foreground", bg: "bg-secondary", label: t("notifications.metaSystem") },
+  };
+  const DEFAULT_META = META.system;
+
+  function timeAgo(iso: string) {
+    const d = (Date.now() - new Date(iso).getTime()) / 1000;
+    if (d < 60) return t("notifications.timeNow");
+    if (d < 3600) return t("notifications.timeMinutes", { n: Math.floor(d / 60) });
+    if (d < 86400) return t("notifications.timeHours", { n: Math.floor(d / 3600) });
+    if (d < 604800) return t("notifications.timeDays", { n: Math.floor(d / 86400) });
+    return t("notifications.timeWeeks", { n: Math.floor(d / 604800) });
+  }
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["notifications"],
@@ -98,10 +100,10 @@ function Page() {
   }, [notifications, activeFilter]);
 
   const FILTER_LABELS: { key: Cat; label: string }[] = [
-    { key: "all", label: "الكل" },
-    { key: "appointment", label: "المواعيد" },
-    { key: "blood", label: "تبرع بالدم" },
-    { key: "system", label: "النظام" },
+    { key: "all", label: t("notifications.filterAll") },
+    { key: "appointment", label: t("notifications.filterAppointments") },
+    { key: "blood", label: t("notifications.filterBlood") },
+    { key: "system", label: t("notifications.filterSystem") },
   ];
 
   const handleMarkRead = async (id: string) => {
@@ -139,10 +141,10 @@ function Page() {
               <ArrowRight className="w-4 h-4" />
             </Link>
             <div className="min-w-0">
-              <h1 className="font-black text-lg leading-tight truncate">الإشعارات</h1>
+              <h1 className="font-black text-lg leading-tight truncate">{t("notifications.title")}</h1>
               {unreadCount > 0 && (
                 <p className="text-xs text-muted-foreground">
-                  <span className="text-primary font-bold">{unreadCount}</span> غير مقروءة
+                  <span className="text-primary font-bold">{unreadCount}</span> {t("notifications.unread", { count: unreadCount })}
                 </p>
               )}
             </div>
@@ -154,7 +156,7 @@ function Page() {
                 className="flex items-center gap-1.5 text-xs text-primary font-semibold bg-primary/10 px-3 py-2 rounded-xl cursor-pointer active:scale-95 transition-transform"
               >
                 <CheckCheck className="w-3.5 h-3.5" />
-                قراءة الكل
+                {t("notifications.markAllRead")}
               </button>
             )}
             <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center shrink-0">
@@ -204,7 +206,7 @@ function Page() {
           ))
         ) : error ? (
           <div className="rounded-2xl bg-surface card-elevated p-4 text-sm text-red-500 text-center">
-            تعذّر تحميل الإشعارات
+            {t("notifications.loadError")}
           </div>
         ) : (
           <AnimatePresence mode="popLayout">
@@ -218,9 +220,9 @@ function Page() {
                 <div className="w-20 h-20 bg-muted rounded-3xl flex items-center justify-center">
                   <BellOff className="w-10 h-10 text-muted-foreground" />
                 </div>
-                <p className="font-bold text-foreground">لا توجد إشعارات</p>
+                <p className="font-bold text-foreground">{t("notifications.empty")}</p>
                 <p className="text-xs text-muted-foreground text-center max-w-xs">
-                  سنُعلمك فور وصول أي تنبيه جديد بخصوص المواعيد، التبرع بالدم، أو تحديثات النظام
+                  {t("notifications.emptyDesc")}
                 </p>
               </motion.div>
             ) : (
@@ -268,7 +270,7 @@ function Page() {
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDelete(n.id); }}
                       className="w-8 h-8 rounded-xl bg-destructive/10 flex items-center justify-center flex-shrink-0 cursor-pointer hover:bg-destructive/20 transition-colors active:scale-95"
-                      aria-label="حذف"
+                      aria-label={t("notifications.deleteAriaLabel")}
                     >
                       <Trash2 className="w-3.5 h-3.5 text-destructive" />
                     </button>

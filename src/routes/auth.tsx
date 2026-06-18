@@ -4,10 +4,12 @@ import { HeartPulse, Mail, Lock, User as UserIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/auth")({ component: Auth });
 
 function Auth() {
+  const { t } = useTranslation();
   const [mode, setMode] = useState<"login" | "signup">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -25,22 +27,22 @@ function Auth() {
           options: { data: { full_name: name }, emailRedirectTo: window.location.origin + "/home" },
         });
         if (error) throw error;
-        toast.success("تم إنشاء الحساب بنجاح");
+        toast.success(t("auth.account_created"));
         nav({ to: "/home" });
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
-        toast.success("مرحبا بعودتك");
+        toast.success(t("auth.welcome_back"));
         nav({ to: "/home" });
       }
     } catch (err: any) {
-      toast.error(err.message ?? "حدث خطأ");
+      toast.error(err.message ?? t("auth.error_occurred"));
     } finally { setLoading(false); }
   }
 
   async function google() {
     const r = await lovable.auth.signInWithOAuth("google", { redirect_uri: window.location.origin + "/home" });
-    if (r.error) toast.error("تعذر تسجيل الدخول بـ Google");
+    if (r.error) toast.error(t("auth.google_signin_error"));
   }
 
   return (
@@ -51,7 +53,7 @@ function Auth() {
         </div>
         <h1 className="mt-4 text-2xl font-extrabold text-gradient">DzHealth</h1>
         <p className="mt-1 text-xs text-muted-foreground">
-          {mode === "login" ? "مرحبا بك مجددًا" : "أنشئ حسابك الجديد"}
+          {mode === "login" ? t("auth.login_subtitle") : t("auth.signup_subtitle")}
         </p>
       </div>
 
@@ -59,30 +61,30 @@ function Auth() {
         {(["login", "signup"] as const).map((m) => (
           <button key={m} onClick={() => setMode(m)}
             className={`flex-1 rounded-full py-2 text-sm font-semibold transition-all ${mode === m ? "gradient-primary text-primary-foreground neon-glow" : "text-muted-foreground"}`}>
-            {m === "login" ? "تسجيل الدخول" : "إنشاء حساب"}
+            {m === "login" ? t("auth.login") : t("auth.signup")}
           </button>
         ))}
       </div>
 
       <form onSubmit={submit} className="mt-6 space-y-3">
         {mode === "signup" && (
-          <Field icon={UserIcon} placeholder="الاسم الكامل" value={name} onChange={setName} />
+          <Field icon={UserIcon} placeholder={t("auth.full_name_placeholder")} value={name} onChange={setName} />
         )}
         <Field icon={Mail} type="email" placeholder="example@mail.com" value={email} onChange={setEmail} />
-        <Field icon={Lock} type="password" placeholder="كلمة المرور" value={password} onChange={setPassword} />
+        <Field icon={Lock} type="password" placeholder={t("auth.password_placeholder")} value={password} onChange={setPassword} />
 
         <button disabled={loading} type="submit"
           className="w-full rounded-2xl gradient-primary py-3.5 text-sm font-bold text-primary-foreground neon-glow disabled:opacity-60">
-          {loading ? "..." : mode === "login" ? "تسجيل الدخول" : "إنشاء حساب"}
+          {loading ? "..." : mode === "login" ? t("auth.login") : t("auth.signup")}
         </button>
       </form>
 
       <div className="my-5 flex items-center gap-3 text-xs text-muted-foreground">
-        <span className="h-px flex-1 bg-border" /> أو <span className="h-px flex-1 bg-border" />
+        <span className="h-px flex-1 bg-border" /> {t("auth.or")} <span className="h-px flex-1 bg-border" />
       </div>
 
       <button onClick={google} className="flex w-full items-center justify-center gap-2 rounded-2xl bg-surface card-elevated py-3 text-sm font-semibold">
-        <span className="text-base">G</span> تسجيل الدخول مع Google
+        <span className="text-base">G</span> {t("auth.google_signin")}
       </button>
     </div>
   );

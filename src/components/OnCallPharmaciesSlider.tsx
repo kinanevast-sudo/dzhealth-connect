@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { sortByDistance } from "@/lib/geo";
 import { openMap } from "@/lib/map";
+import { useTranslation } from "react-i18next";
 
 const MotionLink = motion(Link);
 
@@ -16,19 +17,22 @@ function todayISO() {
   return `${d.getFullYear()}-${m}-${day}`;
 }
 
-function shiftLabel(st?: string) {
-  if (st === "day") return "صباحية من 08:00 إلى 19:00";
-  if (st === "night") return "مسائية من 19:00 إلى 08:00";
-  return "24/24";
-}
-
-function fmtKm(km?: number) {
-  if (km == null || !isFinite(km)) return null;
-  return km < 1 ? `${Math.round(km * 1000)} م` : `${km.toFixed(1)} كم`;
-}
-
 export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng: number } | null }) {
+  const { t } = useTranslation();
   const [index, setIndex] = useState(0);
+
+  function shiftLabel(st?: string) {
+    if (st === "day") return t("onCallPharmaciesSlider.shift_day");
+    if (st === "night") return t("onCallPharmaciesSlider.shift_night");
+    return t("onCallPharmaciesSlider.shift_24");
+  }
+
+  function fmtKm(km?: number) {
+    if (km == null || !isFinite(km)) return null;
+    return km < 1
+      ? t("onCallPharmaciesSlider.dist_m", { n: Math.round(km * 1000) })
+      : t("onCallPharmaciesSlider.dist_km", { n: km.toFixed(1) });
+  }
 
   const { data = [] } = useQuery({
     queryKey: ["on-call-home", todayISO()],
@@ -45,8 +49,8 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
 
   useEffect(() => {
     if (sorted.length <= 1) return;
-    const t = setInterval(() => setIndex((i) => (i + 1) % sorted.length), 4500);
-    return () => clearInterval(t);
+    const timer = setInterval(() => setIndex((i) => (i + 1) % sorted.length), 4500);
+    return () => clearInterval(timer);
   }, [sorted.length]);
 
   if (sorted.length === 0) {
@@ -55,15 +59,15 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
         <div className="flex items-center justify-between mb-2">
           <h2 className="font-black text-base text-foreground flex items-center gap-1.5">
             <Clock className="w-4 h-4 text-green-600" />
-            الصيدليات المناوبة اليوم
+            {t("onCallPharmaciesSlider.section_title")}
           </h2>
           <Link to="/on-call-pharmacies" className="text-primary text-xs font-medium flex items-center gap-1">
-            عرض الكل <ChevronLeft className="w-3 h-3" />
+            {t("onCallPharmaciesSlider.view_all")} <ChevronLeft className="w-3 h-3" />
           </Link>
         </div>
         <div className="bg-card border border-border rounded-2xl px-4 py-6 text-center">
           <Pill className="w-8 h-8 text-muted-foreground mx-auto mb-2 opacity-50" />
-          <p className="text-sm text-muted-foreground">لا توجد صيدليات مناوبة مسجلة لهذا اليوم</p>
+          <p className="text-sm text-muted-foreground">{t("onCallPharmaciesSlider.no_pharmacies")}</p>
         </div>
       </section>
     );
@@ -76,10 +80,10 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
       <div className="flex items-center justify-between mb-2">
         <h2 className="font-black text-base text-foreground flex items-center gap-1.5">
           <Clock className="w-4 h-4 text-green-600" />
-          الصيدليات المناوبة اليوم
+          {t("onCallPharmaciesSlider.section_title")}
         </h2>
         <Link to="/on-call-pharmacies" className="text-primary text-xs font-medium flex items-center gap-1">
-          عرض الكل <ChevronLeft className="w-3 h-3" />
+          {t("onCallPharmaciesSlider.view_all")} <ChevronLeft className="w-3 h-3" />
         </Link>
       </div>
 
@@ -113,11 +117,11 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
             </div>
             <div className="flex flex-col gap-1.5 shrink-0">
               {p.phone && (
-                <a href={`tel:${p.phone}`} onClick={(e) => e.stopPropagation()} className="w-10 h-10 rounded-xl bg-green-600 text-white flex items-center justify-center active:scale-95" aria-label="اتصال">
+                <a href={`tel:${p.phone}`} onClick={(e) => e.stopPropagation()} className="w-10 h-10 rounded-xl bg-green-600 text-white flex items-center justify-center active:scale-95" aria-label={t("onCallPharmaciesSlider.call")}>
                   <Phone className="w-4 h-4" />
                 </a>
               )}
-              <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); openMap(p.lat, p.lng, p.name); }} className="w-10 h-10 rounded-xl bg-cyan-700 text-white flex items-center justify-center active:scale-95" aria-label="الخريطة">
+              <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); openMap(p.lat, p.lng, p.name); }} className="w-10 h-10 rounded-xl bg-cyan-700 text-white flex items-center justify-center active:scale-95" aria-label={t("onCallPharmaciesSlider.map")}>
                 <MapIcon className="w-4 h-4" />
               </button>
             </div>
@@ -130,7 +134,7 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
               <button
                 key={i}
                 onClick={() => setIndex(i)}
-                aria-label={`بطاقة ${i + 1}`}
+                aria-label={t("onCallPharmaciesSlider.card_n", { n: i + 1 })}
                 className={`h-1.5 rounded-full transition-all ${i === index ? "w-6 bg-green-500" : "w-1.5 bg-muted-foreground/40"}`}
               />
             ))}
@@ -140,4 +144,3 @@ export function OnCallPharmaciesSlider({ origin }: { origin: { lat: number; lng:
     </section>
   );
 }
-

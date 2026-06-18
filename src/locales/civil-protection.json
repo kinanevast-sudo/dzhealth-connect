@@ -1,0 +1,83 @@
+{
+  "ar": {
+    "title": "الحماية المدنية",
+    "logoAlt": "الحماية المدنية",
+    "agencyName": "الحماية المدنية الجزائرية",
+    "emergencyDesc": "في حالة الطوارئ — اتصل فوراً بالرقم الأخضر",
+    "call14": "اتصل 14",
+    "call1021": "اتصل 1021",
+    "sectionsTitle": "الأقسام والخدمات",
+    "nearbyCenters": "مراكز قريبة",
+    "search": "بحث",
+    "viewOnMap": "موقع على الخريطة",
+    "call": "اتصال",
+    "sections": {
+      "fire": { "name": "إطفاء الحرائق", "desc": "تدخل سريع ضد الحرائق المنزلية والصناعية والغابية" },
+      "medical": { "name": "الإسعاف الطبي", "desc": "نقل المرضى والمصابين وتقديم الإسعافات الأولية" },
+      "traffic": { "name": "حوادث المرور", "desc": "تدخل في حوادث الطرقات وإنقاذ الضحايا" },
+      "rescue": { "name": "الإنقاذ والغوص", "desc": "إنقاذ الغرقى والتدخل في الفيضانات والكوارث" },
+      "prevention": { "name": "الوقاية والتوعية", "desc": "حملات توعية وتدريب على السلامة" }
+    },
+    "centers": {
+      "alger": { "name": "الوحدة الرئيسية - الجزائر العاصمة", "wilaya": "الجزائر" },
+      "oran": { "name": "وحدة وهران", "wilaya": "وهران" },
+      "constantine": { "name": "وحدة قسنطينة", "wilaya": "قسنطينة" },
+      "annaba": { "name": "وحدة عنابة", "wilaya": "عنابة" },
+      "setif": { "name": "وحدة سطيف", "wilaya": "سطيف" }
+    }
+  },
+  "fr": {
+    "title": "Protection Civile",
+    "logoAlt": "Protection Civile",
+    "agencyName": "Protection Civile Algérienne",
+    "emergencyDesc": "En cas d'urgence — Appelez immédiatement le numéro vert",
+    "call14": "Appeler le 14",
+    "call1021": "Appeler le 1021",
+    "sectionsTitle": "Sections et services",
+    "nearbyCenters": "Centres à proximité",
+    "search": "Rechercher",
+    "viewOnMap": "Voir sur la carte",
+    "call": "Appeler",
+    "sections": {
+      "fire": { "name": "Lutte contre les incendies", "desc": "Intervention rapide contre les incendies domestiques, industriels et forestiers" },
+      "medical": { "name": "Secours médicaux", "desc": "Transport des malades et blessés, et premiers secours" },
+      "traffic": { "name": "Accidents de la route", "desc": "Intervention sur les accidents de la route et sauvetage des victimes" },
+      "rescue": { "name": "Sauvetage et plongée", "desc": "Sauvetage des noyés et intervention lors des inondations et catastrophes" },
+      "prevention": { "name": "Prévention et sensibilisation", "desc": "Campagnes de sensibilisation et formation à la sécurité" }
+    },
+    "centers": {
+      "alger": { "name": "Unité principale - Alger", "wilaya": "Alger" },
+      "oran": { "name": "Unité d'Oran", "wilaya": "Oran" },
+      "constantine": { "name": "Unité de Constantine", "wilaya": "Constantine" },
+      "annaba": { "name": "Unité d'Annaba", "wilaya": "Annaba" },
+      "setif": { "name": "Unité de Sétif", "wilaya": "Sétif" }
+    }
+  },
+  "en": {
+    "title": "Civil Protection",
+    "logoAlt": "Civil Protection",
+    "agencyName": "Algerian Civil Protection",
+    "emergencyDesc": "In case of emergency — Call the hotline immediately",
+    "call14": "Call 14",
+    "call1021": "Call 1021",
+    "sectionsTitle": "Sections & services",
+    "nearbyCenters": "Nearby centers",
+    "search": "Search",
+    "viewOnMap": "View on map",
+    "call": "Call",
+    "sections": {
+      "fire": { "name": "Firefighting", "desc": "Rapid response to domestic, industrial and forest fires" },
+      "medical": { "name": "Medical rescue", "desc": "Transport of patients and injured persons, and first aid" },
+      "traffic": { "name": "Traffic accidents", "desc": "Response to road accidents and rescue of victims" },
+      "rescue": { "name": "Rescue & diving", "desc": "Rescue of drowning persons and intervention during floods and disasters" },
+      "prevention": { "name": "Prevention & awareness", "desc": "Awareness campaigns and safety training" }
+    },
+    "centers": {
+      "alger": { "name": "Main Unit - Algiers", "wilaya": "Algiers" },
+      "oran": { "name": "Oran Unit", "wilaya": "Oran" },
+      "constantine": { "name": "Constantine Unit", "wilaya": "Constantine" },
+      "annaba": { "name": "Annaba Unit", "wilaya": "Annaba" },
+      "setif": { "name": "Setif Unit", "wilaya": "Setif" }
+    }
+  }
+}

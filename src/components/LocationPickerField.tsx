@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { MapPin, Check } from "lucide-react";
 import { MapLocationPicker, type PickedLocation } from "./MapLocationPicker";
+import { useTranslation } from "react-i18next";
 
 export function LocationPickerField({
   lat, lng, onPicked,
@@ -9,6 +10,7 @@ export function LocationPickerField({
   lng: number | null;
   onPicked: (loc: PickedLocation) => void;
 }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const picked = lat != null && lng != null;
   return (
@@ -22,7 +24,9 @@ export function LocationPickerField({
       >
         {picked ? <Check className="w-5 h-5" /> : <MapPin className="w-5 h-5" />}
         <span className="text-sm font-semibold">
-          {picked ? `تم تحديد الموقع (${lat!.toFixed(4)}, ${lng!.toFixed(4)})` : "اختر الموقع من الخريطة"}
+          {picked
+            ? t("locationPickerField.location_set", { lat: lat!.toFixed(4), lng: lng!.toFixed(4) })
+            : t("locationPickerField.pick_location")}
         </span>
       </button>
       <MapLocationPicker

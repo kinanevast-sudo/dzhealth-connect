@@ -1,0 +1,20 @@
+{
+  "ar": {
+    "wilaya": "الولاية",
+    "baladiya": "البلدية",
+    "select": "اختر...",
+    "select_wilaya_first": "اختر الولاية أولاً"
+  },
+  "fr": {
+    "wilaya": "Wilaya",
+    "baladiya": "Commune",
+    "select": "Choisir...",
+    "select_wilaya_first": "Choisissez d'abord une wilaya"
+  },
+  "en": {
+    "wilaya": "Wilaya",
+    "baladiya": "Municipality",
+    "select": "Select...",
+    "select_wilaya_first": "Select a wilaya first"
+  }
+}

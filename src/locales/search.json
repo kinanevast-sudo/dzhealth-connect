@@ -1,0 +1,101 @@
+{
+  "ar": {
+    "title": "بحث",
+    "searchPlaceholder": "ابحث عن طبيب، تخصص، و...",
+    "voiceInputAriaLabel": "إدخال صوتي",
+    "wilayaButton": "الولاية",
+    "allWilayas": "كل الولايات",
+    "sortNearest": "مُرتّب حسب الأقرب",
+    "sortByNearest": "ترتيب حسب الأقرب",
+    "noResults": "لا توجد نتائج",
+    "mapButton": "موقع على الخريطة",
+    "callButton": "اتصال",
+    "currency": "دج",
+    "unitMeter": "م",
+    "unitKm": "كم",
+    "types": {
+      "all": "الكل",
+      "doctors": "الأطباء",
+      "hospitals": "المستشفيات",
+      "pharmacies": "الصيدليات",
+      "oncall": "صيدليات مناوبة",
+      "donors": "متبرعو الدم",
+      "labs": "مخابر التحاليل",
+      "charities": "الجمعيات الخيرية",
+      "ambulances": "سيارات الإسعاف",
+      "civil": "الحماية المدنية"
+    },
+    "sub": {
+      "all": "الكل",
+      "peds": "طب الأطفال",
+      "hosp": "المستشفيات",
+      "pharma": "الصيدليات"
+    }
+  },
+  "fr": {
+    "title": "Recherche",
+    "searchPlaceholder": "Rechercher un médecin, spécialité...",
+    "voiceInputAriaLabel": "Saisie vocale",
+    "wilayaButton": "Wilaya",
+    "allWilayas": "Toutes les wilayas",
+    "sortNearest": "Trié par proximité",
+    "sortByNearest": "Trier par proximité",
+    "noResults": "Aucun résultat",
+    "mapButton": "Voir sur la carte",
+    "callButton": "Appel",
+    "currency": "DZD",
+    "unitMeter": "m",
+    "unitKm": "km",
+    "types": {
+      "all": "Tout",
+      "doctors": "Médecins",
+      "hospitals": "Hôpitaux",
+      "pharmacies": "Pharmacies",
+      "oncall": "Pharmacies de garde",
+      "donors": "Donneurs de sang",
+      "labs": "Laboratoires",
+      "charities": "Associations caritatives",
+      "ambulances": "Ambulances",
+      "civil": "Protection civile"
+    },
+    "sub": {
+      "all": "Tout",
+      "peds": "Pédiatrie",
+      "hosp": "Hôpitaux",
+      "pharma": "Pharmacies"
+    }
+  },
+  "en": {
+    "title": "Search",
+    "searchPlaceholder": "Search for a doctor, specialty...",
+    "voiceInputAriaLabel": "Voice input",
+    "wilayaButton": "Wilaya",
+    "allWilayas": "All wilayas",
+    "sortNearest": "Sorted by nearest",
+    "sortByNearest": "Sort by nearest",
+    "noResults": "No results found",
+    "mapButton": "View on map",
+    "callButton": "Call",
+    "currency": "DZD",
+    "unitMeter": "m",
+    "unitKm": "km",
+    "types": {
+      "all": "All",
+      "doctors": "Doctors",
+      "hospitals": "Hospitals",
+      "pharmacies": "Pharmacies",
+      "oncall": "On-call pharmacies",
+      "donors": "Blood donors",
+      "labs": "Analysis labs",
+      "charities": "Charities",
+      "ambulances": "Ambulances",
+      "civil": "Civil protection"
+    },
+    "sub": {
+      "all": "All",
+      "peds": "Pediatrics",
+      "hosp": "Hospitals",
+      "pharma": "Pharmacies"
+    }
+  }
+}

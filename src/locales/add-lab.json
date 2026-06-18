@@ -1,0 +1,35 @@
+{
+  "ar": {
+    "title": "إضافة مخبر تحاليل",
+    "infoNote": "أضف معلومات المخبر ليظهر مباشرة في البحث والخريطة.",
+    "fieldName": "اسم المخبر *",
+    "fieldPhone": "رقم الهاتف *",
+    "location": "الموقع",
+    "addressPlaceholder": "العنوان التفصيلي",
+    "errorRequired": "املأ الحقول الأساسية",
+    "errorSave": "تعذّر الحفظ: ",
+    "successAdd": "تمت إضافة المخبر بنجاح"
+  },
+  "fr": {
+    "title": "Ajouter un laboratoire d'analyses",
+    "infoNote": "Ajoutez les informations du laboratoire pour qu'il apparaisse directement dans la recherche et sur la carte.",
+    "fieldName": "Nom du laboratoire *",
+    "fieldPhone": "Numéro de téléphone *",
+    "location": "Localisation",
+    "addressPlaceholder": "Adresse détaillée",
+    "errorRequired": "Veuillez remplir les champs obligatoires",
+    "errorSave": "Échec de l'enregistrement : ",
+    "successAdd": "Laboratoire ajouté avec succès"
+  },
+  "en": {
+    "title": "Add an Analysis Laboratory",
+    "infoNote": "Add the laboratory details to make it appear directly in search and on the map.",
+    "fieldName": "Laboratory Name *",
+    "fieldPhone": "Phone Number *",
+    "location": "Location",
+    "addressPlaceholder": "Detailed address",
+    "errorRequired": "Please fill in the required fields",
+    "errorSave": "Failed to save: ",
+    "successAdd": "Laboratory added successfully"
+  }
+}

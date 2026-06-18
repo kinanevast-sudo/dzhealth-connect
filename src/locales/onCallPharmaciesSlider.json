@@ -1,0 +1,41 @@
+{
+  "ar": {
+    "shift_day": "نهاري",
+    "shift_night": "ليلي",
+    "shift_24": "24/7",
+    "dist_m": "{{n}} م",
+    "dist_km": "{{n}} كم",
+    "section_title": "صيدليات المناوبة",
+    "view_all": "عرض الكل",
+    "no_pharmacies": "لا توجد صيدليات مناوبة اليوم",
+    "call": "اتصال",
+    "map": "الخريطة",
+    "card_n": "البطاقة {{n}}"
+  },
+  "fr": {
+    "shift_day": "Diurne",
+    "shift_night": "Nocturne",
+    "shift_24": "24h/24",
+    "dist_m": "{{n}} m",
+    "dist_km": "{{n}} km",
+    "section_title": "Pharmacies de garde",
+    "view_all": "Voir tout",
+    "no_pharmacies": "Aucune pharmacie de garde aujourd'hui",
+    "call": "Appeler",
+    "map": "Carte",
+    "card_n": "Carte {{n}}"
+  },
+  "en": {
+    "shift_day": "Day shift",
+    "shift_night": "Night shift",
+    "shift_24": "24/7",
+    "dist_m": "{{n}} m",
+    "dist_km": "{{n}} km",
+    "section_title": "On-call Pharmacies",
+    "view_all": "View all",
+    "no_pharmacies": "No on-call pharmacies today",
+    "call": "Call",
+    "map": "Map",
+    "card_n": "Card {{n}}"
+  }
+}

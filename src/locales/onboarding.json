@@ -1,0 +1,35 @@
+{
+  "ar": {
+    "skip": "تخطي",
+    "next": "التالي",
+    "start": "ابدأ الآن",
+    "slide0_title": "كل الخدمات الصحية",
+    "slide0_text": "أطباء، مستشفيات، وصيدليات — كل ما تحتاجه في مكان واحد على راحة يدك",
+    "slide1_title": "احجز مواعيدك بسهولة",
+    "slide1_text": "احجز موعدك مع طبيبك المفضّل في ثوانٍ ودون انتظار",
+    "slide2_title": "تبرّع بالدم وأنقذ حياة",
+    "slide2_text": "ساهم في إنقاذ الأرواح عبر التبرع بالدم أو الاستجابة لطلبات الدم القريبة"
+  },
+  "fr": {
+    "skip": "Passer",
+    "next": "Suivant",
+    "start": "Commencer",
+    "slide0_title": "Tous les services de santé",
+    "slide0_text": "Médecins, hôpitaux, pharmacies — tout ce dont vous avez besoin en un seul endroit",
+    "slide1_title": "Prenez rendez-vous facilement",
+    "slide1_text": "Réservez un rendez-vous avec votre médecin préféré en quelques secondes, sans attendre",
+    "slide2_title": "Donnez du sang, sauvez des vies",
+    "slide2_text": "Contribuez à sauver des vies en faisant un don de sang ou en répondant aux demandes proches"
+  },
+  "en": {
+    "skip": "Skip",
+    "next": "Next",
+    "start": "Get Started",
+    "slide0_title": "All Health Services",
+    "slide0_text": "Doctors, hospitals, and pharmacies — everything you need in one convenient place",
+    "slide1_title": "Book Appointments Easily",
+    "slide1_text": "Book an appointment with your preferred doctor in seconds, no waiting needed",
+    "slide2_title": "Donate Blood, Save Lives",
+    "slide2_text": "Help save lives by donating blood or responding to nearby blood requests"
+  }
+}

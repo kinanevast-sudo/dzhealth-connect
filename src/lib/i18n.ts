@@ -220,7 +220,27 @@ const resources = {
   },
 } as const;
 
+// Auto-load per-page namespace bundles from src/locales/*.json.
+// Each JSON file shape: { "ar": {...}, "fr": {...}, "en": {...} }
+// File name (without .json) becomes the i18next namespace (default).
+const localeModules = import.meta.glob("../locales/*.json", { eager: true }) as Record<
+  string,
+  { default?: Record<string, Record<string, unknown>> } & Record<string, Record<string, unknown>>
+>;
+const pageBundles: Record<AppLang, Record<string, Record<string, unknown>>> = { ar: {}, fr: {}, en: {} };
+for (const [path, mod] of Object.entries(localeModules)) {
+  const ns = path.split("/").pop()!.replace(/\.json$/, "");
+  const data = (mod as { default?: Record<string, Record<string, unknown>> }).default ?? (mod as Record<string, Record<string, unknown>>);
+  for (const lang of ["ar", "fr", "en"] as const) {
+    const bundle = (data as Record<string, Record<string, unknown>>)[lang];
+    if (bundle && typeof bundle === "object") {
+      pageBundles[lang][ns] = bundle;
+    }
+  }
+}
+
 const LANG_KEY = "dzhealth-lang";
+
 
 export function applyDir(lang: AppLang) {
   if (typeof document === "undefined") return;
@@ -236,8 +256,13 @@ function cachedLang(): AppLang {
 
 if (!i18n.isInitialized) {
   const lng = cachedLang();
+  const merged: Record<AppLang, { translation: Record<string, unknown> }> = {
+    ar: { translation: { ...(resources.ar.translation as Record<string, unknown>), ...pageBundles.ar } },
+    fr: { translation: { ...(resources.fr.translation as Record<string, unknown>), ...pageBundles.fr } },
+    en: { translation: { ...(resources.en.translation as Record<string, unknown>), ...pageBundles.en } },
+  };
   i18n.use(initReactI18next).init({
-    resources,
+    resources: merged,
     lng,
     fallbackLng: "ar",
     interpolation: { escapeValue: false },

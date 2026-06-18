@@ -1,0 +1,14 @@
+{
+  "ar": {
+    "title": "المعدات الطبية",
+    "available": "متاح"
+  },
+  "fr": {
+    "title": "Équipements médicaux",
+    "available": "Disponible"
+  },
+  "en": {
+    "title": "Medical Equipment",
+    "available": "Available"
+  }
+}

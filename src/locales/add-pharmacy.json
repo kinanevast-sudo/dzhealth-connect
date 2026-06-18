@@ -1,0 +1,35 @@
+{
+  "ar": {
+    "title": "إضافة صيدلية",
+    "fieldName": "اسم الصيدلية *",
+    "fieldPhone": "رقم الهاتف *",
+    "oncall24": "مناوبة 24 ساعة",
+    "oncall24Desc": "خدمات على مدار الساعة",
+    "location": "الموقع",
+    "addressPlaceholder": "العنوان التفصيلي",
+    "errorRequired": "املأ الحقول الأساسية",
+    "successAdd": "تمت إضافة الصيدلية"
+  },
+  "fr": {
+    "title": "Ajouter une pharmacie",
+    "fieldName": "Nom de la pharmacie *",
+    "fieldPhone": "Numéro de téléphone *",
+    "oncall24": "Garde 24 heures",
+    "oncall24Desc": "Services disponibles en permanence",
+    "location": "Localisation",
+    "addressPlaceholder": "Adresse détaillée",
+    "errorRequired": "Veuillez remplir les champs obligatoires",
+    "successAdd": "Pharmacie ajoutée avec succès"
+  },
+  "en": {
+    "title": "Add a Pharmacy",
+    "fieldName": "Pharmacy Name *",
+    "fieldPhone": "Phone Number *",
+    "oncall24": "24-Hour On-Call",
+    "oncall24Desc": "Round-the-clock services",
+    "location": "Location",
+    "addressPlaceholder": "Detailed address",
+    "errorRequired": "Please fill in the required fields",
+    "successAdd": "Pharmacy added successfully"
+  }
+}

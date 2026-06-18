@@ -1,0 +1,32 @@
+{
+  "ar": {
+    "title": "إضافة مستشفى",
+    "fieldName": "اسم المستشفى *",
+    "fieldPhone": "رقم الهاتف *",
+    "fieldKind": "النوع",
+    "location": "الموقع",
+    "addressPlaceholder": "العنوان التفصيلي",
+    "errorRequired": "املأ الحقول الأساسية",
+    "successAdd": "تمت إضافة المستشفى"
+  },
+  "fr": {
+    "title": "Ajouter un hôpital",
+    "fieldName": "Nom de l'hôpital *",
+    "fieldPhone": "Numéro de téléphone *",
+    "fieldKind": "Type",
+    "location": "Localisation",
+    "addressPlaceholder": "Adresse détaillée",
+    "errorRequired": "Veuillez remplir les champs obligatoires",
+    "successAdd": "Hôpital ajouté avec succès"
+  },
+  "en": {
+    "title": "Add a Hospital",
+    "fieldName": "Hospital Name *",
+    "fieldPhone": "Phone Number *",
+    "fieldKind": "Type",
+    "location": "Location",
+    "addressPlaceholder": "Detailed address",
+    "errorRequired": "Please fill in the required fields",
+    "successAdd": "Hospital added successfully"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "ar": {
+    "title": "إضافة طبيب",
+    "fieldFullName": "الاسم الكامل *",
+    "fieldPhone": "رقم الهاتف *",
+    "fieldSpecialty": "التخصص *",
+    "specialtyPlaceholder": "اختر التخصص",
+    "fieldFee": "رسوم الاستشارة (دج)",
+    "fieldExperience": "سنوات الخبرة",
+    "fieldAbout": "نبذة عن الطبيب",
+    "location": "الموقع",
+    "addressPlaceholder": "العنوان التفصيلي",
+    "errorRequired": "املأ الحقول الأساسية",
+    "successAdd": "تمت إضافة الطبيب"
+  },
+  "fr": {
+    "title": "Ajouter un médecin",
+    "fieldFullName": "Nom complet *",
+    "fieldPhone": "Numéro de téléphone *",
+    "fieldSpecialty": "Spécialité *",
+    "specialtyPlaceholder": "Choisir la spécialité",
+    "fieldFee": "Frais de consultation (DA)",
+    "fieldExperience": "Années d'expérience",
+    "fieldAbout": "À propos du médecin",
+    "location": "Localisation",
+    "addressPlaceholder": "Adresse détaillée",
+    "errorRequired": "Veuillez remplir les champs obligatoires",
+    "successAdd": "Médecin ajouté avec succès"
+  },
+  "en": {
+    "title": "Add a Doctor",
+    "fieldFullName": "Full Name *",
+    "fieldPhone": "Phone Number *",
+    "fieldSpecialty": "Specialty *",
+    "specialtyPlaceholder": "Choose specialty",
+    "fieldFee": "Consultation Fee (DZD)",
+    "fieldExperience": "Years of Experience",
+    "fieldAbout": "About the Doctor",
+    "location": "Location",
+    "addressPlaceholder": "Detailed address",
+    "errorRequired": "Please fill in the required fields",
+    "successAdd": "Doctor added successfully"
+  }
+}
