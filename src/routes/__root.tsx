@@ -12,6 +12,8 @@ import { Toaster } from "sonner";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import "../lib/i18n";
+import { OfflineScreen } from "../components/OfflineScreen";
 
 function NotFoundComponent() {
   return (
@@ -101,9 +103,11 @@ function RootComponent() {
   }, []);
   return (
     <QueryClientProvider client={queryClient}>
-      <div id="app-frame">
-        <Outlet />
-      </div>
+      <OfflineScreen>
+        <div id="app-frame">
+          <Outlet />
+        </div>
+      </OfflineScreen>
       <Toaster position="top-center" theme="dark" richColors />
     </QueryClientProvider>
   );
