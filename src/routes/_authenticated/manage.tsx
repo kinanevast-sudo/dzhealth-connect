@@ -6,7 +6,7 @@ import {
   LayoutDashboard, ClipboardList, ShieldCheck, Loader2, BarChart3, Home,
   Users as UsersIcon, FileText, Bell, Settings, Image as ImageIcon, Activity,
   Brain, History, Search, Maximize2, ChevronDown, Heart, AlertTriangle,
-  Database,
+  Database, Monitor, Smartphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
