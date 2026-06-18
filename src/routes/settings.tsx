@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/settings")({ component: Page });
 
@@ -19,6 +20,7 @@ const NOTIF_KEY = "dzhealth-notif";
 type Lang = "ar" | "fr" | "en";
 
 function Page() {
+  const { t, i18n } = useTranslation();
   const { theme, set: setTheme, isDark } = useTheme();
   const navigate = useNavigate();
   const [notif, setNotif] = useState(true);
