@@ -27,6 +27,15 @@ function ManageLayout() {
   const [pendingCount, setPendingCount] = useState(0);
   const [profile, setProfile] = useState<{ name: string; avatar: string | null } | null>(null);
 
+  // Desktop-only gate (must be before any early returns to respect Rules of Hooks)
+  const [isDesktop, setIsDesktop] = useState(true);
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
   const check = async () => {
     setState("checking");
     const { data: u } = await supabase.auth.getUser();
