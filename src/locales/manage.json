@@ -1,488 +1,506 @@
 {
   "ar": {
-    "manage": {
-      "title": "لوحة الإدارة",
-      "backHome": "العودة للرئيسية",
-      "backToApp": "العودة إلى التطبيق",
-      "nav": {
-        "dashboard": "اللوحة الرئيسية",
-        "submissions": "مراجعة الإضافات",
-        "analytics": "الإحصائيات",
-        "resources": "الموارد"
-      },
-      "analytics": {
-        "title": "الإحصائيات والتحليلات",
-        "subtitle": "مؤشرات حية لأطباء ومستشفيات وطلبات الدم والمواعيد",
-        "exportCsv": "تصدير CSV",
-        "registrations30": "التسجيلات خلال آخر 30 يوم",
-        "appointmentsByStatus": "المواعيد حسب الحالة",
-        "doctorsByWilaya": "الأطباء حسب الولاية (أعلى 10)",
-        "doctorsBySpecialty": "الأطباء حسب التخصص (أعلى 10)",
-        "hospitalsByWilaya": "المستشفيات حسب الولاية (أعلى 10)",
-        "bloodByType": "طلبات الدم حسب الفصيلة",
-        "bloodByUrgency": "طلبات الدم حسب الاستعجال",
-        "refresh": "تحديث",
-        "filters": {
-          "title": "الفلاتر",
-          "period": "المدة",
-          "wilaya": "الولاية",
-          "specialty": "التخصص",
-          "all": "الكل",
-          "reset": "إعادة تعيين",
-          "d7": "7 أيام", "d30": "30 يوم", "d90": "90 يوم", "d365": "سنة"
-        },
-        "kpi": {
-          "appointments": "المواعيد",
-          "urgentBlood": "طلبات دم مستعجلة",
-          "signups": "تسجيلات الفترة",
-          "prev": "في الفترة السابقة"
-        },
-        "alerts": {
-          "regDrop": "انخفاض التسجيلات بنسبة {{pct}}% ({{curr}} مقابل {{prev}} في الفترة السابقة)",
-          "urgentBlood": "تنبيه: {{n}} طلبات دم عاجلة/حرجة في الفترة الحالية",
-          "pendingHigh": "هناك {{n}} إضافة معلقة بانتظار المراجعة"
-        },
-        "table": {
-          "title": "جدول البيانات",
-          "search": "بحث في الجدول…",
-          "columns": "الأعمدة",
-          "blood": "طلبات الدم",
-          "appointments": "المواعيد",
-          "shown": "{{n}} من أصل {{total}} صف"
-        },
-        "feed": {
-          "title": "آخر الأنشطة",
-          "search": "بحث…",
-          "pullHint": "اسحب للأسفل في الجوال للتحديث",
-          "blood": "طلب دم",
-          "appointment": "موعد",
-          "signup": "تسجيل جديد"
-        }
-      },
-      "crud": {
-        "total": "{{count}} عنصر",
-        "add": "إضافة",
-        "export": "تصدير CSV",
-        "search": "بحث",
-        "searchPlaceholder": "ابحث…",
-        "actions": "إجراءات",
-        "empty": "لا توجد بيانات",
-        "page": "صفحة {{page}} من {{total}}",
-        "deleteTitle": "حذف العنصر",
-        "deleteDesc": "هذا الإجراء لا يمكن التراجع عنه.",
-        "cancel": "إلغاء",
-        "confirmDelete": "تأكيد الحذف",
-        "deletedOk": "تم الحذف",
-        "createTitle": "إنشاء جديد",
-        "editTitle": "تعديل",
-        "save": "حفظ",
-        "savedOk": "تم الحفظ",
-        "createdOk": "تم الإنشاء",
-        "notFound": "هذا المورد غير موجود"
-      },
-      "bootstrap": {
-        "title": "إعداد المشرف الأعلى",
-        "desc": "لا يوجد مشرف أعلى بعد. اضغط على الزر لتصبح أول مشرف أعلى لهذا النظام. هذه العملية تتم مرة واحدة فقط.",
-        "claim": "أصبح المشرف الأعلى",
-        "success": "تمت ترقيتك إلى مشرف أعلى",
-        "already": "يوجد مشرف أعلى بالفعل"
-      },
-      "denied": {
-        "title": "ممنوع الوصول",
-        "desc": "هذا القسم مخصص للمشرفين فقط."
-      },
-      "dashboard": {
-        "title": "لوحة التحكم الرئيسية",
-        "subtitle": "نظرة حية وشاملة على حالة منصة DZHealth",
-        "quickActions": "إجراءات سريعة",
-        "reviewPending": "مراجعة الإضافات المعلقة",
-        "morePhases": "وحدات إضافية ستُضاف لاحقاً.",
-        "live": "مباشر",
-        "vsPrev7": "مقارنة بآخر 7 أيام",
-        "activity14": "نشاط المستخدمين (14 يوم)",
-        "activitySub": "تسجيلات، أطباء ومستشفيات جدد",
-        "distribution": "توزيع المحتوى",
-        "distributionSub": "نسبة كل نوع من المحتوى",
-        "total": "الإجمالي",
-        "coverage": "التغطية الجغرافية",
-        "topWilayas": "أعلى الولايات تغطية",
-        "tier": { "high": "عالية", "mid": "متوسطة", "low": "منخفضة", "none": "بلا تغطية" },
-        "contentReview": "ملخص المراجعة",
-        "liveActivity": "النشاط المباشر",
-        "viewMore": "عرض المزيد",
-        "pendingAlert": "لديك {{n}} طلب يحتاج مراجعة عاجلة"
+    "title": "لوحة الإدارة",
+    "backHome": "العودة للرئيسية",
+    "backToApp": "العودة إلى التطبيق",
+    "nav": {
+      "dashboard": "اللوحة الرئيسية",
+      "submissions": "مراجعة الإضافات",
+      "analytics": "الإحصائيات",
+      "resources": "الموارد"
+    },
+    "analytics": {
+      "title": "الإحصائيات والتحليلات",
+      "subtitle": "مؤشرات حية لأطباء ومستشفيات وطلبات الدم والمواعيد",
+      "exportCsv": "تصدير CSV",
+      "registrations30": "التسجيلات خلال آخر 30 يوم",
+      "appointmentsByStatus": "المواعيد حسب الحالة",
+      "doctorsByWilaya": "الأطباء حسب الولاية (أعلى 10)",
+      "doctorsBySpecialty": "الأطباء حسب التخصص (أعلى 10)",
+      "hospitalsByWilaya": "المستشفيات حسب الولاية (أعلى 10)",
+      "bloodByType": "طلبات الدم حسب الفصيلة",
+      "bloodByUrgency": "طلبات الدم حسب الاستعجال",
+      "refresh": "تحديث",
+      "filters": {
+        "title": "الفلاتر",
+        "period": "المدة",
+        "wilaya": "الولاية",
+        "specialty": "التخصص",
+        "all": "الكل",
+        "reset": "إعادة تعيين",
+        "d7": "7 أيام",
+        "d30": "30 يوم",
+        "d90": "90 يوم",
+        "d365": "سنة"
       },
       "kpi": {
-        "pending": "إضافات معلقة",
-        "approved": "إضافات مقبولة",
-        "rejected": "إضافات مرفوضة",
-        "users": "المستخدمون",
-        "doctors": "الأطباء",
-        "hospitals": "المستشفيات",
-        "pharmacies": "الصيدليات",
-        "donors": "متبرعو الدم",
         "appointments": "المواعيد",
-        "bloodReqs": "طلبات الدم"
+        "urgentBlood": "طلبات دم مستعجلة",
+        "signups": "تسجيلات الفترة",
+        "prev": "في الفترة السابقة"
+      },
+      "alerts": {
+        "regDrop": "انخفاض التسجيلات بنسبة {{pct}}% ({{curr}} مقابل {{prev}} في الفترة السابقة)",
+        "urgentBlood": "تنبيه: {{n}} طلبات دم عاجلة/حرجة في الفترة الحالية",
+        "pendingHigh": "هناك {{n}} إضافة معلقة بانتظار المراجعة"
+      },
+      "table": {
+        "title": "جدول البيانات",
+        "search": "بحث في الجدول…",
+        "columns": "الأعمدة",
+        "blood": "طلبات الدم",
+        "appointments": "المواعيد",
+        "shown": "{{n}} من أصل {{total}} صف"
       },
       "feed": {
+        "title": "آخر الأنشطة",
+        "search": "بحث…",
+        "pullHint": "اسحب للأسفل في الجوال للتحديث",
         "blood": "طلب دم",
         "appointment": "موعد",
-        "signup": "تسجيل جديد",
-        "submission": "إضافة"
-      },
-      "subs": {
-        "title": "مراجعة الإضافات",
-        "tabs": {
-          "pending": "معلقة",
-          "approved": "مقبولة",
-          "rejected": "مرفوضة",
-          "all": "الكل"
-        },
-        "empty": "لا توجد طلبات في هذا التصنيف.",
-        "tapToReview": "اضغط للمراجعة والتفاصيل",
-        "emptyPayload": "لا توجد بيانات في هذا الطلب",
-        "openMap": "فتح على الخريطة",
-        "approve": "قبول",
-        "reject": "رفض",
-        "editBeforeApprove": "تعديل قبل القبول",
-        "approvedOk": "تمت الموافقة ونقل البيانات",
-        "rejectedOk": "تم رفض الطلب",
-        "reason": "السبب",
-        "reasonRequired": "السبب مطلوب",
-        "rejectTitle": "رفض الطلب",
-        "rejectDesc": "اكتب سبب الرفض. سيُرسل تلقائياً إلى صاحب الطلب.",
-        "reasonPlaceholder": "البيانات غير مكتملة، الرقم غير صحيح…",
-        "cancel": "إلغاء",
-        "confirmReject": "تأكيد الرفض",
-        "editTitle": "تعديل البيانات قبل القبول",
-        "editDesc": "عدّل JSON ثم احفظ وأقبل. سيتم تسجيل التعديل في سجل المراجعة.",
-        "invalidJson": "JSON غير صالح",
-        "saveAndApprove": "حفظ والقبول"
+        "signup": "تسجيل جديد"
       }
+    },
+    "crud": {
+      "total": "{{count}} عنصر",
+      "add": "إضافة",
+      "export": "تصدير CSV",
+      "search": "بحث",
+      "searchPlaceholder": "ابحث…",
+      "actions": "إجراءات",
+      "empty": "لا توجد بيانات",
+      "page": "صفحة {{page}} من {{total}}",
+      "deleteTitle": "حذف العنصر",
+      "deleteDesc": "هذا الإجراء لا يمكن التراجع عنه.",
+      "cancel": "إلغاء",
+      "confirmDelete": "تأكيد الحذف",
+      "deletedOk": "تم الحذف",
+      "createTitle": "إنشاء جديد",
+      "editTitle": "تعديل",
+      "save": "حفظ",
+      "savedOk": "تم الحفظ",
+      "createdOk": "تم الإنشاء",
+      "notFound": "هذا المورد غير موجود"
+    },
+    "bootstrap": {
+      "title": "إعداد المشرف الأعلى",
+      "desc": "لا يوجد مشرف أعلى بعد. اضغط على الزر لتصبح أول مشرف أعلى لهذا النظام. هذه العملية تتم مرة واحدة فقط.",
+      "claim": "أصبح المشرف الأعلى",
+      "success": "تمت ترقيتك إلى مشرف أعلى",
+      "already": "يوجد مشرف أعلى بالفعل"
+    },
+    "denied": {
+      "title": "ممنوع الوصول",
+      "desc": "هذا القسم مخصص للمشرفين فقط."
+    },
+    "dashboard": {
+      "title": "لوحة التحكم الرئيسية",
+      "subtitle": "نظرة حية وشاملة على حالة منصة DZHealth",
+      "quickActions": "إجراءات سريعة",
+      "reviewPending": "مراجعة الإضافات المعلقة",
+      "morePhases": "وحدات إضافية ستُضاف لاحقاً.",
+      "live": "مباشر",
+      "vsPrev7": "مقارنة بآخر 7 أيام",
+      "activity14": "نشاط المستخدمين (14 يوم)",
+      "activitySub": "تسجيلات، أطباء ومستشفيات جدد",
+      "distribution": "توزيع المحتوى",
+      "distributionSub": "نسبة كل نوع من المحتوى",
+      "total": "الإجمالي",
+      "coverage": "التغطية الجغرافية",
+      "topWilayas": "أعلى الولايات تغطية",
+      "tier": {
+        "high": "عالية",
+        "mid": "متوسطة",
+        "low": "منخفضة",
+        "none": "بلا تغطية"
+      },
+      "contentReview": "ملخص المراجعة",
+      "liveActivity": "النشاط المباشر",
+      "viewMore": "عرض المزيد",
+      "pendingAlert": "لديك {{n}} طلب يحتاج مراجعة عاجلة"
+    },
+    "kpi": {
+      "pending": "إضافات معلقة",
+      "approved": "إضافات مقبولة",
+      "rejected": "إضافات مرفوضة",
+      "users": "المستخدمون",
+      "doctors": "الأطباء",
+      "hospitals": "المستشفيات",
+      "pharmacies": "الصيدليات",
+      "donors": "متبرعو الدم",
+      "appointments": "المواعيد",
+      "bloodReqs": "طلبات الدم"
+    },
+    "feed": {
+      "blood": "طلب دم",
+      "appointment": "موعد",
+      "signup": "تسجيل جديد",
+      "submission": "إضافة"
+    },
+    "subs": {
+      "title": "مراجعة الإضافات",
+      "tabs": {
+        "pending": "معلقة",
+        "approved": "مقبولة",
+        "rejected": "مرفوضة",
+        "all": "الكل"
+      },
+      "empty": "لا توجد طلبات في هذا التصنيف.",
+      "tapToReview": "اضغط للمراجعة والتفاصيل",
+      "emptyPayload": "لا توجد بيانات في هذا الطلب",
+      "openMap": "فتح على الخريطة",
+      "approve": "قبول",
+      "reject": "رفض",
+      "editBeforeApprove": "تعديل قبل القبول",
+      "approvedOk": "تمت الموافقة ونقل البيانات",
+      "rejectedOk": "تم رفض الطلب",
+      "reason": "السبب",
+      "reasonRequired": "السبب مطلوب",
+      "rejectTitle": "رفض الطلب",
+      "rejectDesc": "اكتب سبب الرفض. سيُرسل تلقائياً إلى صاحب الطلب.",
+      "reasonPlaceholder": "البيانات غير مكتملة، الرقم غير صحيح…",
+      "cancel": "إلغاء",
+      "confirmReject": "تأكيد الرفض",
+      "editTitle": "تعديل البيانات قبل القبول",
+      "editDesc": "عدّل JSON ثم احفظ وأقبل. سيتم تسجيل التعديل في سجل المراجعة.",
+      "invalidJson": "JSON غير صالح",
+      "saveAndApprove": "حفظ والقبول"
     }
   },
   "fr": {
-    "manage": {
-      "title": "Tableau d'administration",
-      "backHome": "Retour à l'accueil",
-      "backToApp": "Retour à l'application",
-      "nav": {
-        "dashboard": "Tableau de bord",
-        "submissions": "Modération",
-        "analytics": "Statistiques",
-        "resources": "Ressources"
-      },
-      "analytics": {
-        "title": "Statistiques & analytique",
-        "subtitle": "Indicateurs en direct : médecins, hôpitaux, sang, rendez-vous",
-        "exportCsv": "Exporter CSV",
-        "registrations30": "Inscriptions sur 30 jours",
-        "appointmentsByStatus": "Rendez-vous par statut",
-        "doctorsByWilaya": "Médecins par wilaya (top 10)",
-        "doctorsBySpecialty": "Médecins par spécialité (top 10)",
-        "hospitalsByWilaya": "Hôpitaux par wilaya (top 10)",
-        "bloodByType": "Demandes de sang par groupe",
-        "bloodByUrgency": "Demandes de sang par urgence",
-        "refresh": "Actualiser",
-        "filters": {
-          "title": "Filtres",
-          "period": "Période",
-          "wilaya": "Wilaya",
-          "specialty": "Spécialité",
-          "all": "Toutes",
-          "reset": "Réinitialiser",
-          "d7": "7 jours", "d30": "30 jours", "d90": "90 jours", "d365": "1 an"
-        },
-        "kpi": {
-          "appointments": "Rendez-vous",
-          "urgentBlood": "Demandes urgentes",
-          "signups": "Inscriptions",
-          "prev": "période préc."
-        },
-        "alerts": {
-          "regDrop": "Baisse des inscriptions de {{pct}}% ({{curr}} vs {{prev}})",
-          "urgentBlood": "Alerte : {{n}} demandes de sang urgentes/critiques",
-          "pendingHigh": "{{n}} soumissions en attente de modération"
-        },
-        "table": {
-          "title": "Tableau de données",
-          "search": "Rechercher…",
-          "columns": "Colonnes",
-          "blood": "Sang",
-          "appointments": "Rendez-vous",
-          "shown": "{{n}} sur {{total}} lignes"
-        },
-        "feed": {
-          "title": "Activité récente",
-          "search": "Rechercher…",
-          "pullHint": "Tirez vers le bas (mobile) pour actualiser",
-          "blood": "Demande de sang",
-          "appointment": "Rendez-vous",
-          "signup": "Nouvel utilisateur"
-        }
-      },
-      "crud": {
-        "total": "{{count}} éléments",
-        "add": "Ajouter",
-        "export": "Exporter CSV",
-        "search": "Rechercher",
-        "searchPlaceholder": "Rechercher…",
-        "actions": "Actions",
-        "empty": "Aucune donnée",
-        "page": "Page {{page}} sur {{total}}",
-        "deleteTitle": "Supprimer l'élément",
-        "deleteDesc": "Cette action est irréversible.",
-        "cancel": "Annuler",
-        "confirmDelete": "Confirmer la suppression",
-        "deletedOk": "Supprimé",
-        "createTitle": "Nouvel élément",
-        "editTitle": "Modifier",
-        "save": "Enregistrer",
-        "savedOk": "Enregistré",
-        "createdOk": "Créé",
-        "notFound": "Ressource introuvable"
-      },
-      "bootstrap": {
-        "title": "Configurer le super-admin",
-        "desc": "Aucun super-admin n'existe encore. Cliquez ci-dessous pour devenir le premier super-admin. Cette opération n'est possible qu'une seule fois.",
-        "claim": "Devenir super-admin",
-        "success": "Vous êtes maintenant super-admin",
-        "already": "Un super-admin existe déjà"
-      },
-      "denied": {
-        "title": "Accès refusé",
-        "desc": "Cette section est réservée aux administrateurs."
-      },
-      "dashboard": {
-        "title": "Tableau de bord principal",
-        "subtitle": "Vue en direct et complète de la plateforme DZHealth",
-        "quickActions": "Actions rapides",
-        "reviewPending": "Examiner les soumissions",
-        "morePhases": "D'autres modules à venir.",
-        "live": "En direct",
-        "vsPrev7": "vs 7 derniers jours",
-        "activity14": "Activité utilisateurs (14j)",
-        "activitySub": "Nouveaux inscrits, médecins et hôpitaux",
-        "distribution": "Répartition du contenu",
-        "distributionSub": "Part de chaque type",
-        "total": "Total",
-        "coverage": "Couverture géographique",
-        "topWilayas": "Top wilayas couvertes",
-        "tier": { "high": "Élevée", "mid": "Moyenne", "low": "Faible", "none": "Aucune" },
-        "contentReview": "Résumé modération",
-        "liveActivity": "Activité en direct",
-        "viewMore": "Voir plus",
-        "pendingAlert": "{{n}} soumissions en attente urgente"
+    "title": "Tableau d'administration",
+    "backHome": "Retour à l'accueil",
+    "backToApp": "Retour à l'application",
+    "nav": {
+      "dashboard": "Tableau de bord",
+      "submissions": "Modération",
+      "analytics": "Statistiques",
+      "resources": "Ressources"
+    },
+    "analytics": {
+      "title": "Statistiques & analytique",
+      "subtitle": "Indicateurs en direct : médecins, hôpitaux, sang, rendez-vous",
+      "exportCsv": "Exporter CSV",
+      "registrations30": "Inscriptions sur 30 jours",
+      "appointmentsByStatus": "Rendez-vous par statut",
+      "doctorsByWilaya": "Médecins par wilaya (top 10)",
+      "doctorsBySpecialty": "Médecins par spécialité (top 10)",
+      "hospitalsByWilaya": "Hôpitaux par wilaya (top 10)",
+      "bloodByType": "Demandes de sang par groupe",
+      "bloodByUrgency": "Demandes de sang par urgence",
+      "refresh": "Actualiser",
+      "filters": {
+        "title": "Filtres",
+        "period": "Période",
+        "wilaya": "Wilaya",
+        "specialty": "Spécialité",
+        "all": "Toutes",
+        "reset": "Réinitialiser",
+        "d7": "7 jours",
+        "d30": "30 jours",
+        "d90": "90 jours",
+        "d365": "1 an"
       },
       "kpi": {
+        "appointments": "Rendez-vous",
+        "urgentBlood": "Demandes urgentes",
+        "signups": "Inscriptions",
+        "prev": "période préc."
+      },
+      "alerts": {
+        "regDrop": "Baisse des inscriptions de {{pct}}% ({{curr}} vs {{prev}})",
+        "urgentBlood": "Alerte : {{n}} demandes de sang urgentes/critiques",
+        "pendingHigh": "{{n}} soumissions en attente de modération"
+      },
+      "table": {
+        "title": "Tableau de données",
+        "search": "Rechercher…",
+        "columns": "Colonnes",
+        "blood": "Sang",
+        "appointments": "Rendez-vous",
+        "shown": "{{n}} sur {{total}} lignes"
+      },
+      "feed": {
+        "title": "Activité récente",
+        "search": "Rechercher…",
+        "pullHint": "Tirez vers le bas (mobile) pour actualiser",
+        "blood": "Demande de sang",
+        "appointment": "Rendez-vous",
+        "signup": "Nouvel utilisateur"
+      }
+    },
+    "crud": {
+      "total": "{{count}} éléments",
+      "add": "Ajouter",
+      "export": "Exporter CSV",
+      "search": "Rechercher",
+      "searchPlaceholder": "Rechercher…",
+      "actions": "Actions",
+      "empty": "Aucune donnée",
+      "page": "Page {{page}} sur {{total}}",
+      "deleteTitle": "Supprimer l'élément",
+      "deleteDesc": "Cette action est irréversible.",
+      "cancel": "Annuler",
+      "confirmDelete": "Confirmer la suppression",
+      "deletedOk": "Supprimé",
+      "createTitle": "Nouvel élément",
+      "editTitle": "Modifier",
+      "save": "Enregistrer",
+      "savedOk": "Enregistré",
+      "createdOk": "Créé",
+      "notFound": "Ressource introuvable"
+    },
+    "bootstrap": {
+      "title": "Configurer le super-admin",
+      "desc": "Aucun super-admin n'existe encore. Cliquez ci-dessous pour devenir le premier super-admin. Cette opération n'est possible qu'une seule fois.",
+      "claim": "Devenir super-admin",
+      "success": "Vous êtes maintenant super-admin",
+      "already": "Un super-admin existe déjà"
+    },
+    "denied": {
+      "title": "Accès refusé",
+      "desc": "Cette section est réservée aux administrateurs."
+    },
+    "dashboard": {
+      "title": "Tableau de bord principal",
+      "subtitle": "Vue en direct et complète de la plateforme DZHealth",
+      "quickActions": "Actions rapides",
+      "reviewPending": "Examiner les soumissions",
+      "morePhases": "D'autres modules à venir.",
+      "live": "En direct",
+      "vsPrev7": "vs 7 derniers jours",
+      "activity14": "Activité utilisateurs (14j)",
+      "activitySub": "Nouveaux inscrits, médecins et hôpitaux",
+      "distribution": "Répartition du contenu",
+      "distributionSub": "Part de chaque type",
+      "total": "Total",
+      "coverage": "Couverture géographique",
+      "topWilayas": "Top wilayas couvertes",
+      "tier": {
+        "high": "Élevée",
+        "mid": "Moyenne",
+        "low": "Faible",
+        "none": "Aucune"
+      },
+      "contentReview": "Résumé modération",
+      "liveActivity": "Activité en direct",
+      "viewMore": "Voir plus",
+      "pendingAlert": "{{n}} soumissions en attente urgente"
+    },
+    "kpi": {
+      "pending": "En attente",
+      "approved": "Approuvées",
+      "rejected": "Rejetées",
+      "users": "Utilisateurs",
+      "doctors": "Médecins",
+      "hospitals": "Hôpitaux",
+      "pharmacies": "Pharmacies",
+      "donors": "Donneurs",
+      "appointments": "Rendez-vous",
+      "bloodReqs": "Demandes de sang"
+    },
+    "feed": {
+      "blood": "Demande de sang",
+      "appointment": "Rendez-vous",
+      "signup": "Nouvel inscrit",
+      "submission": "Soumission"
+    },
+    "subs": {
+      "title": "Modération des soumissions",
+      "tabs": {
         "pending": "En attente",
         "approved": "Approuvées",
         "rejected": "Rejetées",
-        "users": "Utilisateurs",
-        "doctors": "Médecins",
-        "hospitals": "Hôpitaux",
-        "pharmacies": "Pharmacies",
-        "donors": "Donneurs",
-        "appointments": "Rendez-vous",
-        "bloodReqs": "Demandes de sang"
+        "all": "Toutes"
       },
-      "feed": {
-        "blood": "Demande de sang",
-        "appointment": "Rendez-vous",
-        "signup": "Nouvel inscrit",
-        "submission": "Soumission"
-      },
-      "subs": {
-        "title": "Modération des soumissions",
-        "tabs": {
-          "pending": "En attente",
-          "approved": "Approuvées",
-          "rejected": "Rejetées",
-          "all": "Toutes"
-        },
-        "empty": "Aucune demande dans cette catégorie.",
-        "tapToReview": "Cliquer pour examiner",
-        "emptyPayload": "Aucune donnée dans cette demande",
-        "openMap": "Ouvrir sur la carte",
-        "approve": "Approuver",
-        "reject": "Rejeter",
-        "editBeforeApprove": "Modifier avant approbation",
-        "approvedOk": "Approuvé et publié",
-        "rejectedOk": "Demande rejetée",
-        "reason": "Motif",
-        "reasonRequired": "Motif obligatoire",
-        "rejectTitle": "Rejeter la demande",
-        "rejectDesc": "Indiquez le motif. Il sera envoyé à l'auteur.",
-        "reasonPlaceholder": "Informations incomplètes, numéro invalide…",
-        "cancel": "Annuler",
-        "confirmReject": "Confirmer le rejet",
-        "editTitle": "Modifier avant approbation",
-        "editDesc": "Modifiez le JSON puis enregistrez. La modification sera tracée.",
-        "invalidJson": "JSON invalide",
-        "saveAndApprove": "Enregistrer et approuver"
-      }
+      "empty": "Aucune demande dans cette catégorie.",
+      "tapToReview": "Cliquer pour examiner",
+      "emptyPayload": "Aucune donnée dans cette demande",
+      "openMap": "Ouvrir sur la carte",
+      "approve": "Approuver",
+      "reject": "Rejeter",
+      "editBeforeApprove": "Modifier avant approbation",
+      "approvedOk": "Approuvé et publié",
+      "rejectedOk": "Demande rejetée",
+      "reason": "Motif",
+      "reasonRequired": "Motif obligatoire",
+      "rejectTitle": "Rejeter la demande",
+      "rejectDesc": "Indiquez le motif. Il sera envoyé à l'auteur.",
+      "reasonPlaceholder": "Informations incomplètes, numéro invalide…",
+      "cancel": "Annuler",
+      "confirmReject": "Confirmer le rejet",
+      "editTitle": "Modifier avant approbation",
+      "editDesc": "Modifiez le JSON puis enregistrez. La modification sera tracée.",
+      "invalidJson": "JSON invalide",
+      "saveAndApprove": "Enregistrer et approuver"
     }
   },
   "en": {
-    "manage": {
-      "title": "Admin Console",
-      "backHome": "Back to home",
-      "backToApp": "Back to app",
-      "nav": {
-        "dashboard": "Dashboard",
-        "submissions": "Submissions",
-        "analytics": "Analytics",
-        "resources": "Resources"
-      },
-      "analytics": {
-        "title": "Analytics & insights",
-        "subtitle": "Live metrics across doctors, hospitals, blood requests and appointments",
-        "exportCsv": "Export CSV",
-        "registrations30": "Signups in the last 30 days",
-        "appointmentsByStatus": "Appointments by status",
-        "doctorsByWilaya": "Doctors by wilaya (top 10)",
-        "doctorsBySpecialty": "Doctors by specialty (top 10)",
-        "hospitalsByWilaya": "Hospitals by wilaya (top 10)",
-        "bloodByType": "Blood requests by type",
-        "bloodByUrgency": "Blood requests by urgency",
-        "refresh": "Refresh",
-        "filters": {
-          "title": "Filters",
-          "period": "Period",
-          "wilaya": "Wilaya",
-          "specialty": "Specialty",
-          "all": "All",
-          "reset": "Reset",
-          "d7": "7 days", "d30": "30 days", "d90": "90 days", "d365": "1 year"
-        },
-        "kpi": {
-          "appointments": "Appointments",
-          "urgentBlood": "Urgent blood",
-          "signups": "Signups",
-          "prev": "prev. period"
-        },
-        "alerts": {
-          "regDrop": "Signups dropped {{pct}}% ({{curr}} vs {{prev}} previously)",
-          "urgentBlood": "Alert: {{n}} urgent/critical blood requests in period",
-          "pendingHigh": "{{n}} pending submissions awaiting review"
-        },
-        "table": {
-          "title": "Data table",
-          "search": "Search table…",
-          "columns": "Columns",
-          "blood": "Blood requests",
-          "appointments": "Appointments",
-          "shown": "{{n}} of {{total}} rows"
-        },
-        "feed": {
-          "title": "Recent activity",
-          "search": "Search…",
-          "pullHint": "Pull down on mobile to refresh",
-          "blood": "Blood request",
-          "appointment": "Appointment",
-          "signup": "New user"
-        }
-      },
-      "crud": {
-        "total": "{{count}} items",
-        "add": "Add",
-        "export": "Export CSV",
-        "search": "Search",
-        "searchPlaceholder": "Search…",
-        "actions": "Actions",
-        "empty": "No data",
-        "page": "Page {{page}} of {{total}}",
-        "deleteTitle": "Delete item",
-        "deleteDesc": "This action cannot be undone.",
-        "cancel": "Cancel",
-        "confirmDelete": "Confirm delete",
-        "deletedOk": "Deleted",
-        "createTitle": "Create new",
-        "editTitle": "Edit",
-        "save": "Save",
-        "savedOk": "Saved",
-        "createdOk": "Created",
-        "notFound": "Resource not found"
-      },
-      "bootstrap": {
-        "title": "Set up super admin",
-        "desc": "No super admin exists yet. Click below to become the first super admin. This is a one-time action.",
-        "claim": "Become super admin",
-        "success": "You are now super admin",
-        "already": "A super admin already exists"
-      },
-      "denied": {
-        "title": "Access denied",
-        "desc": "This area is restricted to administrators."
-      },
-      "dashboard": {
-        "title": "Admin Dashboard",
-        "subtitle": "Live, comprehensive view of the DZHealth platform",
-        "quickActions": "Quick actions",
-        "reviewPending": "Review pending submissions",
-        "morePhases": "More modules coming next.",
-        "live": "Live",
-        "vsPrev7": "vs previous 7 days",
-        "activity14": "User activity (14 days)",
-        "activitySub": "New signups, doctors and hospitals",
-        "distribution": "Content distribution",
-        "distributionSub": "Share of each content type",
-        "total": "Total",
-        "coverage": "Geographic coverage",
-        "topWilayas": "Top covered wilayas",
-        "tier": { "high": "High", "mid": "Medium", "low": "Low", "none": "None" },
-        "contentReview": "Review summary",
-        "liveActivity": "Live activity",
-        "viewMore": "View more",
-        "pendingAlert": "{{n}} submissions awaiting urgent review"
+    "title": "Admin Console",
+    "backHome": "Back to home",
+    "backToApp": "Back to app",
+    "nav": {
+      "dashboard": "Dashboard",
+      "submissions": "Submissions",
+      "analytics": "Analytics",
+      "resources": "Resources"
+    },
+    "analytics": {
+      "title": "Analytics & insights",
+      "subtitle": "Live metrics across doctors, hospitals, blood requests and appointments",
+      "exportCsv": "Export CSV",
+      "registrations30": "Signups in the last 30 days",
+      "appointmentsByStatus": "Appointments by status",
+      "doctorsByWilaya": "Doctors by wilaya (top 10)",
+      "doctorsBySpecialty": "Doctors by specialty (top 10)",
+      "hospitalsByWilaya": "Hospitals by wilaya (top 10)",
+      "bloodByType": "Blood requests by type",
+      "bloodByUrgency": "Blood requests by urgency",
+      "refresh": "Refresh",
+      "filters": {
+        "title": "Filters",
+        "period": "Period",
+        "wilaya": "Wilaya",
+        "specialty": "Specialty",
+        "all": "All",
+        "reset": "Reset",
+        "d7": "7 days",
+        "d30": "30 days",
+        "d90": "90 days",
+        "d365": "1 year"
       },
       "kpi": {
+        "appointments": "Appointments",
+        "urgentBlood": "Urgent blood",
+        "signups": "Signups",
+        "prev": "prev. period"
+      },
+      "alerts": {
+        "regDrop": "Signups dropped {{pct}}% ({{curr}} vs {{prev}} previously)",
+        "urgentBlood": "Alert: {{n}} urgent/critical blood requests in period",
+        "pendingHigh": "{{n}} pending submissions awaiting review"
+      },
+      "table": {
+        "title": "Data table",
+        "search": "Search table…",
+        "columns": "Columns",
+        "blood": "Blood requests",
+        "appointments": "Appointments",
+        "shown": "{{n}} of {{total}} rows"
+      },
+      "feed": {
+        "title": "Recent activity",
+        "search": "Search…",
+        "pullHint": "Pull down on mobile to refresh",
+        "blood": "Blood request",
+        "appointment": "Appointment",
+        "signup": "New user"
+      }
+    },
+    "crud": {
+      "total": "{{count}} items",
+      "add": "Add",
+      "export": "Export CSV",
+      "search": "Search",
+      "searchPlaceholder": "Search…",
+      "actions": "Actions",
+      "empty": "No data",
+      "page": "Page {{page}} of {{total}}",
+      "deleteTitle": "Delete item",
+      "deleteDesc": "This action cannot be undone.",
+      "cancel": "Cancel",
+      "confirmDelete": "Confirm delete",
+      "deletedOk": "Deleted",
+      "createTitle": "Create new",
+      "editTitle": "Edit",
+      "save": "Save",
+      "savedOk": "Saved",
+      "createdOk": "Created",
+      "notFound": "Resource not found"
+    },
+    "bootstrap": {
+      "title": "Set up super admin",
+      "desc": "No super admin exists yet. Click below to become the first super admin. This is a one-time action.",
+      "claim": "Become super admin",
+      "success": "You are now super admin",
+      "already": "A super admin already exists"
+    },
+    "denied": {
+      "title": "Access denied",
+      "desc": "This area is restricted to administrators."
+    },
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "subtitle": "Live, comprehensive view of the DZHealth platform",
+      "quickActions": "Quick actions",
+      "reviewPending": "Review pending submissions",
+      "morePhases": "More modules coming next.",
+      "live": "Live",
+      "vsPrev7": "vs previous 7 days",
+      "activity14": "User activity (14 days)",
+      "activitySub": "New signups, doctors and hospitals",
+      "distribution": "Content distribution",
+      "distributionSub": "Share of each content type",
+      "total": "Total",
+      "coverage": "Geographic coverage",
+      "topWilayas": "Top covered wilayas",
+      "tier": {
+        "high": "High",
+        "mid": "Medium",
+        "low": "Low",
+        "none": "None"
+      },
+      "contentReview": "Review summary",
+      "liveActivity": "Live activity",
+      "viewMore": "View more",
+      "pendingAlert": "{{n}} submissions awaiting urgent review"
+    },
+    "kpi": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "users": "Users",
+      "doctors": "Doctors",
+      "hospitals": "Hospitals",
+      "pharmacies": "Pharmacies",
+      "donors": "Donors",
+      "appointments": "Appointments",
+      "bloodReqs": "Blood requests"
+    },
+    "feed": {
+      "blood": "Blood request",
+      "appointment": "Appointment",
+      "signup": "New signup",
+      "submission": "Submission"
+    },
+    "subs": {
+      "title": "Submission review",
+      "tabs": {
         "pending": "Pending",
         "approved": "Approved",
         "rejected": "Rejected",
-        "users": "Users",
-        "doctors": "Doctors",
-        "hospitals": "Hospitals",
-        "pharmacies": "Pharmacies",
-        "donors": "Donors",
-        "appointments": "Appointments",
-        "bloodReqs": "Blood requests"
+        "all": "All"
       },
-      "feed": {
-        "blood": "Blood request",
-        "appointment": "Appointment",
-        "signup": "New signup",
-        "submission": "Submission"
-      },
-      "subs": {
-        "title": "Submission review",
-        "tabs": {
-          "pending": "Pending",
-          "approved": "Approved",
-          "rejected": "Rejected",
-          "all": "All"
-        },
-        "empty": "No items in this tab.",
-        "tapToReview": "Tap to review",
-        "emptyPayload": "No data in this submission",
-        "openMap": "Open on map",
-        "approve": "Approve",
-        "reject": "Reject",
-        "editBeforeApprove": "Edit before approval",
-        "approvedOk": "Approved and published",
-        "rejectedOk": "Submission rejected",
-        "reason": "Reason",
-        "reasonRequired": "Reason is required",
-        "rejectTitle": "Reject submission",
-        "rejectDesc": "Write the reason. It will be sent to the author.",
-        "reasonPlaceholder": "Incomplete data, wrong phone…",
-        "cancel": "Cancel",
-        "confirmReject": "Confirm reject",
-        "editTitle": "Edit before approval",
-        "editDesc": "Edit the JSON then save & approve. The change is logged.",
-        "invalidJson": "Invalid JSON",
-        "saveAndApprove": "Save & approve"
-      }
+      "empty": "No items in this tab.",
+      "tapToReview": "Tap to review",
+      "emptyPayload": "No data in this submission",
+      "openMap": "Open on map",
+      "approve": "Approve",
+      "reject": "Reject",
+      "editBeforeApprove": "Edit before approval",
+      "approvedOk": "Approved and published",
+      "rejectedOk": "Submission rejected",
+      "reason": "Reason",
+      "reasonRequired": "Reason is required",
+      "rejectTitle": "Reject submission",
+      "rejectDesc": "Write the reason. It will be sent to the author.",
+      "reasonPlaceholder": "Incomplete data, wrong phone…",
+      "cancel": "Cancel",
+      "confirmReject": "Confirm reject",
+      "editTitle": "Edit before approval",
+      "editDesc": "Edit the JSON then save & approve. The change is logged.",
+      "invalidJson": "Invalid JSON",
+      "saveAndApprove": "Save & approve"
     }
   }
 }
