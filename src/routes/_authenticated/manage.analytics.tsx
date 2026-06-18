@@ -154,7 +154,7 @@ function Analytics() {
     const newHospQ = supabase.from("hospitals").select("created_at, wilaya_id").gte("created_at", sinceIso);
 
     const prevDocsQ = supabase.from("doctors").select("id", { count: "exact", head: true }).gte("created_at", prevSinceIso).lt("created_at", sinceIso);
-    const prevUsersQ = supabase.from("profiles").select("id", { count: "exact", head: true }).gte("created_at", prevSinceIso).lt("created_at", sinceIso);
+    const prevUsersQ = supabase.from("profiles").select("user_id", { count: "exact", head: true }).gte("created_at", prevSinceIso).lt("created_at", sinceIso);
     const prevHospQ = supabase.from("hospitals").select("id", { count: "exact", head: true }).gte("created_at", prevSinceIso).lt("created_at", sinceIso);
 
     if (filterWilaya != null) {
@@ -188,7 +188,7 @@ function Analytics() {
       prevUsersQ,
       prevHospQ,
       supabase.from("pending_submissions").select("id", { count: "exact", head: true }).eq("status", "pending"),
-      supabase.from("profiles").select("id", { count: "exact", head: true }),
+      supabase.from("profiles").select("user_id", { count: "exact", head: true }),
     ]);
 
     const wMap = new Map<number, string>();
@@ -336,7 +336,7 @@ function Analytics() {
     const [blood, appts, profiles] = await Promise.all([
       supabase.from("blood_requests").select("id, blood_type, urgency, hospital_name, created_at").order("created_at", { ascending: false }).limit(10),
       supabase.from("appointments").select("id, doctor_id, status, scheduled_at, created_at").order("created_at", { ascending: false }).limit(10),
-      supabase.from("profiles").select("id, full_name, created_at").order("created_at", { ascending: false }).limit(10),
+      supabase.from("profiles").select("user_id, full_name, created_at").order("created_at", { ascending: false }).limit(10),
     ]);
     const items: Array<{ kind: string; title: string; subtitle: string; at: string }> = [];
     for (const b of blood.data ?? []) {
