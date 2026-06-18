@@ -163,7 +163,7 @@ function ManageSidebar() {
                 return (
                   <SidebarMenuItem key={r.slug}>
                     <SidebarMenuButton asChild isActive={pathname === to}>
-                      <Link to={to} className="flex items-center gap-2">
+                      <Link to="/manage/resource/$slug" params={{ slug: r.slug }} className="flex items-center gap-2">
                         <Database className="h-4 w-4" />
                         {!collapsed && <span className="truncate">{r.label[lng]}</span>}
                       </Link>
