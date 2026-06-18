@@ -78,7 +78,7 @@ function SubmissionsPage() {
 
   const approve = async (id: string, override?: Record<string, unknown>) => {
     setBusy(true);
-    const { error } = await supabase.rpc("approve_submission", { _id: id, _override_payload: override ?? null });
+    const { error } = await supabase.rpc("approve_submission", { _id: id, _override_payload: (override ?? null) as never });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
     toast.success(t("manage.subs.approvedOk"));
