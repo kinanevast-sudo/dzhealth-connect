@@ -363,8 +363,9 @@ function Dashboard() {
         </div>
       </div>
 
-      {/* Bottom row: 4 columns */}
-      <div className="grid grid-cols-4 gap-4">
+      {/* Bottom row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+
         {/* Geographic coverage */}
         <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
           <h2 className="text-sm font-bold mb-3 text-white">التغطية الجغرافية</h2>
