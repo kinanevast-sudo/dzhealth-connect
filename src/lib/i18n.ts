@@ -96,13 +96,18 @@ function initialLang(): AppLang {
 }
 
 if (!i18n.isInitialized) {
+  const lng = initialLang();
   i18n.use(initReactI18next).init({
     resources,
-    lng: initialLang(),
+    lng,
     fallbackLng: "ar",
     interpolation: { escapeValue: false },
     returnNull: false,
   });
+  if (typeof document !== "undefined") {
+    document.documentElement.dir = lng === "ar" ? "rtl" : "ltr";
+    document.documentElement.lang = lng;
+  }
 }
 
 export function setAppLanguage(lang: AppLang) {
