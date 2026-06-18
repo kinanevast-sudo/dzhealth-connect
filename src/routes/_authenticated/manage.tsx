@@ -114,15 +114,6 @@ function ManageLayout() {
     );
   }
 
-  // Desktop-only gate
-  const [isDesktop, setIsDesktop] = useState(true);
-  useEffect(() => {
-    const check = () => setIsDesktop(window.innerWidth >= 1024);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
-
   if (!isDesktop) {
     return (
       <div dir="rtl" className="min-h-screen bg-[#0b1220] text-slate-200 flex items-center justify-center px-6">
