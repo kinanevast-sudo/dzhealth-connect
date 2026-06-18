@@ -7,6 +7,7 @@ import {
   Star, Clock, Calendar, CheckCircle2, ChevronRight, Send, Stethoscope,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -19,9 +20,6 @@ const TIME_SLOTS = [
   "11:00", "11:30", "14:00", "14:30", "15:00", "15:30",
   "16:00", "16:30", "17:00",
 ];
-
-const DAY_NAMES_AR = ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"];
-const MONTH_NAMES_AR = ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"];
 
 function getNextDays(count: number) {
   const days: Date[] = [];
@@ -46,6 +44,7 @@ function detectGender(x: any): "male" | "female" {
 
 function Detail() {
   const { id } = Route.useParams();
+  const { t } = useTranslation();
   const qc = useQueryClient();
   const [activeTab, setActiveTab] = useState<Tab>("info");
   const [userId, setUserId] = useState<string | null>(null);
@@ -57,6 +56,9 @@ function Detail() {
   const [bookingConfirmed, setBookingConfirmed] = useState(false);
   const [booking, setBooking] = useState(false);
   const days = getNextDays(10);
+
+  const dayNames = t("doctorDetail.dayNames", { returnObjects: true }) as string[];
+  const monthNames = t("doctorDetail.monthNames", { returnObjects: true }) as string[];
 
   const { data: d, isLoading, isError } = useQuery({
     queryKey: ["doctor", id],
@@ -93,8 +95,8 @@ function Detail() {
     return (
       <div className="min-h-[100dvh] flex flex-col items-center justify-center gap-3 p-8 text-center bg-background">
         <Stethoscope className="h-12 w-12 text-primary" />
-        <p className="text-sm text-muted-foreground">تعذّر تحميل بيانات الطبيب.</p>
-        <Link to="/doctors" className="rounded-2xl px-5 py-2.5 text-sm font-bold bg-primary text-primary-foreground">رجوع</Link>
+        <p className="text-sm text-muted-foreground">{t("doctorDetail.loadError")}</p>
+        <Link to="/doctors" className="rounded-2xl px-5 py-2.5 text-sm font-bold bg-primary text-primary-foreground">{t("doctorDetail.back")}</Link>
       </div>
     );
   }
@@ -109,17 +111,17 @@ function Detail() {
   const baladiyaName = x.baladiyas?.name_ar ?? "";
 
   const toggleFav = async () => {
-    if (!userId) { toast.error("يجب تسجيل الدخول"); return; }
+    if (!userId) { toast.error(t("doctorDetail.toastLoginRequired")); return; }
     const v = !fav;
     setFav(v);
     if (v) {
       const { error } = await supabase.from("favorites").insert({ user_id: userId, doctor_id: id });
       if (error) { setFav(false); toast.error(error.message); return; }
-      toast.success("أضيف إلى المفضلة");
+      toast.success(t("doctorDetail.toastAddedFav"));
     } else {
       const { error } = await supabase.from("favorites").delete().eq("user_id", userId).eq("doctor_id", id);
       if (error) { setFav(true); toast.error(error.message); return; }
-      toast.success("حُذف من المفضلة");
+      toast.success(t("doctorDetail.toastRemovedFav"));
     }
     qc.invalidateQueries({ queryKey: ["favorites", userId] });
   };
@@ -128,15 +130,15 @@ function Detail() {
     const text = `${x.full_name}\n${specialtyName}\n${wilayaName} - ${baladiyaName}\n${x.phone ?? ""}`;
     try {
       if (navigator.share) await navigator.share({ title: x.full_name, text, url: window.location.href });
-      else { await navigator.clipboard.writeText(text); toast.success("تم نسخ معلومات الطبيب"); }
+      else { await navigator.clipboard.writeText(text); toast.success(t("doctorDetail.toastCopied")); }
     } catch {}
   };
 
-  const formatDateAr = (dd: Date) => `${dd.getDate()} ${MONTH_NAMES_AR[dd.getMonth()]}`;
+  const formatDate = (dd: Date) => `${dd.getDate()} ${monthNames[dd.getMonth()]}`;
 
   const handleConfirmBooking = async () => {
     if (!selectedDate || !selectedTime) return;
-    if (!userId) { toast.error("يجب تسجيل الدخول للحجز"); return; }
+    if (!userId) { toast.error(t("doctorDetail.toastLoginToBook")); return; }
     setBooking(true);
     const [hh, mm] = selectedTime.split(":").map(Number);
     const dt = new Date(selectedDate);
@@ -153,11 +155,11 @@ function Detail() {
     if (error) { toast.error(error.message); return; }
     setBookingConfirmed(true);
     qc.invalidateQueries({ queryKey: ["appointments", userId] });
-    toast.success("تم تأكيد الموعد");
+    toast.success(t("doctorDetail.toastBookingConfirmed"));
   };
 
   return (
-    <div dir="rtl" className="min-h-screen bg-background pb-10">
+    <div className="min-h-screen bg-background pb-10">
       {/* Hero */}
       <div className="relative h-72">
         {showImg ? (
@@ -169,9 +171,9 @@ function Detail() {
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-transparent" />
 
-        <div className="absolute top-6 left-4 right-4 flex justify-between items-center">
+        <div className="absolute top-6 start-4 end-4 flex justify-between items-center">
           <Link to="/doctors" className="w-10 h-10 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center">
-            <ArrowRight className="w-5 h-5 text-foreground" />
+            <ArrowRight className="w-5 h-5 text-foreground rtl:rotate-180" />
           </Link>
           <div className="flex gap-2">
             <button onClick={handleShare} className="w-10 h-10 bg-background/80 backdrop-blur-sm rounded-xl flex items-center justify-center">
@@ -183,15 +185,15 @@ function Detail() {
           </div>
         </div>
 
-        <div className="absolute bottom-4 left-4 right-4 text-right">
-          <div className="flex items-center gap-2 justify-end">
+        <div className="absolute bottom-4 start-4 end-4 text-start">
+          <div className="flex items-center gap-2">
             {x.verified && <BadgeCheck className="w-5 h-5 text-primary fill-primary" />}
             <h1 className="text-2xl font-black text-white drop-shadow-lg">{x.full_name}</h1>
           </div>
           <p className="text-primary font-semibold">{specialtyName}</p>
-          <div className="flex items-center gap-1 mt-0.5 justify-end">
-            <span className="text-white/70 text-sm">{baladiyaName} - {wilayaName}</span>
+          <div className="flex items-center gap-1 mt-0.5">
             <MapPin className="w-3 h-3 text-white/70" />
+            <span className="text-white/70 text-sm">{baladiyaName} - {wilayaName}</span>
           </div>
         </div>
       </div>
@@ -199,9 +201,9 @@ function Detail() {
       {/* Stats */}
       <div className="mx-4 -mt-2 bg-card rounded-2xl border border-border p-4 grid grid-cols-3 gap-3 z-10 relative">
         {[
-          { label: "الخبرة", value: `${x.experience_years ?? 12}`, unit: "سنوات" },
-          { label: "المرضى", value: `+${(((x.patients_count ?? 2800)) / 1000).toFixed(1)}K`, unit: "" },
-          { label: "نسبة الرضا", value: `${x.satisfaction ?? 98}%`, unit: "" },
+          { label: t("doctorDetail.stats.experience"), value: `${x.experience_years ?? 12}`, unit: t("doctorDetail.stats.experienceUnit") },
+          { label: t("doctorDetail.stats.patients"), value: `+${(((x.patients_count ?? 2800)) / 1000).toFixed(1)}K`, unit: "" },
+          { label: t("doctorDetail.stats.satisfaction"), value: `${x.satisfaction ?? 98}%`, unit: "" },
         ].map((s) => (
           <div key={s.label} className="text-center">
             <p className="text-xl font-black text-primary">
@@ -216,10 +218,10 @@ function Detail() {
       {/* Quick actions */}
       <div className="mx-4 mt-3 grid grid-cols-2 gap-2">
         <a href={`https://www.google.com/maps?q=${x.lat},${x.lng}`} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 bg-primary text-primary-foreground rounded-xl py-2.5 font-medium text-sm">
-          <MapIcon className="w-4 h-4" /> عرض على الخريطة
+          <MapIcon className="w-4 h-4" /> {t("doctorDetail.viewOnMap")}
         </a>
         <a href={`tel:${x.phone}`} className="flex items-center justify-center gap-2 bg-secondary rounded-xl py-2.5 font-medium text-sm">
-          <Phone className="w-4 h-4 text-foreground" /> اتصال
+          <Phone className="w-4 h-4 text-foreground" /> {t("doctorDetail.call")}
         </a>
       </div>
 
@@ -231,7 +233,7 @@ function Detail() {
             onClick={() => setActiveTab(tab)}
             className={`flex-1 py-2 text-xs font-bold rounded-xl transition-colors ${activeTab === tab ? "bg-primary text-primary-foreground" : "text-muted-foreground"}`}
           >
-            {tab === "info" ? "نبذة" : tab === "reviews" ? "التقييمات" : "احجز موعد"}
+            {t(`doctorDetail.tabs.${tab}`)}
           </button>
         ))}
       </div>
@@ -247,53 +249,53 @@ function Detail() {
         >
           {activeTab === "info" && (
             <>
-              <BioSection about={x.about ?? "أستاذ محاضر، متخصص في تشخيص وعلاج الأمراض ضمن مجال التخصص."} />
+              <BioSection about={x.about ?? t("doctorDetail.defaultAbout")} />
 
-              <section className="bg-card rounded-2xl border border-border p-4 text-right">
-                <h2 className="font-bold text-sm text-muted-foreground mb-3">التخصص</h2>
-                <div className="flex flex-wrap gap-2 justify-end">
-                  {[specialtyName, "أمراض مزمنة", "كشف عام"].filter(Boolean).map((s: string) => (
+              <section className="bg-card rounded-2xl border border-border p-4">
+                <h2 className="font-bold text-sm text-muted-foreground mb-3">{t("doctorDetail.specialtySection")}</h2>
+                <div className="flex flex-wrap gap-2">
+                  {[specialtyName, t("doctorDetail.chronicDiseases"), t("doctorDetail.generalCheckup")].filter(Boolean).map((s: string) => (
                     <span key={s} className="text-xs bg-primary/10 text-primary px-3 py-1.5 rounded-full border border-primary/20">{s}</span>
                   ))}
                 </div>
               </section>
 
-              <section className="bg-card rounded-2xl border border-border p-4 text-right">
-                <h2 className="font-bold text-sm text-muted-foreground mb-3">الموقع</h2>
-                <div className="flex items-start gap-3 flex-row-reverse">
+              <section className="bg-card rounded-2xl border border-border p-4">
+                <h2 className="font-bold text-sm text-muted-foreground mb-3">{t("doctorDetail.locationSection")}</h2>
+                <div className="flex items-start gap-3">
                   <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center flex-shrink-0">
                     <MapPin className="w-4 h-4 text-primary" />
                   </div>
-                  <div className="flex-1 text-right">
+                  <div className="flex-1">
                     <p className="text-sm font-medium">{x.address ?? `${baladiyaName}، ${wilayaName}`}</p>
                     <p className="text-xs text-muted-foreground mt-0.5">{baladiyaName}، {wilayaName}</p>
                     <a href={`https://www.google.com/maps?q=${x.lat},${x.lng}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 mt-2 px-3 py-1.5 bg-primary/10 text-primary text-xs font-semibold rounded-xl">
-                      <MapIcon className="w-3.5 h-3.5" /> عرض على الخريطة
+                      <MapIcon className="w-3.5 h-3.5" /> {t("doctorDetail.viewOnMap")}
                     </a>
                   </div>
                 </div>
               </section>
 
-              <section className="bg-card rounded-2xl border border-border p-4 text-right">
-                <h2 className="font-bold text-sm text-muted-foreground mb-3">رسوم الاستشارة</h2>
+              <section className="bg-card rounded-2xl border border-border p-4">
+                <h2 className="font-bold text-sm text-muted-foreground mb-3">{t("doctorDetail.feeSection")}</h2>
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">رسوم الطبيب</span>
-                    <span className="text-sm font-semibold">{fee} دج</span>
+                    <span className="text-sm text-muted-foreground">{t("doctorDetail.doctorFee")}</span>
+                    <span className="text-sm font-semibold">{fee} {t("doctorDetail.currency")}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-sm text-muted-foreground">رسوم المنصة</span>
-                    <span className="text-sm font-semibold">{platformFee} دج</span>
+                    <span className="text-sm text-muted-foreground">{t("doctorDetail.platformFee")}</span>
+                    <span className="text-sm font-semibold">{platformFee} {t("doctorDetail.currency")}</span>
                   </div>
                   <div className="border-t border-border pt-2 flex justify-between">
-                    <span className="font-bold">الإجمالي</span>
-                    <span className="font-black text-primary">{fee + platformFee} دج</span>
+                    <span className="font-bold">{t("doctorDetail.total")}</span>
+                    <span className="font-black text-primary">{fee + platformFee} {t("doctorDetail.currency")}</span>
                   </div>
                 </div>
               </section>
 
               <button onClick={() => setActiveTab("book")} className="w-full bg-primary text-primary-foreground rounded-2xl py-3.5 font-bold flex items-center justify-center gap-2">
-                <Calendar className="w-4 h-4" /> احجز موعد <ChevronRight className="w-4 h-4 rotate-180" />
+                <Calendar className="w-4 h-4" /> {t("doctorDetail.bookAppointmentBtn")} <ChevronRight className="w-4 h-4 rtl:rotate-180" />
               </button>
             </>
           )}
@@ -306,33 +308,33 @@ function Detail() {
                 <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 300, damping: 14 }} className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center">
                   <CheckCircle2 className="w-10 h-10 text-green-500" />
                 </motion.div>
-                <h2 className="text-xl font-black">تم تأكيد الموعد</h2>
-                <div className="bg-card rounded-2xl border border-border p-4 w-full space-y-2 text-right">
-                  <div className="flex justify-between"><span className="text-sm text-muted-foreground">الطبيب</span><span className="text-sm font-bold">{x.full_name}</span></div>
-                  <div className="flex justify-between"><span className="text-sm text-muted-foreground">التاريخ</span><span className="text-sm font-bold">{selectedDate && formatDateAr(selectedDate)}</span></div>
-                  <div className="flex justify-between"><span className="text-sm text-muted-foreground">الوقت</span><span className="text-sm font-bold">{selectedTime}</span></div>
-                  <div className="flex justify-between"><span className="text-sm text-muted-foreground">نوع الزيارة</span><span className="text-sm font-bold">{visitType === "in_person" ? "في العيادة" : "عن بعد"}</span></div>
+                <h2 className="text-xl font-black">{t("doctorDetail.bookingConfirmedTitle")}</h2>
+                <div className="bg-card rounded-2xl border border-border p-4 w-full space-y-2">
+                  <div className="flex justify-between"><span className="text-sm text-muted-foreground">{t("doctorDetail.bookingDoctor")}</span><span className="text-sm font-bold">{x.full_name}</span></div>
+                  <div className="flex justify-between"><span className="text-sm text-muted-foreground">{t("doctorDetail.bookingDate")}</span><span className="text-sm font-bold">{selectedDate && formatDate(selectedDate)}</span></div>
+                  <div className="flex justify-between"><span className="text-sm text-muted-foreground">{t("doctorDetail.bookingTime")}</span><span className="text-sm font-bold">{selectedTime}</span></div>
+                  <div className="flex justify-between"><span className="text-sm text-muted-foreground">{t("doctorDetail.bookingVisitType")}</span><span className="text-sm font-bold">{visitType === "in_person" ? t("doctorDetail.visitInPerson") : t("doctorDetail.visitOnline")}</span></div>
                 </div>
-                <button onClick={() => { setBookingConfirmed(false); setSelectedDate(null); setSelectedTime(null); }} className="w-full bg-secondary rounded-2xl py-3 font-bold text-sm">حجز موعد آخر</button>
+                <button onClick={() => { setBookingConfirmed(false); setSelectedDate(null); setSelectedTime(null); }} className="w-full bg-secondary rounded-2xl py-3 font-bold text-sm">{t("doctorDetail.bookAnother")}</button>
               </motion.div>
             ) : (
               <>
-                <section className="bg-card rounded-2xl border border-border p-4 text-right">
-                  <h3 className="text-sm font-bold mb-3">نوع الزيارة</h3>
+                <section className="bg-card rounded-2xl border border-border p-4">
+                  <h3 className="text-sm font-bold mb-3">{t("doctorDetail.visitTypeSection")}</h3>
                   <div className="grid grid-cols-2 gap-2">
                     {(["in_person", "online"] as const).map((type) => (
                       <button key={type} onClick={() => setVisitType(type)}
                         className={`flex items-center justify-center gap-2 py-3 rounded-xl border text-sm font-medium transition-colors ${visitType === type ? "bg-primary/10 border-primary text-primary" : "border-border text-muted-foreground bg-secondary"}`}>
                         <span>{type === "in_person" ? "🏥" : "💻"}</span>
-                        {type === "in_person" ? "في العيادة" : "عن بعد"}
+                        {type === "in_person" ? t("doctorDetail.visitInPerson") : t("doctorDetail.visitOnline")}
                       </button>
                     ))}
                   </div>
                 </section>
 
-                <section className="bg-card rounded-2xl border border-border p-4 text-right">
-                  <h3 className="text-sm font-bold mb-3 flex items-center gap-2 justify-end">
-                    اختر التاريخ <Calendar className="w-4 h-4 text-primary" />
+                <section className="bg-card rounded-2xl border border-border p-4">
+                  <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-primary" /> {t("doctorDetail.pickDateSection")}
                   </h3>
                   <div className="flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
                     {days.map((day) => {
@@ -340,9 +342,9 @@ function Detail() {
                       return (
                         <motion.button key={day.toISOString()} whileTap={{ scale: 0.95 }} onClick={() => setSelectedDate(day)}
                           className={`flex-shrink-0 flex flex-col items-center gap-1 w-14 py-3 rounded-xl border transition-colors ${isSelected ? "bg-primary border-primary text-primary-foreground" : "border-border bg-secondary text-muted-foreground"}`}>
-                          <span className="text-[10px] font-medium">{DAY_NAMES_AR[day.getDay()]}</span>
+                          <span className="text-[10px] font-medium">{dayNames[day.getDay()]}</span>
                           <span className="text-lg font-black">{day.getDate()}</span>
-                          <span className="text-[9px]">{MONTH_NAMES_AR[day.getMonth()].slice(0, 3)}</span>
+                          <span className="text-[9px]">{monthNames[day.getMonth()].slice(0, 3)}</span>
                         </motion.button>
                       );
                     })}
@@ -351,9 +353,9 @@ function Detail() {
 
                 <AnimatePresence>
                   {selectedDate && (
-                    <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-2xl border border-border p-4 text-right">
-                      <h3 className="text-sm font-bold mb-3 flex items-center gap-2 justify-end">
-                        اختر الوقت <Clock className="w-4 h-4 text-primary" />
+                    <motion.section initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="bg-card rounded-2xl border border-border p-4">
+                      <h3 className="text-sm font-bold mb-3 flex items-center gap-2">
+                        <Clock className="w-4 h-4 text-primary" /> {t("doctorDetail.pickTimeSection")}
                       </h3>
                       <div className="grid grid-cols-4 gap-2">
                         {TIME_SLOTS.map((slot) => (
@@ -367,19 +369,19 @@ function Detail() {
                   )}
                 </AnimatePresence>
 
-                <section className="bg-card rounded-2xl border border-border p-4 text-right">
-                  <h3 className="text-sm font-bold mb-3">رسوم الاستشارة</h3>
+                <section className="bg-card rounded-2xl border border-border p-4">
+                  <h3 className="text-sm font-bold mb-3">{t("doctorDetail.feeSection")}</h3>
                   <div className="space-y-1.5">
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">رسوم الطبيب</span><span>{fee} دج</span></div>
-                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">رسوم المنصة</span><span>{platformFee} دج</span></div>
-                    <div className="border-t border-border pt-2 flex justify-between"><span className="font-bold">الإجمالي</span><span className="font-black text-primary">{fee + platformFee} دج</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">{t("doctorDetail.doctorFee")}</span><span>{fee} {t("doctorDetail.currency")}</span></div>
+                    <div className="flex justify-between text-sm"><span className="text-muted-foreground">{t("doctorDetail.platformFee")}</span><span>{platformFee} {t("doctorDetail.currency")}</span></div>
+                    <div className="border-t border-border pt-2 flex justify-between"><span className="font-bold">{t("doctorDetail.total")}</span><span className="font-black text-primary">{fee + platformFee} {t("doctorDetail.currency")}</span></div>
                   </div>
                 </section>
 
                 <motion.button whileTap={{ scale: 0.98 }} onClick={handleConfirmBooking}
                   disabled={!selectedDate || !selectedTime || booking}
                   className={`w-full py-4 rounded-2xl font-bold text-sm flex items-center justify-center gap-2 transition-all ${selectedDate && selectedTime && !booking ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground opacity-60 cursor-not-allowed"}`}>
-                  <Calendar className="w-4 h-4" /> {booking ? "جارٍ التأكيد..." : "تأكيد الحجز"}
+                  <Calendar className="w-4 h-4" /> {booking ? t("doctorDetail.bookingInProgress") : t("doctorDetail.confirmBooking")}
                 </motion.button>
               </>
             )
@@ -390,23 +392,28 @@ function Detail() {
   );
 }
 
-function timeAgo(iso: string) {
-  const diff = Date.now() - new Date(iso).getTime();
-  const m = Math.floor(diff / 60000);
-  if (m < 1) return "الآن";
-  if (m < 60) return `منذ ${m} دقيقة`;
-  const h = Math.floor(m / 60);
-  if (h < 24) return `منذ ${h} ساعة`;
-  const dd = Math.floor(h / 24);
-  if (dd < 7) return `منذ ${dd} يوم`;
-  const w = Math.floor(dd / 7);
-  if (w < 5) return `منذ ${w} أسبوع`;
-  const mo = Math.floor(dd / 30);
-  return `منذ ${mo} شهر`;
+function useTimeAgo() {
+  const { t } = useTranslation();
+  return (iso: string) => {
+    const diff = Date.now() - new Date(iso).getTime();
+    const m = Math.floor(diff / 60000);
+    if (m < 1) return t("doctorDetail.timeAgo.now");
+    if (m < 60) return t("doctorDetail.timeAgo.minutes", { count: m });
+    const h = Math.floor(m / 60);
+    if (h < 24) return t("doctorDetail.timeAgo.hours", { count: h });
+    const dd = Math.floor(h / 24);
+    if (dd < 7) return t("doctorDetail.timeAgo.days", { count: dd });
+    const w = Math.floor(dd / 7);
+    if (w < 5) return t("doctorDetail.timeAgo.weeks", { count: w });
+    const mo = Math.floor(dd / 30);
+    return t("doctorDetail.timeAgo.months", { count: mo });
+  };
 }
 
 function RatingsTab({ doctor }: { doctor: any }) {
+  const { t } = useTranslation();
   const qc = useQueryClient();
+  const timeAgo = useTimeAgo();
   const [stars, setStars] = useState(5);
   const [hover, setHover] = useState(0);
   const [comment, setComment] = useState("");
@@ -444,14 +451,14 @@ function RatingsTab({ doctor }: { doctor: any }) {
   reviews.forEach((r: any) => { dist[r.stars] = (dist[r.stars] || 0) + 1; });
 
   const submit = async () => {
-    if (!userId) { toast.error("يجب تسجيل الدخول لإرسال تقييم"); return; }
+    if (!userId) { toast.error(t("doctorDetail.toastLoginRequired")); return; }
     setSubmitting(true);
     const { error } = await supabase.from("reviews" as any).upsert({
       doctor_id: doctor.id, user_id: userId, rating: stars, review_text: comment.trim() || null,
     }, { onConflict: "doctor_id,user_id" });
     setSubmitting(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("شكراً لتقييمك");
+    toast.success(t("doctorDetail.toastReviewSubmitted"));
     setComment(""); setStars(5);
     qc.invalidateQueries({ queryKey: ["doctor-reviews", doctor.id] });
   };
@@ -467,7 +474,7 @@ function RatingsTab({ doctor }: { doctor: any }) {
                 <Star key={s} className={`w-4 h-4 ${s <= Math.round(Number(avg)) ? "text-yellow-500 fill-yellow-500" : "text-muted-foreground"}`} />
               ))}
             </div>
-            <p className="text-xs text-muted-foreground mt-1">{total} تقييم</p>
+            <p className="text-xs text-muted-foreground mt-1">{t("doctorDetail.reviewCount", { count: total })}</p>
           </div>
           <div className="flex-1 space-y-1.5">
             {[5,4,3,2,1].map((star) => {
@@ -488,34 +495,34 @@ function RatingsTab({ doctor }: { doctor: any }) {
         </div>
       </section>
 
-      <section className="bg-card rounded-2xl border border-border p-4 text-right">
-        <h3 className="mb-3 text-sm font-bold text-primary">أضف تقييمك</h3>
-        <div className="mb-3 flex justify-end gap-1" dir="ltr">
+      <section className="bg-card rounded-2xl border border-border p-4">
+        <h3 className="mb-3 text-sm font-bold text-primary">{t("doctorDetail.addReview")}</h3>
+        <div className="mb-3 flex gap-1" dir="ltr">
           {[1,2,3,4,5].map((i) => (
             <button key={i} type="button" onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(0)} onClick={() => setStars(i)} className="transition-transform hover:scale-110">
               <Star className={`h-8 w-8 ${i <= (hover || stars) ? "fill-yellow-400 text-yellow-400" : "text-muted-foreground"}`} />
             </button>
           ))}
         </div>
-        <textarea value={comment} onChange={(e) => setComment(e.target.value)} maxLength={500} rows={3} placeholder="شاركنا تجربتك مع الطبيب..." className="w-full rounded-xl p-3 text-sm text-right resize-none bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary" />
+        <textarea value={comment} onChange={(e) => setComment(e.target.value)} maxLength={500} rows={3} placeholder={t("doctorDetail.reviewPlaceholder")} className="w-full rounded-xl p-3 text-sm resize-none bg-secondary border border-border focus:outline-none focus:ring-2 focus:ring-primary" />
         <button onClick={submit} disabled={submitting} className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl py-3 text-sm font-bold bg-primary text-primary-foreground disabled:opacity-60">
-          <Send className="h-4 w-4" /> {submitting ? "جارٍ الإرسال..." : "إرسال التقييم"}
+          <Send className="h-4 w-4" /> {submitting ? t("doctorDetail.submittingReview") : t("doctorDetail.submitReview")}
         </button>
       </section>
 
-      {isLoading && <div className="bg-card rounded-2xl border border-border p-6 text-center text-xs text-muted-foreground">جارٍ تحميل التقييمات...</div>}
+      {isLoading && <div className="bg-card rounded-2xl border border-border p-6 text-center text-xs text-muted-foreground">{t("doctorDetail.loadingReviews")}</div>}
       {!isLoading && reviews.length === 0 && (
-        <div className="bg-card rounded-2xl border border-border p-6 text-center text-xs text-muted-foreground">لا توجد تقييمات بعد. كن أول من يقيّم!</div>
+        <div className="bg-card rounded-2xl border border-border p-6 text-center text-xs text-muted-foreground">{t("doctorDetail.noReviews")}</div>
       )}
 
       {reviews.map((r: any, i: number) => {
-        const name = r.profile?.full_name ?? "مستخدم";
+        const name = r.profile?.full_name ?? t("doctorDetail.anonymousUser");
         return (
           <motion.div key={r.id} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} className="bg-card rounded-2xl border border-border p-4">
-            <div className="flex items-start justify-between mb-2 flex-row-reverse">
-              <div className="flex items-center gap-2 flex-row-reverse">
+            <div className="flex items-start justify-between mb-2">
+              <div className="flex items-center gap-2">
                 <span className="text-2xl">👤</span>
-                <div className="text-right">
+                <div>
                   <p className="text-sm font-bold">{name}</p>
                   <p className="text-xs text-muted-foreground">{timeAgo(r.created_at)}</p>
                 </div>
@@ -526,7 +533,7 @@ function RatingsTab({ doctor }: { doctor: any }) {
                 ))}
               </div>
             </div>
-            {r.comment && <p className="text-sm text-muted-foreground leading-relaxed text-right">{r.comment}</p>}
+            {r.comment && <p className="text-sm text-muted-foreground leading-relaxed">{r.comment}</p>}
           </motion.div>
         );
       })}
@@ -535,20 +542,21 @@ function RatingsTab({ doctor }: { doctor: any }) {
 }
 
 function BioSection({ about }: { about: string }) {
+  const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
   const LIMIT = 180;
   const isLong = about.length > LIMIT;
   const shown = !isLong || expanded ? about : about.slice(0, LIMIT) + "…";
   return (
-    <section className="bg-card rounded-2xl border border-border p-4 text-right">
-      <h2 className="font-bold text-sm text-muted-foreground mb-2">نبذة عن الطبيب</h2>
+    <section className="bg-card rounded-2xl border border-border p-4">
+      <h2 className="font-bold text-sm text-muted-foreground mb-2">{t("doctorDetail.bioTitle")}</h2>
       <p className="text-sm text-foreground leading-relaxed whitespace-pre-line">{shown}</p>
       {isLong && (
         <button
           onClick={() => setExpanded((v) => !v)}
           className="mt-2 text-xs font-bold text-primary hover:underline"
         >
-          {expanded ? "عرض أقل" : "عرض المزيد"}
+          {expanded ? t("doctorDetail.showLess") : t("doctorDetail.showMore")}
         </button>
       )}
     </section>
