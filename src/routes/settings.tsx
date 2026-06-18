@@ -146,13 +146,13 @@ function Page() {
         )}
 
         {/* Appearance */}
-        <Section label="المظهر">
+        <Section label={t("settings.appearance")}>
           <div className="p-4">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center">
                 {isDark ? <Moon className="w-4 h-4 text-primary" /> : <Sun className="w-4 h-4 text-primary" />}
               </div>
-              <p className="font-semibold text-sm flex-1">الوضع</p>
+              <p className="font-semibold text-sm flex-1">{t("settings.mode")}</p>
             </div>
             <div className="flex gap-2">
               {THEMES.map(({ key, label, icon }) => (
@@ -175,14 +175,15 @@ function Page() {
         </Section>
 
         {/* Language */}
-        <Section label="اللغة">
+        <Section label={t("settings.language")}>
           <div className="p-4">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center">
                 <Globe className="w-4 h-4 text-primary" />
               </div>
-              <p className="font-semibold text-sm flex-1">اللغة</p>
+              <p className="font-semibold text-sm flex-1">{t("settings.language")}</p>
             </div>
+
             <div className="flex gap-2">
               {LANGS.map((l) => (
                 <button
