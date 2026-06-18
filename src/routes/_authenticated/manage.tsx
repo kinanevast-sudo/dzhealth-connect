@@ -142,17 +142,16 @@ function ManageLayout() {
   );
 }
 
-function ManageHeader() {
+function ManageHeader({ onMenuClick }: { onMenuClick: () => void }) {
   const { t } = useTranslation();
   return (
-    <header className="sticky top-0 z-20 h-16 bg-[#0b1220]/80 backdrop-blur border-b border-white/5 flex items-center gap-4 px-6">
-      <button className="h-10 w-10 grid place-items-center rounded-xl bg-[#111a2e] border border-white/5 hover:border-white/10 transition">
-        <span className="sr-only">menu</span>
-        <div className="space-y-1">
-          <span className="block h-0.5 w-4 bg-slate-300" />
-          <span className="block h-0.5 w-4 bg-slate-300" />
-          <span className="block h-0.5 w-4 bg-slate-300" />
-        </div>
+    <header className="sticky top-0 z-20 h-16 bg-[#0b1220]/80 backdrop-blur border-b border-white/5 flex items-center gap-2 sm:gap-4 px-3 sm:px-6">
+      <button
+        onClick={onMenuClick}
+        className="h-10 w-10 grid place-items-center rounded-xl bg-[#111a2e] border border-white/5 hover:border-white/10 transition shrink-0"
+        aria-label="menu"
+      >
+        <Menu className="h-4 w-4 text-slate-300" />
       </button>
       <div className="flex-1 max-w-2xl mx-auto">
         <div className="relative">
