@@ -2,7 +2,8 @@ import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tan
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { LayoutDashboard, ClipboardList, ShieldCheck, ArrowLeft, Loader2 } from "lucide-react";
+import { LayoutDashboard, ClipboardList, ShieldCheck, ArrowLeft, Loader2, Database } from "lucide-react";
+import { RESOURCES } from "@/lib/admin/resources";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
   SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarProvider, SidebarTrigger, useSidebar,
@@ -119,12 +120,13 @@ function ManageLayout() {
 }
 
 function ManageSidebar() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const pathname = useRouterState({ select: (r) => r.location.pathname });
+  const lng = (["ar", "fr", "en"].includes(i18n.language) ? i18n.language : "ar") as "ar" | "fr" | "en";
 
-  const items = [
+  const main = [
     { to: "/manage", label: t("manage.nav.dashboard"), icon: LayoutDashboard, exact: true },
     { to: "/manage/submissions", label: t("manage.nav.submissions"), icon: ClipboardList },
   ];
@@ -139,7 +141,7 @@ function ManageSidebar() {
           <SidebarGroupLabel>{t("manage.title")}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              {items.map((it) => (
+              {main.map((it) => (
                 <SidebarMenuItem key={it.to}>
                   <SidebarMenuButton asChild isActive={isActive(it.to, it.exact)}>
                     <Link to={it.to} className="flex items-center gap-2">
@@ -149,6 +151,26 @@ function ManageSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel>{t("manage.nav.resources")}</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {RESOURCES.map((r) => {
+                const to = `/manage/resource/${r.slug}`;
+                return (
+                  <SidebarMenuItem key={r.slug}>
+                    <SidebarMenuButton asChild isActive={pathname === to}>
+                      <Link to={to} className="flex items-center gap-2">
+                        <Database className="h-4 w-4" />
+                        {!collapsed && <span className="truncate">{r.label[lng]}</span>}
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
