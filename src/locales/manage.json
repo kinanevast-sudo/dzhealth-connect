@@ -7,7 +7,20 @@
       "nav": {
         "dashboard": "اللوحة الرئيسية",
         "submissions": "مراجعة الإضافات",
+        "analytics": "الإحصائيات",
         "resources": "الموارد"
+      },
+      "analytics": {
+        "title": "الإحصائيات والتحليلات",
+        "subtitle": "مؤشرات حية لأطباء ومستشفيات وطلبات الدم والمواعيد",
+        "exportCsv": "تصدير CSV",
+        "registrations30": "التسجيلات خلال آخر 30 يوم",
+        "appointmentsByStatus": "المواعيد حسب الحالة",
+        "doctorsByWilaya": "الأطباء حسب الولاية (أعلى 10)",
+        "doctorsBySpecialty": "الأطباء حسب التخصص (أعلى 10)",
+        "hospitalsByWilaya": "المستشفيات حسب الولاية (أعلى 10)",
+        "bloodByType": "طلبات الدم حسب الفصيلة",
+        "bloodByUrgency": "طلبات الدم حسب الاستعجال"
       },
       "crud": {
         "total": "{{count}} عنصر",
@@ -97,7 +110,20 @@
       "nav": {
         "dashboard": "Tableau de bord",
         "submissions": "Modération",
+        "analytics": "Statistiques",
         "resources": "Ressources"
+      },
+      "analytics": {
+        "title": "Statistiques & analytique",
+        "subtitle": "Indicateurs en direct : médecins, hôpitaux, sang, rendez-vous",
+        "exportCsv": "Exporter CSV",
+        "registrations30": "Inscriptions sur 30 jours",
+        "appointmentsByStatus": "Rendez-vous par statut",
+        "doctorsByWilaya": "Médecins par wilaya (top 10)",
+        "doctorsBySpecialty": "Médecins par spécialité (top 10)",
+        "hospitalsByWilaya": "Hôpitaux par wilaya (top 10)",
+        "bloodByType": "Demandes de sang par groupe",
+        "bloodByUrgency": "Demandes de sang par urgence"
       },
       "crud": {
         "total": "{{count}} éléments",
@@ -187,7 +213,20 @@
       "nav": {
         "dashboard": "Dashboard",
         "submissions": "Submissions",
+        "analytics": "Analytics",
         "resources": "Resources"
+      },
+      "analytics": {
+        "title": "Analytics & insights",
+        "subtitle": "Live metrics across doctors, hospitals, blood requests and appointments",
+        "exportCsv": "Export CSV",
+        "registrations30": "Signups in the last 30 days",
+        "appointmentsByStatus": "Appointments by status",
+        "doctorsByWilaya": "Doctors by wilaya (top 10)",
+        "doctorsBySpecialty": "Doctors by specialty (top 10)",
+        "hospitalsByWilaya": "Hospitals by wilaya (top 10)",
+        "bloodByType": "Blood requests by type",
+        "bloodByUrgency": "Blood requests by urgency"
       },
       "crud": {
         "total": "{{count}} items",
