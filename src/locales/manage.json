@@ -6,7 +6,29 @@
       "backToApp": "العودة إلى التطبيق",
       "nav": {
         "dashboard": "اللوحة الرئيسية",
-        "submissions": "مراجعة الإضافات"
+        "submissions": "مراجعة الإضافات",
+        "resources": "الموارد"
+      },
+      "crud": {
+        "total": "{{count}} عنصر",
+        "add": "إضافة",
+        "export": "تصدير CSV",
+        "search": "بحث",
+        "searchPlaceholder": "ابحث…",
+        "actions": "إجراءات",
+        "empty": "لا توجد بيانات",
+        "page": "صفحة {{page}} من {{total}}",
+        "deleteTitle": "حذف العنصر",
+        "deleteDesc": "هذا الإجراء لا يمكن التراجع عنه.",
+        "cancel": "إلغاء",
+        "confirmDelete": "تأكيد الحذف",
+        "deletedOk": "تم الحذف",
+        "createTitle": "إنشاء جديد",
+        "editTitle": "تعديل",
+        "save": "حفظ",
+        "savedOk": "تم الحفظ",
+        "createdOk": "تم الإنشاء",
+        "notFound": "هذا المورد غير موجود"
       },
       "bootstrap": {
         "title": "إعداد المشرف الأعلى",
@@ -74,7 +96,29 @@
       "backToApp": "Retour à l'application",
       "nav": {
         "dashboard": "Tableau de bord",
-        "submissions": "Modération"
+        "submissions": "Modération",
+        "resources": "Ressources"
+      },
+      "crud": {
+        "total": "{{count}} éléments",
+        "add": "Ajouter",
+        "export": "Exporter CSV",
+        "search": "Rechercher",
+        "searchPlaceholder": "Rechercher…",
+        "actions": "Actions",
+        "empty": "Aucune donnée",
+        "page": "Page {{page}} sur {{total}}",
+        "deleteTitle": "Supprimer l'élément",
+        "deleteDesc": "Cette action est irréversible.",
+        "cancel": "Annuler",
+        "confirmDelete": "Confirmer la suppression",
+        "deletedOk": "Supprimé",
+        "createTitle": "Nouvel élément",
+        "editTitle": "Modifier",
+        "save": "Enregistrer",
+        "savedOk": "Enregistré",
+        "createdOk": "Créé",
+        "notFound": "Ressource introuvable"
       },
       "bootstrap": {
         "title": "Configurer le super-admin",
@@ -142,7 +186,29 @@
       "backToApp": "Back to app",
       "nav": {
         "dashboard": "Dashboard",
-        "submissions": "Submissions"
+        "submissions": "Submissions",
+        "resources": "Resources"
+      },
+      "crud": {
+        "total": "{{count}} items",
+        "add": "Add",
+        "export": "Export CSV",
+        "search": "Search",
+        "searchPlaceholder": "Search…",
+        "actions": "Actions",
+        "empty": "No data",
+        "page": "Page {{page}} of {{total}}",
+        "deleteTitle": "Delete item",
+        "deleteDesc": "This action cannot be undone.",
+        "cancel": "Cancel",
+        "confirmDelete": "Confirm delete",
+        "deletedOk": "Deleted",
+        "createTitle": "Create new",
+        "editTitle": "Edit",
+        "save": "Save",
+        "savedOk": "Saved",
+        "createdOk": "Created",
+        "notFound": "Resource not found"
       },
       "bootstrap": {
         "title": "Set up super admin",
