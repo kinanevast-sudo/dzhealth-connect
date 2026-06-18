@@ -4,10 +4,10 @@ import { useTranslation } from "react-i18next";
 import {
   Users, Stethoscope, Building2, Pill, Droplet, ClipboardList,
   CheckCircle2, XCircle, TrendingUp, TrendingDown, Activity,
-  AlertTriangle, FileText, MapPin, Eye, ArrowUpRight,
+  AlertTriangle, FileText, MapPin, ArrowUpRight,
 } from "lucide-react";
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
+  Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, AreaChart, Area,
 } from "recharts";
 import { supabase } from "@/integrations/supabase/client";
