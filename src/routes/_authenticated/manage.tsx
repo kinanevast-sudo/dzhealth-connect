@@ -6,7 +6,7 @@ import {
   LayoutDashboard, ClipboardList, ShieldCheck, Loader2, BarChart3, Home,
   Users as UsersIcon, FileText, Bell, Settings, Image as ImageIcon, Activity,
   Brain, History, Search, Maximize2, ChevronDown, Heart, AlertTriangle,
-  Database, Monitor, Smartphone,
+  Database, Menu, X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -27,14 +27,8 @@ function ManageLayout() {
   const [pendingCount, setPendingCount] = useState(0);
   const [profile, setProfile] = useState<{ name: string; avatar: string | null } | null>(null);
 
-  // Desktop-only gate (must be before any early returns to respect Rules of Hooks)
-  const [isDesktop, setIsDesktop] = useState(true);
-  useEffect(() => {
-    const check = () => setIsDesktop(window.innerWidth >= 1024);
-    check();
-    window.addEventListener("resize", check);
-    return () => window.removeEventListener("resize", check);
-  }, []);
+  // Mobile sidebar drawer state
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const check = async () => {
     setState("checking");
@@ -114,33 +108,32 @@ function ManageLayout() {
     );
   }
 
-  if (!isDesktop) {
-    return (
-      <div dir="rtl" className="min-h-screen bg-[#0b1220] text-slate-200 flex items-center justify-center px-6">
-        <div className="max-w-sm w-full bg-[#111a2e] border border-white/10 rounded-2xl p-8 text-center space-y-5">
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-sky-500/15 grid place-items-center">
-            <Monitor className="h-8 w-8 text-sky-400" />
-          </div>
-          <div className="space-y-2">
-            <h1 className="text-xl font-bold text-white">لوحة التحكم</h1>
-            <p className="text-sm text-slate-400 leading-relaxed">
-              هذه اللوحة مُصممة خصيصًا لأجهزة الكمبيوتر. يُرجى فتحها من حاسوبك للحصول على أفضل تجربة.
-            </p>
-          </div>
-          <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
-            <Smartphone className="h-4 w-4" />
-            <span>العرض الحالي غير مدعوم</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div dir="rtl" className="manage-shell min-h-screen bg-[#0b1220] text-slate-200 flex">
-      <ManageSidebar pendingCount={pendingCount} profile={profile} />
+      {/* Desktop sidebar */}
+      <div className="hidden lg:flex">
+        <ManageSidebar pendingCount={pendingCount} profile={profile} />
+      </div>
+
+      {/* Mobile sidebar drawer */}
+      {sidebarOpen && (
+        <div className="lg:hidden fixed inset-0 z-40 flex">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setSidebarOpen(false)} />
+          <div className="relative z-50 h-full animate-in slide-in-from-right">
+            <ManageSidebar pendingCount={pendingCount} profile={profile} />
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="absolute top-3 left-3 h-9 w-9 grid place-items-center rounded-lg bg-[#111a2e] border border-white/10 text-slate-300"
+              aria-label="close"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="flex-1 min-w-0 flex flex-col">
-        <ManageHeader />
+        <ManageHeader onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 overflow-auto">
           <Outlet />
         </main>
@@ -149,17 +142,16 @@ function ManageLayout() {
   );
 }
 
-function ManageHeader() {
+function ManageHeader({ onMenuClick }: { onMenuClick: () => void }) {
   const { t } = useTranslation();
   return (
-    <header className="sticky top-0 z-20 h-16 bg-[#0b1220]/80 backdrop-blur border-b border-white/5 flex items-center gap-4 px-6">
-      <button className="h-10 w-10 grid place-items-center rounded-xl bg-[#111a2e] border border-white/5 hover:border-white/10 transition">
-        <span className="sr-only">menu</span>
-        <div className="space-y-1">
-          <span className="block h-0.5 w-4 bg-slate-300" />
-          <span className="block h-0.5 w-4 bg-slate-300" />
-          <span className="block h-0.5 w-4 bg-slate-300" />
-        </div>
+    <header className="sticky top-0 z-20 h-16 bg-[#0b1220]/80 backdrop-blur border-b border-white/5 flex items-center gap-2 sm:gap-4 px-3 sm:px-6">
+      <button
+        onClick={onMenuClick}
+        className="h-10 w-10 grid place-items-center rounded-xl bg-[#111a2e] border border-white/5 hover:border-white/10 transition shrink-0"
+        aria-label="menu"
+      >
+        <Menu className="h-4 w-4 text-slate-300" />
       </button>
       <div className="flex-1 max-w-2xl mx-auto">
         <div className="relative">
