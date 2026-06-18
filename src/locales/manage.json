@@ -160,7 +160,44 @@
         "doctorsBySpecialty": "Médecins par spécialité (top 10)",
         "hospitalsByWilaya": "Hôpitaux par wilaya (top 10)",
         "bloodByType": "Demandes de sang par groupe",
-        "bloodByUrgency": "Demandes de sang par urgence"
+        "bloodByUrgency": "Demandes de sang par urgence",
+        "refresh": "Actualiser",
+        "filters": {
+          "title": "Filtres",
+          "period": "Période",
+          "wilaya": "Wilaya",
+          "specialty": "Spécialité",
+          "all": "Toutes",
+          "reset": "Réinitialiser",
+          "d7": "7 jours", "d30": "30 jours", "d90": "90 jours", "d365": "1 an"
+        },
+        "kpi": {
+          "appointments": "Rendez-vous",
+          "urgentBlood": "Demandes urgentes",
+          "signups": "Inscriptions",
+          "prev": "période préc."
+        },
+        "alerts": {
+          "regDrop": "Baisse des inscriptions de {{pct}}% ({{curr}} vs {{prev}})",
+          "urgentBlood": "Alerte : {{n}} demandes de sang urgentes/critiques",
+          "pendingHigh": "{{n}} soumissions en attente de modération"
+        },
+        "table": {
+          "title": "Tableau de données",
+          "search": "Rechercher…",
+          "columns": "Colonnes",
+          "blood": "Sang",
+          "appointments": "Rendez-vous",
+          "shown": "{{n}} sur {{total}} lignes"
+        },
+        "feed": {
+          "title": "Activité récente",
+          "search": "Rechercher…",
+          "pullHint": "Tirez vers le bas (mobile) pour actualiser",
+          "blood": "Demande de sang",
+          "appointment": "Rendez-vous",
+          "signup": "Nouvel utilisateur"
+        }
       },
       "crud": {
         "total": "{{count}} éléments",
