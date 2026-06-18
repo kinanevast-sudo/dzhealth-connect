@@ -92,11 +92,25 @@
         "desc": "هذا القسم مخصص للمشرفين فقط."
       },
       "dashboard": {
-        "title": "نظرة عامة",
-        "subtitle": "ملخص حيوي لحالة المنصة",
+        "title": "لوحة التحكم الرئيسية",
+        "subtitle": "نظرة حية وشاملة على حالة منصة DZHealth",
         "quickActions": "إجراءات سريعة",
         "reviewPending": "مراجعة الإضافات المعلقة",
-        "morePhases": "وحدات إضافية (CRUD، إحصائيات متقدمة، خرائط، AI) ستُضاف في المراحل التالية."
+        "morePhases": "وحدات إضافية ستُضاف لاحقاً.",
+        "live": "مباشر",
+        "vsPrev7": "مقارنة بآخر 7 أيام",
+        "activity14": "نشاط المستخدمين (14 يوم)",
+        "activitySub": "تسجيلات، أطباء ومستشفيات جدد",
+        "distribution": "توزيع المحتوى",
+        "distributionSub": "نسبة كل نوع من المحتوى",
+        "total": "الإجمالي",
+        "coverage": "التغطية الجغرافية",
+        "topWilayas": "أعلى الولايات تغطية",
+        "tier": { "high": "عالية", "mid": "متوسطة", "low": "منخفضة", "none": "بلا تغطية" },
+        "contentReview": "ملخص المراجعة",
+        "liveActivity": "النشاط المباشر",
+        "viewMore": "عرض المزيد",
+        "pendingAlert": "لديك {{n}} طلب يحتاج مراجعة عاجلة"
       },
       "kpi": {
         "pending": "إضافات معلقة",
@@ -106,7 +120,15 @@
         "doctors": "الأطباء",
         "hospitals": "المستشفيات",
         "pharmacies": "الصيدليات",
-        "donors": "متبرعو الدم"
+        "donors": "متبرعو الدم",
+        "appointments": "المواعيد",
+        "bloodReqs": "طلبات الدم"
+      },
+      "feed": {
+        "blood": "طلب دم",
+        "appointment": "موعد",
+        "signup": "تسجيل جديد",
+        "submission": "إضافة"
       },
       "subs": {
         "title": "مراجعة الإضافات",
@@ -232,11 +254,25 @@
         "desc": "Cette section est réservée aux administrateurs."
       },
       "dashboard": {
-        "title": "Vue d'ensemble",
-        "subtitle": "Synthèse en direct de la plateforme",
+        "title": "Tableau de bord principal",
+        "subtitle": "Vue en direct et complète de la plateforme DZHealth",
         "quickActions": "Actions rapides",
         "reviewPending": "Examiner les soumissions",
-        "morePhases": "Modules supplémentaires (CRUD, analytics avancées, cartes, IA) à venir."
+        "morePhases": "D'autres modules à venir.",
+        "live": "En direct",
+        "vsPrev7": "vs 7 derniers jours",
+        "activity14": "Activité utilisateurs (14j)",
+        "activitySub": "Nouveaux inscrits, médecins et hôpitaux",
+        "distribution": "Répartition du contenu",
+        "distributionSub": "Part de chaque type",
+        "total": "Total",
+        "coverage": "Couverture géographique",
+        "topWilayas": "Top wilayas couvertes",
+        "tier": { "high": "Élevée", "mid": "Moyenne", "low": "Faible", "none": "Aucune" },
+        "contentReview": "Résumé modération",
+        "liveActivity": "Activité en direct",
+        "viewMore": "Voir plus",
+        "pendingAlert": "{{n}} soumissions en attente urgente"
       },
       "kpi": {
         "pending": "En attente",
@@ -246,7 +282,15 @@
         "doctors": "Médecins",
         "hospitals": "Hôpitaux",
         "pharmacies": "Pharmacies",
-        "donors": "Donneurs"
+        "donors": "Donneurs",
+        "appointments": "Rendez-vous",
+        "bloodReqs": "Demandes de sang"
+      },
+      "feed": {
+        "blood": "Demande de sang",
+        "appointment": "Rendez-vous",
+        "signup": "Nouvel inscrit",
+        "submission": "Soumission"
       },
       "subs": {
         "title": "Modération des soumissions",
@@ -372,11 +416,25 @@
         "desc": "This area is restricted to administrators."
       },
       "dashboard": {
-        "title": "Overview",
-        "subtitle": "Live platform summary",
+        "title": "Admin Dashboard",
+        "subtitle": "Live, comprehensive view of the DZHealth platform",
         "quickActions": "Quick actions",
         "reviewPending": "Review pending submissions",
-        "morePhases": "More modules (CRUD, advanced analytics, maps, AI) coming in next phases."
+        "morePhases": "More modules coming next.",
+        "live": "Live",
+        "vsPrev7": "vs previous 7 days",
+        "activity14": "User activity (14 days)",
+        "activitySub": "New signups, doctors and hospitals",
+        "distribution": "Content distribution",
+        "distributionSub": "Share of each content type",
+        "total": "Total",
+        "coverage": "Geographic coverage",
+        "topWilayas": "Top covered wilayas",
+        "tier": { "high": "High", "mid": "Medium", "low": "Low", "none": "None" },
+        "contentReview": "Review summary",
+        "liveActivity": "Live activity",
+        "viewMore": "View more",
+        "pendingAlert": "{{n}} submissions awaiting urgent review"
       },
       "kpi": {
         "pending": "Pending",
@@ -386,7 +444,15 @@
         "doctors": "Doctors",
         "hospitals": "Hospitals",
         "pharmacies": "Pharmacies",
-        "donors": "Donors"
+        "donors": "Donors",
+        "appointments": "Appointments",
+        "bloodReqs": "Blood requests"
+      },
+      "feed": {
+        "blood": "Blood request",
+        "appointment": "Appointment",
+        "signup": "New signup",
+        "submission": "Submission"
       },
       "subs": {
         "title": "Submission review",
