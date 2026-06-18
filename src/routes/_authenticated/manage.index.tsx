@@ -214,14 +214,15 @@ function Dashboard() {
   ];
 
   return (
-    <div dir={lng === "ar" ? "rtl" : "ltr"} className="p-6 space-y-5 bg-[#0b1220] min-h-full text-slate-200">
+    <div dir={lng === "ar" ? "rtl" : "ltr"} className="p-3 sm:p-5 lg:p-6 space-y-4 lg:space-y-5 bg-[#0b1220] min-h-full text-slate-200">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-white">لوحة التحكم الرئيسية</h1>
+        <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-white">لوحة التحكم الرئيسية</h1>
       </div>
 
-      {/* KPI cards — 7 fixed columns desktop */}
-      <div className="grid grid-cols-7 gap-3">
+      {/* KPI cards — responsive */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7 gap-3">
+
         {kpis.map((k) => {
           const tone = TONES[k.tone];
           const deltaVal = k.delta;
