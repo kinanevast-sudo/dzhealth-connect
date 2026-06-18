@@ -2,7 +2,7 @@ import { createFileRoute, Outlet, Link, useRouterState, useNavigate } from "@tan
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { LayoutDashboard, ClipboardList, ShieldCheck, ArrowLeft, Loader2, Database } from "lucide-react";
+import { LayoutDashboard, ClipboardList, ShieldCheck, ArrowLeft, Loader2, Database, BarChart3 } from "lucide-react";
 import { RESOURCES } from "@/lib/admin/resources";
 import {
   Sidebar, SidebarContent, SidebarGroup, SidebarGroupContent, SidebarGroupLabel,
@@ -129,6 +129,7 @@ function ManageSidebar() {
   const main = [
     { to: "/manage", label: t("manage.nav.dashboard"), icon: LayoutDashboard, exact: true },
     { to: "/manage/submissions", label: t("manage.nav.submissions"), icon: ClipboardList },
+    { to: "/manage/analytics", label: t("manage.nav.analytics"), icon: BarChart3 },
   ];
 
   const isActive = (to: string, exact?: boolean) =>
