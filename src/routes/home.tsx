@@ -7,6 +7,7 @@ import {
   Accessibility, Leaf, Eye, Baby, Brain, Bone, Heart, Star, BadgeCheck,
 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { useUnreadNotifications } from "@/hooks/useUnreadNotifications";
@@ -26,32 +27,6 @@ const BLOOD_TYPE_COLORS: Record<string, string> = {
   "AB+": "text-purple-500", "AB-": "text-purple-600",
 };
 
-const STATS = [
-  { icon: Stethoscope, label: "أطباء", value: "1,240+", color: "text-primary", bg: "bg-primary/10" },
-  { icon: Building2, label: "مستشفيات", value: "320+", color: "text-blue-500", bg: "bg-blue-500/10" },
-  { icon: Pill, label: "صيدليات", value: "4,500+", color: "text-green-500", bg: "bg-green-500/10" },
-  { icon: Droplet, label: "متبرعون", value: "800+", color: "text-red-500", bg: "bg-red-500/10" },
-];
-
-const SPECIALTIES = [
-  { id: "donors", icon: "🩸", name: "متبرعو الدم", to: "/donors" },
-  { id: "pharmacies", icon: "💊", name: "الصيدليات", to: "/pharmacies" },
-  { id: "hospitals", icon: "🏥", name: "المستشفيات", to: "/hospitals" },
-  { id: "civil", icon: "🛡️", name: "الحماية المدنية", to: "/civil-protection" },
-  { id: "labs", icon: "🧪", name: "مخابر التحاليل", to: "/search" },
-  { id: "charities", icon: "🤝", name: "الجمعيات الخيرية", to: "/search" },
-  { id: "ambulances", icon: "🚑", name: "سيارات الإسعاف", to: "/search" },
-  { id: "pediatrics", icon: "👶", name: "طب الأطفال", to: "/doctors" },
-  { id: "equipment", icon: "🦽", name: "المعدات الطبية", to: "/equipment" },
-  { id: "alt", icon: "🌿", name: "الطب البديل", to: "/search" },
-  { id: "eye", icon: "👁️", name: "طب العيون", to: "/doctors" },
-  { id: "dental", icon: "🦷", name: "طب الأسنان", to: "/doctors" },
-  { id: "neuro", icon: "🧠", name: "طب الأعصاب", to: "/doctors" },
-  { id: "bone", icon: "🦴", name: "العظام والمفاصل", to: "/doctors" },
-  { id: "gyn", icon: "🌸", name: "أمراض النساء", to: "/doctors" },
-  { id: "cardio", icon: "❤️", name: "القلب والشرايين", to: "/doctors" },
-];
-
 const containerVariants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.07 } },
@@ -62,12 +37,15 @@ const itemVariants = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.38, ease: [0.25, 0.1, 0.25, 1] as const } },
 };
 
-function fmtKm(km?: number) {
+function fmtKm(km?: number, t?: (k: string) => string) {
   if (km == null || !isFinite(km)) return null;
-  return km < 1 ? `${Math.round(km * 1000)} م` : `${km.toFixed(1)} كم`;
+  const m = t ? t("home.unitMeter") : "م";
+  const km_ = t ? t("home.unitKm") : "كم";
+  return km < 1 ? `${Math.round(km * 1000)} ${m}` : `${km.toFixed(1)} ${km_}`;
 }
 
 function Home() {
+  const { t } = useTranslation();
   const [showAllSpecialties, setShowAllSpecialties] = useState(false);
   const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
   const [locationLabel, setLocationLabel] = useState<{ wilaya?: string; baladiya?: string }>({});
@@ -77,11 +55,35 @@ function Home() {
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const unreadCount = useUnreadNotifications();
 
+  const STATS = [
+    { icon: Stethoscope, label: t("home.stats.doctors"), value: "1,240+", color: "text-primary", bg: "bg-primary/10" },
+    { icon: Building2, label: t("home.stats.hospitals"), value: "320+", color: "text-blue-500", bg: "bg-blue-500/10" },
+    { icon: Pill, label: t("home.stats.pharmacies"), value: "4,500+", color: "text-green-500", bg: "bg-green-500/10" },
+    { icon: Droplet, label: t("home.stats.donors"), value: "800+", color: "text-red-500", bg: "bg-red-500/10" },
+  ];
+
+  const SPECIALTIES = [
+    { id: "donors", icon: "🩸", name: t("home.specialtyNames.donors"), to: "/donors" },
+    { id: "pharmacies", icon: "💊", name: t("home.specialtyNames.pharmacies"), to: "/pharmacies" },
+    { id: "hospitals", icon: "🏥", name: t("home.specialtyNames.hospitals"), to: "/hospitals" },
+    { id: "civil", icon: "🛡️", name: t("home.specialtyNames.civil"), to: "/civil-protection" },
+    { id: "labs", icon: "🧪", name: t("home.specialtyNames.labs"), to: "/search" },
+    { id: "charities", icon: "🤝", name: t("home.specialtyNames.charities"), to: "/search" },
+    { id: "ambulances", icon: "🚑", name: t("home.specialtyNames.ambulances"), to: "/search" },
+    { id: "pediatrics", icon: "👶", name: t("home.specialtyNames.pediatrics"), to: "/doctors" },
+    { id: "equipment", icon: "🦽", name: t("home.specialtyNames.equipment"), to: "/equipment" },
+    { id: "alt", icon: "🌿", name: t("home.specialtyNames.alt"), to: "/search" },
+    { id: "eye", icon: "👁️", name: t("home.specialtyNames.eye"), to: "/doctors" },
+    { id: "dental", icon: "🦷", name: t("home.specialtyNames.dental"), to: "/doctors" },
+    { id: "neuro", icon: "🧠", name: t("home.specialtyNames.neuro"), to: "/doctors" },
+    { id: "bone", icon: "🦴", name: t("home.specialtyNames.bone"), to: "/doctors" },
+    { id: "gyn", icon: "🌸", name: t("home.specialtyNames.gyn"), to: "/doctors" },
+    { id: "cardio", icon: "❤️", name: t("home.specialtyNames.cardio"), to: "/doctors" },
+  ];
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      // Load profile info first (name, avatar, fallback location/label)
       const { data: u } = await supabase.auth.getUser();
       let profileLoc: { lat: number; lng: number } | null = null;
       let profileLabel: { wilaya?: string; baladiya?: string } = {};
@@ -102,7 +104,6 @@ function Home() {
         };
       }
 
-      // GPS first → fallback to profile
       const useFallback = () => {
         if (cancelled) return;
         if (profileLoc) setOrigin(profileLoc);
@@ -120,7 +121,6 @@ function Home() {
           if (cancelled) return;
           const lat = pos.coords.latitude, lng = pos.coords.longitude;
           setOrigin({ lat, lng });
-          // Convert GPS to nearest Algerian wilaya
           const nearest = nearestWilaya(lat, lng);
           setWilayaId(nearest.id);
           try {
@@ -169,7 +169,6 @@ function Home() {
     },
   });
 
-
   const doctors = sortByDistance((doctorsRaw ?? []) as any[], origin);
   const featured = doctors.filter((d: any) => d.verified).slice(0, 3);
   const nearbyDoctors = doctors.slice(0, 8);
@@ -182,7 +181,6 @@ function Home() {
   return (
     <AppShell>
       <div dir="rtl" className="min-h-[100dvh] bg-background">
-        {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -16 }}
           animate={{ opacity: 1, y: 0 }}
@@ -204,9 +202,9 @@ function Home() {
                 )}
                 <div>
                   <p className="text-sm text-muted-foreground">
-                    {displayName ? `مرحباً، ${displayName}` : "مرحباً"}
+                    {displayName ? t("home.greetingName", { name: displayName }) : t("home.greeting")}
                   </p>
-                  <h1 className="text-lg font-black text-foreground">كيف يمكننا مساعدتك؟</h1>
+                  <h1 className="text-lg font-black text-foreground">{t("home.howCanWeHelp")}</h1>
                 </div>
               </div>
               <div className="flex items-center gap-1 mt-1">
@@ -217,7 +215,7 @@ function Home() {
                   <span className="text-xs text-muted-foreground">
                     {locationLabel.baladiya && locationLabel.wilaya
                       ? `${locationLabel.baladiya}، ${locationLabel.wilaya}`
-                      : locationLabel.wilaya ?? locationLabel.baladiya ?? "الجزائر"}
+                      : locationLabel.wilaya ?? locationLabel.baladiya ?? t("home.defaultLocation")}
                   </span>
                 )}
               </div>
@@ -234,20 +232,18 @@ function Home() {
             </div>
           </div>
 
-          {/* Search bar */}
           <Link to="/search">
             <motion.div
               whileTap={{ scale: 0.98 }}
               className="flex items-center gap-3 bg-secondary rounded-2xl px-4 py-3 cursor-pointer"
             >
               <Search className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-              <span className="text-sm text-muted-foreground">ابحث عن طبيب، تخصص، ولاية...</span>
+              <span className="text-sm text-muted-foreground">{t("home.searchPlaceholder")}</span>
             </motion.div>
           </Link>
         </motion.div>
 
         <motion.div variants={containerVariants} initial="hidden" animate="visible" className="px-4 py-4 space-y-6">
-          {/* Stats */}
           <motion.div variants={itemVariants}>
             <div className="grid grid-cols-4 gap-2">
               {STATS.map((stat) => (
@@ -262,15 +258,14 @@ function Home() {
             </div>
           </motion.div>
 
-          {/* Specialties */}
           <motion.section variants={itemVariants}>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-black text-base text-foreground">التخصصات</h2>
+              <h2 className="font-black text-base text-foreground">{t("home.specialties")}</h2>
               <button
                 onClick={() => setShowAllSpecialties(!showAllSpecialties)}
                 className="flex items-center gap-1 text-primary text-xs font-medium cursor-pointer"
               >
-                {showAllSpecialties ? "عرض أقل" : "عرض الكل"}
+                {showAllSpecialties ? t("home.showLess") : t("home.showAll")}
                 <motion.div animate={{ rotate: showAllSpecialties ? 180 : 0 }} transition={{ duration: 0.2 }}>
                   <ChevronDown className="w-3 h-3" />
                 </motion.div>
@@ -304,17 +299,15 @@ function Home() {
             </AnimatePresence>
           </motion.section>
 
-          {/* Urgent blood requests slider — filtered by user's wilaya (GPS → profile fallback) */}
           <motion.div variants={itemVariants}>
             <BloodRequestsSlider wilayaId={wilayaId} />
           </motion.div>
 
-          {/* Featured doctors */}
           <motion.section variants={itemVariants}>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-black text-base text-foreground">أطباء مميزون</h2>
+              <h2 className="font-black text-base text-foreground">{t("home.featuredDoctors")}</h2>
               <Link to="/doctors" className="flex items-center gap-1 text-primary text-xs font-medium">
-                عرض الكل <ChevronRight className="w-3 h-3 rotate-180" />
+                {t("home.showAll")} <ChevronRight className="w-3 h-3 rotate-180" />
               </Link>
             </div>
             {isLoading ? (
@@ -337,12 +330,11 @@ function Home() {
             )}
           </motion.section>
 
-          {/* Nearby doctors — horizontal scroll, real GPS distance */}
           <motion.section variants={itemVariants}>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-black text-base text-foreground">أطباء قريبون</h2>
+              <h2 className="font-black text-base text-foreground">{t("home.nearbyDoctors")}</h2>
               <Link to="/nearby-doctors" className="flex items-center gap-1 text-primary text-xs font-medium">
-                عرض الكل <ChevronRight className="w-3 h-3 rotate-180" />
+                {t("home.showAll")} <ChevronRight className="w-3 h-3 rotate-180" />
               </Link>
             </div>
             <div className="-mx-4 px-4 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
@@ -358,22 +350,20 @@ function Home() {
                   </motion.div>
                 ))}
                 {nearbyDoctors.length === 0 && !isLoading && (
-                  <div className="text-xs text-muted-foreground py-8 px-4">لا يوجد أطباء قريبون</div>
+                  <div className="text-xs text-muted-foreground py-8 px-4">{t("home.noDoctorsNearby")}</div>
                 )}
               </div>
             </div>
           </motion.section>
 
-          {/* Civil protection nearby */}
           <motion.div variants={itemVariants}>
             <CivilProtectionSlider wilayaName={locationLabel.wilaya} />
           </motion.div>
 
-          {/* Nearby hospitals */}
           <motion.section variants={itemVariants}>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-black text-base text-foreground">مستشفيات قريبة</h2>
-              <Link to="/hospitals" className="flex items-center gap-1 text-primary text-xs font-medium">عرض الكل</Link>
+              <h2 className="font-black text-base text-foreground">{t("home.nearbyHospitals")}</h2>
+              <Link to="/hospitals" className="flex items-center gap-1 text-primary text-xs font-medium">{t("home.showAll")}</Link>
             </div>
             <div className="space-y-3">
               {hospitals.map((h: any) => (
@@ -385,12 +375,12 @@ function Home() {
                       {h.baladiyas?.name_ar ? `${h.baladiyas.name_ar} - ` : ""}{h.wilayas?.name_ar}
                     </p>
                     <div className="flex flex-wrap gap-1 mt-1.5">
-                      {["طوارئ", "جراحة", "أطفال"].map((s) => (
+                      {[t("home.hospitalTags.emergency"), t("home.hospitalTags.surgery"), t("home.hospitalTags.pediatrics")].map((s) => (
                         <span key={s} className="text-[9px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full">{s}</span>
                       ))}
                     </div>
                     <div className="flex items-center justify-between mt-2">
-                      <span className="text-xs text-muted-foreground">{fmtKm(h._distanceKm) ?? h.wilayas?.name_ar}</span>
+                      <span className="text-xs text-muted-foreground">{fmtKm(h._distanceKm, t) ?? h.wilayas?.name_ar}</span>
                       {h.phone && (
                         <a href={`tel:${h.phone}`} onClick={(e) => e.stopPropagation()} className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center cursor-pointer">
                           <Phone className="w-3.5 h-3.5 text-primary" />
@@ -403,16 +393,14 @@ function Home() {
             </div>
           </motion.section>
 
-          {/* On-call pharmacies today */}
           <motion.div variants={itemVariants}>
             <OnCallPharmaciesSlider origin={origin} />
           </motion.div>
 
-          {/* Nearby pharmacies */}
           <motion.section variants={itemVariants}>
             <div className="flex items-center justify-between mb-3">
-              <h2 className="font-black text-base text-foreground">صيدليات قريبة</h2>
-              <Link to="/pharmacies" className="flex items-center gap-1 text-primary text-xs font-medium">عرض الكل</Link>
+              <h2 className="font-black text-base text-foreground">{t("home.nearbyPharmacies")}</h2>
+              <Link to="/pharmacies" className="flex items-center gap-1 text-primary text-xs font-medium">{t("home.showAll")}</Link>
             </div>
             <div className="space-y-2">
               {pharmacies.map((p: any, i: number) => (
@@ -433,7 +421,7 @@ function Home() {
                     </div>
                     <p className="text-xs text-muted-foreground">
                       {p.wilayas?.name_ar}
-                      {fmtKm(p._distanceKm) && <span className="ms-2 font-bold text-primary">· {fmtKm(p._distanceKm)}</span>}
+                      {fmtKm(p._distanceKm, t) && <span className="ms-2 font-bold text-primary">· {fmtKm(p._distanceKm, t)}</span>}
                     </p>
                   </div>
                   {p.phone && (
@@ -446,10 +434,9 @@ function Home() {
             </div>
           </motion.section>
 
-          {/* Footer */}
           <motion.div variants={itemVariants} className="flex items-center justify-center gap-2 py-4 text-muted-foreground/40">
             <Activity className="w-4 h-4" />
-            <span className="text-xs">DZHealth — صحتك، أولويتنا</span>
+            <span className="text-xs">DZHealth — {t("home.footer")}</span>
           </motion.div>
         </motion.div>
       </div>
@@ -458,7 +445,8 @@ function Home() {
 }
 
 function DoctorRow({ d, showDistanceAsPrice = false }: { d: any; showDistanceAsPrice?: boolean }) {
-  const dist = fmtKm(d._distanceKm);
+  const { t } = useTranslation();
+  const dist = fmtKm(d._distanceKm, t);
   return (
     <Link to="/doctors/$id" params={{ id: d.id }} className="block bg-card rounded-2xl border border-border p-3 active:scale-[0.98] transition">
       <div className="flex items-start gap-3">
@@ -493,7 +481,7 @@ function DoctorRow({ d, showDistanceAsPrice = false }: { d: any; showDistanceAsP
                 {dist ?? "—"}
               </span>
             ) : (
-              <span className="text-xs font-bold text-primary">{d.fee} دج</span>
+              <span className="text-xs font-bold text-primary">{d.fee} {t("home.currency")}</span>
             )}
           </div>
         </div>
@@ -503,7 +491,8 @@ function DoctorRow({ d, showDistanceAsPrice = false }: { d: any; showDistanceAsP
 }
 
 function DoctorNearbyCard({ d }: { d: any }) {
-  const dist = fmtKm(d._distanceKm);
+  const { t } = useTranslation();
+  const dist = fmtKm(d._distanceKm, t);
   return (
     <Link
       to="/doctors/$id"
@@ -537,4 +526,3 @@ function DoctorNearbyCard({ d }: { d: any }) {
     </Link>
   );
 }
-

@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Search as SearchIcon, ChevronUp, MapPin, Mic, Stethoscope, Star, Phone, BadgeCheck, Map as MapIcon, Navigation } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell } from "@/components/AppShell";
 import { openMap } from "@/lib/map";
@@ -9,27 +10,8 @@ import { sortByDistance } from "@/lib/geo";
 
 export const Route = createFileRoute("/search")({ component: Page });
 
-const TYPES = [
-  { id: "all", label: "الكل", icon: null, color: "#0891b2", bg: "#e0f2fe" },
-  { id: "doctors", label: "الأطباء", icon: "👨‍⚕️", color: "#0891b2", bg: "#0891b2" },
-  { id: "hospitals", label: "المستشفيات", icon: "🏥", color: "#3b82f6", bg: "#dbeafe" },
-  { id: "pharmacies", label: "الصيدليات", icon: "💊", color: "#10b981", bg: "#d1fae5" },
-  { id: "oncall", label: "صيدليات مناوبة", icon: "🕒", color: "#16a34a", bg: "#dcfce7" },
-  { id: "donors", label: "متبرعو الدم", icon: "🩸", color: "#ef4444", bg: "#fee2e2" },
-  { id: "labs", label: "مخابر التحاليل", icon: "🧪", color: "#7c3aed", bg: "#ede9fe" },
-  { id: "charities", label: "الجمعيات الخيرية", icon: "🤝", color: "#f59e0b", bg: "#fef3c7" },
-  { id: "ambulances", label: "سيارات الإسعاف", icon: "🚑", color: "#dc2626", bg: "#fee2e2" },
-  { id: "civil", label: "الحماية المدنية", icon: "🛡️", color: "#ea580c", bg: "#ffedd5" },
-];
-
-const SUB = [
-  { id: "all", label: "الكل" },
-  { id: "peds", label: "طب الأطفال", icon: "👶" },
-  { id: "hosp", label: "المستشفيات", icon: "🏥" },
-  { id: "pharma", label: "الصيدليات", icon: "💊" },
-];
-
 function Page() {
+  const { t } = useTranslation();
   const [q, setQ] = useState("");
   const [type, setType] = useState("doctors");
   const [sub, setSub] = useState("all");
@@ -38,6 +20,26 @@ function Page() {
   const [wilaya, setWilaya] = useState<{ id: number; name_ar: string } | null>(null);
   const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
   const [sortNearest, setSortNearest] = useState(false);
+
+  const TYPES = [
+    { id: "all", label: t("search.types.all"), icon: null, color: "#0891b2", bg: "#e0f2fe" },
+    { id: "doctors", label: t("search.types.doctors"), icon: "👨‍⚕️", color: "#0891b2", bg: "#0891b2" },
+    { id: "hospitals", label: t("search.types.hospitals"), icon: "🏥", color: "#3b82f6", bg: "#dbeafe" },
+    { id: "pharmacies", label: t("search.types.pharmacies"), icon: "💊", color: "#10b981", bg: "#d1fae5" },
+    { id: "oncall", label: t("search.types.oncall"), icon: "🕒", color: "#16a34a", bg: "#dcfce7" },
+    { id: "donors", label: t("search.types.donors"), icon: "🩸", color: "#ef4444", bg: "#fee2e2" },
+    { id: "labs", label: t("search.types.labs"), icon: "🧪", color: "#7c3aed", bg: "#ede9fe" },
+    { id: "charities", label: t("search.types.charities"), icon: "🤝", color: "#f59e0b", bg: "#fef3c7" },
+    { id: "ambulances", label: t("search.types.ambulances"), icon: "🚑", color: "#dc2626", bg: "#fee2e2" },
+    { id: "civil", label: t("search.types.civil"), icon: "🛡️", color: "#ea580c", bg: "#ffedd5" },
+  ];
+
+  const SUB = [
+    { id: "all", label: t("search.sub.all") },
+    { id: "peds", label: t("search.sub.peds"), icon: "👶" },
+    { id: "hosp", label: t("search.sub.hosp"), icon: "🏥" },
+    { id: "pharma", label: t("search.sub.pharma"), icon: "💊" },
+  ];
 
   useEffect(() => {
     if (!sortNearest || origin || typeof navigator === "undefined" || !navigator.geolocation) return;
@@ -70,7 +72,6 @@ function Page() {
       ? `id,${nameCol},photo_url,phone,wilayas(name_ar),baladiyas(name_ar)`
       : `id,${nameCol},photo_url,phone,lat,lng,verified,wilayas(name_ar),baladiyas(name_ar)`;
 
-  // On-call pharmacy ids for today
   const todayISO = (() => {
     const d = new Date();
     return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -106,7 +107,7 @@ function Page() {
     <AppShell>
       <div dir="rtl" className="min-h-[100dvh]" style={{ background: "var(--background)", color: "var(--foreground)" }}>
         <header className="px-5 pt-8 pb-3">
-          <h1 className="text-2xl font-extrabold text-right">بحث</h1>
+          <h1 className="text-2xl font-extrabold text-right">{t("search.title")}</h1>
 
           <div className="mt-4 flex items-center gap-2">
             <div className="relative flex-1 flex items-center rounded-2xl px-3 py-3" style={{ background: "#e0f2fe" }}>
@@ -114,10 +115,10 @@ function Page() {
               <input
                 value={q}
                 onChange={(e) => setQ(e.target.value)}
-                placeholder="ابحث عن طبيب، تخصص، و..."
+                placeholder={t("search.searchPlaceholder")}
                 className="flex-1 bg-transparent px-2 text-sm outline-none text-right placeholder:text-slate-500"
               />
-              <button aria-label="إدخال صوتي" className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full" style={{ background: "#bae6fd" }}>
+              <button aria-label={t("search.voiceInputAriaLabel")} className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full" style={{ background: "#bae6fd" }}>
                 <Mic className="h-3.5 w-3.5" style={{ color: "#0891b2" }} />
               </button>
             </div>
@@ -127,7 +128,7 @@ function Page() {
               style={{ background: "#e0f2fe" }}
             >
               <ChevronUp className={`h-4 w-4 transition-transform ${wOpen ? "" : "rotate-180"}`} style={{ color: "#0891b2" }} />
-              <span className="text-sm font-semibold">{wilaya?.name_ar ?? "الولاية"}</span>
+              <span className="text-sm font-semibold">{wilaya?.name_ar ?? t("search.wilayaButton")}</span>
               <MapPin className="h-4 w-4" style={{ color: "#0891b2" }} />
             </button>
           </div>
@@ -138,7 +139,7 @@ function Page() {
                 onClick={() => { setWilaya(null); setWOpen(false); }}
                 className="block w-full rounded-xl px-3 py-2 text-right text-sm hover:bg-muted"
               >
-                كل الولايات
+                {t("search.allWilayas")}
               </button>
               {wilayas.map((w: any) => (
                 <button
@@ -160,7 +161,7 @@ function Page() {
               style={{ background: "#e0f2fe" }}
             >
               <ChevronUp className={`h-4 w-4 transition-transform ${tOpen ? "" : "rotate-180"}`} style={{ color: "#0891b2" }} />
-              <span className="flex-1 text-right text-sm font-semibold">{SUB.find(s => s.id === sub)?.label ?? "الكل"}</span>
+              <span className="flex-1 text-right text-sm font-semibold">{SUB.find(s => s.id === sub)?.label ?? t("search.sub.all")}</span>
               <Stethoscope className="h-4 w-4 shrink-0" style={{ color: "#0891b2" }} />
             </button>
             {tOpen && (
@@ -169,7 +170,7 @@ function Page() {
                   <button key={s.id} onClick={() => { setSub(s.id); setTOpen(false); }}
                     className={`flex w-full items-center justify-end gap-2 rounded-xl px-3 py-2 text-right text-sm hover:bg-muted ${sub === s.id ? "font-bold" : ""}`}
                     style={sub === s.id ? { background: "#e0f2fe", color: "#0891b2" } : undefined}>
-                    <span>{s.label}</span>{s.icon && <span>{s.icon}</span>}
+                    <span>{s.label}</span>{(s as any).icon && <span>{(s as any).icon}</span>}
                   </button>
                 ))}
               </div>
@@ -177,16 +178,16 @@ function Page() {
           </div>
 
           <div dir="rtl" className="mt-3 flex gap-2 overflow-x-auto pb-1" style={{ scrollbarWidth: "none" }}>
-            {TYPES.map((t) => {
-              const active = type === t.id;
+            {TYPES.map((tp) => {
+              const active = type === tp.id;
               return (
-                <button key={t.id} onClick={() => setType(t.id)}
+                <button key={tp.id} onClick={() => setType(tp.id)}
                   className="shrink-0 flex items-center gap-1.5 rounded-2xl px-3 py-2 text-xs font-semibold"
                   style={active
-                    ? { background: t.color, color: "white" }
-                    : { background: t.bg, color: t.color }}>
-                  <span>{t.label}</span>
-                  {t.icon && <span>{t.icon}</span>}
+                    ? { background: tp.color, color: "white" }
+                    : { background: tp.bg, color: tp.color }}>
+                  <span>{tp.label}</span>
+                  {tp.icon && <span>{tp.icon}</span>}
                 </button>
               );
             })}
@@ -199,14 +200,14 @@ function Page() {
               style={sortNearest ? { background: "#0891b2", color: "white" } : { background: "#e0f2fe", color: "#0891b2" }}
             >
               <Navigation className="h-3.5 w-3.5" />
-              {sortNearest ? "مُرتّب حسب الأقرب" : "ترتيب حسب الأقرب"}
+              {sortNearest ? t("search.sortNearest") : t("search.sortByNearest")}
             </button>
           </div>
         </header>
 
         <section className="px-5 pb-24 space-y-3">
           {results.length === 0 && (
-            <p className="py-8 text-center text-sm text-muted-foreground">لا توجد نتائج</p>
+            <p className="py-8 text-center text-sm text-muted-foreground">{t("search.noResults")}</p>
           )}
           {results.map((r: any) => {
             const href = detailBase ? `${detailBase}/${r.id}` : "#";
@@ -245,10 +246,10 @@ function Page() {
                       <div className="mt-2 flex items-center justify-between">
                         {dist != null && isFinite(dist) ? (
                           <span className="text-xs font-bold" style={{ color: "#0891b2" }}>
-                            {dist < 1 ? `${Math.round(dist * 1000)} م` : `${dist.toFixed(1)} كم`}
+                            {dist < 1 ? `${Math.round(dist * 1000)} ${t("search.unitMeter")}` : `${dist.toFixed(1)} ${t("search.unitKm")}`}
                           </span>
                         ) : r.fee != null ? (
-                          <span className="text-xs font-bold" style={{ color: "#0891b2" }}>{r.fee} دج</span>
+                          <span className="text-xs font-bold" style={{ color: "#0891b2" }}>{r.fee} {t("search.currency")}</span>
                         ) : <span />}
                         {r.rating != null && (
                           <div className="flex items-center gap-1 text-xs">
@@ -268,10 +269,10 @@ function Page() {
                     className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white"
                     style={{ background: "#0891b2" }}
                   >
-                    <MapIcon className="h-4 w-4" /> موقع على الخريطة
+                    <MapIcon className="h-4 w-4" /> {t("search.mapButton")}
                   </button>
                   <a href={r.phone ? `tel:${r.phone}` : "#"} onClick={(e) => { if (!r.phone) e.preventDefault(); }} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold" style={{ background: "#e0f2fe", color: "#0891b2" }}>
-                    <Phone className="h-4 w-4" /> اتصال
+                    <Phone className="h-4 w-4" /> {t("search.callButton")}
                   </a>
                 </div>
               </div>
