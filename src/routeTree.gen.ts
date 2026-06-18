@@ -36,10 +36,14 @@ import { Route as AddCharityRouteImport } from './routes/add-charity'
 import { Route as AddBloodRequestRouteImport } from './routes/add-blood-request'
 import { Route as AddAmbulanceRouteImport } from './routes/add-ambulance'
 import { Route as AddRouteImport } from './routes/add'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DoctorsIndexRouteImport } from './routes/doctors.index'
 import { Route as PharmaciesIdRouteImport } from './routes/pharmacies.$id'
 import { Route as DoctorsIdRouteImport } from './routes/doctors.$id'
+import { Route as AuthenticatedManageRouteImport } from './routes/_authenticated/manage'
+import { Route as AuthenticatedManageIndexRouteImport } from './routes/_authenticated/manage.index'
+import { Route as AuthenticatedManageSubmissionsRouteImport } from './routes/_authenticated/manage.submissions'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -176,6 +180,10 @@ const AddRoute = AddRouteImport.update({
   path: '/add',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -196,6 +204,23 @@ const DoctorsIdRoute = DoctorsIdRouteImport.update({
   path: '/doctors/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedManageRoute = AuthenticatedManageRouteImport.update({
+  id: '/manage',
+  path: '/manage',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedManageIndexRoute =
+  AuthenticatedManageIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedManageRoute,
+  } as any)
+const AuthenticatedManageSubmissionsRoute =
+  AuthenticatedManageSubmissionsRouteImport.update({
+    id: '/submissions',
+    path: '/submissions',
+    getParentRoute: () => AuthenticatedManageRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -226,9 +251,12 @@ export interface FileRoutesByFullPath {
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/manage': typeof AuthenticatedManageRouteWithChildren
   '/doctors/$id': typeof DoctorsIdRoute
   '/pharmacies/$id': typeof PharmaciesIdRoute
   '/doctors/': typeof DoctorsIndexRoute
+  '/manage/submissions': typeof AuthenticatedManageSubmissionsRoute
+  '/manage/': typeof AuthenticatedManageIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -262,10 +290,13 @@ export interface FileRoutesByTo {
   '/doctors/$id': typeof DoctorsIdRoute
   '/pharmacies/$id': typeof PharmaciesIdRoute
   '/doctors': typeof DoctorsIndexRoute
+  '/manage/submissions': typeof AuthenticatedManageSubmissionsRoute
+  '/manage': typeof AuthenticatedManageIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/add': typeof AddRoute
   '/add-ambulance': typeof AddAmbulanceRoute
   '/add-blood-request': typeof AddBloodRequestRoute
@@ -293,9 +324,12 @@ export interface FileRoutesById {
   '/profile': typeof ProfileRoute
   '/search': typeof SearchRoute
   '/settings': typeof SettingsRoute
+  '/_authenticated/manage': typeof AuthenticatedManageRouteWithChildren
   '/doctors/$id': typeof DoctorsIdRoute
   '/pharmacies/$id': typeof PharmaciesIdRoute
   '/doctors/': typeof DoctorsIndexRoute
+  '/_authenticated/manage/submissions': typeof AuthenticatedManageSubmissionsRoute
+  '/_authenticated/manage/': typeof AuthenticatedManageIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -328,9 +362,12 @@ export interface FileRouteTypes {
     | '/profile'
     | '/search'
     | '/settings'
+    | '/manage'
     | '/doctors/$id'
     | '/pharmacies/$id'
     | '/doctors/'
+    | '/manage/submissions'
+    | '/manage/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -364,9 +401,12 @@ export interface FileRouteTypes {
     | '/doctors/$id'
     | '/pharmacies/$id'
     | '/doctors'
+    | '/manage/submissions'
+    | '/manage'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/add'
     | '/add-ambulance'
     | '/add-blood-request'
@@ -394,13 +434,17 @@ export interface FileRouteTypes {
     | '/profile'
     | '/search'
     | '/settings'
+    | '/_authenticated/manage'
     | '/doctors/$id'
     | '/pharmacies/$id'
     | '/doctors/'
+    | '/_authenticated/manage/submissions'
+    | '/_authenticated/manage/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AddRoute: typeof AddRoute
   AddAmbulanceRoute: typeof AddAmbulanceRoute
   AddBloodRequestRoute: typeof AddBloodRequestRoute
@@ -623,6 +667,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AddRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -651,8 +702,53 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DoctorsIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/manage': {
+      id: '/_authenticated/manage'
+      path: '/manage'
+      fullPath: '/manage'
+      preLoaderRoute: typeof AuthenticatedManageRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/manage/': {
+      id: '/_authenticated/manage/'
+      path: '/'
+      fullPath: '/manage/'
+      preLoaderRoute: typeof AuthenticatedManageIndexRouteImport
+      parentRoute: typeof AuthenticatedManageRoute
+    }
+    '/_authenticated/manage/submissions': {
+      id: '/_authenticated/manage/submissions'
+      path: '/submissions'
+      fullPath: '/manage/submissions'
+      preLoaderRoute: typeof AuthenticatedManageSubmissionsRouteImport
+      parentRoute: typeof AuthenticatedManageRoute
+    }
   }
 }
+
+interface AuthenticatedManageRouteChildren {
+  AuthenticatedManageSubmissionsRoute: typeof AuthenticatedManageSubmissionsRoute
+  AuthenticatedManageIndexRoute: typeof AuthenticatedManageIndexRoute
+}
+
+const AuthenticatedManageRouteChildren: AuthenticatedManageRouteChildren = {
+  AuthenticatedManageSubmissionsRoute: AuthenticatedManageSubmissionsRoute,
+  AuthenticatedManageIndexRoute: AuthenticatedManageIndexRoute,
+}
+
+const AuthenticatedManageRouteWithChildren =
+  AuthenticatedManageRoute._addFileChildren(AuthenticatedManageRouteChildren)
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedManageRoute: typeof AuthenticatedManageRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedManageRoute: AuthenticatedManageRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
 
 interface PharmaciesRouteChildren {
   PharmaciesIdRoute: typeof PharmaciesIdRoute
@@ -668,6 +764,7 @@ const PharmaciesRouteWithChildren = PharmaciesRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AddRoute: AddRoute,
   AddAmbulanceRoute: AddAmbulanceRoute,
   AddBloodRequestRoute: AddBloodRequestRoute,
@@ -701,13 +798,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
