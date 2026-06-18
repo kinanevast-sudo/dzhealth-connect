@@ -1,0 +1,206 @@
+{
+  "ar": {
+    "manage": {
+      "title": "لوحة الإدارة",
+      "backHome": "العودة للرئيسية",
+      "backToApp": "العودة إلى التطبيق",
+      "nav": {
+        "dashboard": "اللوحة الرئيسية",
+        "submissions": "مراجعة الإضافات"
+      },
+      "bootstrap": {
+        "title": "إعداد المشرف الأعلى",
+        "desc": "لا يوجد مشرف أعلى بعد. اضغط على الزر لتصبح أول مشرف أعلى لهذا النظام. هذه العملية تتم مرة واحدة فقط.",
+        "claim": "أصبح المشرف الأعلى",
+        "success": "تمت ترقيتك إلى مشرف أعلى",
+        "already": "يوجد مشرف أعلى بالفعل"
+      },
+      "denied": {
+        "title": "ممنوع الوصول",
+        "desc": "هذا القسم مخصص للمشرفين فقط."
+      },
+      "dashboard": {
+        "title": "نظرة عامة",
+        "subtitle": "ملخص حيوي لحالة المنصة",
+        "quickActions": "إجراءات سريعة",
+        "reviewPending": "مراجعة الإضافات المعلقة",
+        "morePhases": "وحدات إضافية (CRUD، إحصائيات متقدمة، خرائط، AI) ستُضاف في المراحل التالية."
+      },
+      "kpi": {
+        "pending": "إضافات معلقة",
+        "approved": "إضافات مقبولة",
+        "rejected": "إضافات مرفوضة",
+        "users": "المستخدمون",
+        "doctors": "الأطباء",
+        "hospitals": "المستشفيات",
+        "pharmacies": "الصيدليات",
+        "donors": "متبرعو الدم"
+      },
+      "subs": {
+        "title": "مراجعة الإضافات",
+        "tabs": {
+          "pending": "معلقة",
+          "approved": "مقبولة",
+          "rejected": "مرفوضة",
+          "all": "الكل"
+        },
+        "empty": "لا توجد طلبات في هذا التصنيف.",
+        "tapToReview": "اضغط للمراجعة والتفاصيل",
+        "emptyPayload": "لا توجد بيانات في هذا الطلب",
+        "openMap": "فتح على الخريطة",
+        "approve": "قبول",
+        "reject": "رفض",
+        "editBeforeApprove": "تعديل قبل القبول",
+        "approvedOk": "تمت الموافقة ونقل البيانات",
+        "rejectedOk": "تم رفض الطلب",
+        "reason": "السبب",
+        "reasonRequired": "السبب مطلوب",
+        "rejectTitle": "رفض الطلب",
+        "rejectDesc": "اكتب سبب الرفض. سيُرسل تلقائياً إلى صاحب الطلب.",
+        "reasonPlaceholder": "البيانات غير مكتملة، الرقم غير صحيح…",
+        "cancel": "إلغاء",
+        "confirmReject": "تأكيد الرفض",
+        "editTitle": "تعديل البيانات قبل القبول",
+        "editDesc": "عدّل JSON ثم احفظ وأقبل. سيتم تسجيل التعديل في سجل المراجعة.",
+        "invalidJson": "JSON غير صالح",
+        "saveAndApprove": "حفظ والقبول"
+      }
+    }
+  },
+  "fr": {
+    "manage": {
+      "title": "Tableau d'administration",
+      "backHome": "Retour à l'accueil",
+      "backToApp": "Retour à l'application",
+      "nav": {
+        "dashboard": "Tableau de bord",
+        "submissions": "Modération"
+      },
+      "bootstrap": {
+        "title": "Configurer le super-admin",
+        "desc": "Aucun super-admin n'existe encore. Cliquez ci-dessous pour devenir le premier super-admin. Cette opération n'est possible qu'une seule fois.",
+        "claim": "Devenir super-admin",
+        "success": "Vous êtes maintenant super-admin",
+        "already": "Un super-admin existe déjà"
+      },
+      "denied": {
+        "title": "Accès refusé",
+        "desc": "Cette section est réservée aux administrateurs."
+      },
+      "dashboard": {
+        "title": "Vue d'ensemble",
+        "subtitle": "Synthèse en direct de la plateforme",
+        "quickActions": "Actions rapides",
+        "reviewPending": "Examiner les soumissions",
+        "morePhases": "Modules supplémentaires (CRUD, analytics avancées, cartes, IA) à venir."
+      },
+      "kpi": {
+        "pending": "En attente",
+        "approved": "Approuvées",
+        "rejected": "Rejetées",
+        "users": "Utilisateurs",
+        "doctors": "Médecins",
+        "hospitals": "Hôpitaux",
+        "pharmacies": "Pharmacies",
+        "donors": "Donneurs"
+      },
+      "subs": {
+        "title": "Modération des soumissions",
+        "tabs": {
+          "pending": "En attente",
+          "approved": "Approuvées",
+          "rejected": "Rejetées",
+          "all": "Toutes"
+        },
+        "empty": "Aucune demande dans cette catégorie.",
+        "tapToReview": "Cliquer pour examiner",
+        "emptyPayload": "Aucune donnée dans cette demande",
+        "openMap": "Ouvrir sur la carte",
+        "approve": "Approuver",
+        "reject": "Rejeter",
+        "editBeforeApprove": "Modifier avant approbation",
+        "approvedOk": "Approuvé et publié",
+        "rejectedOk": "Demande rejetée",
+        "reason": "Motif",
+        "reasonRequired": "Motif obligatoire",
+        "rejectTitle": "Rejeter la demande",
+        "rejectDesc": "Indiquez le motif. Il sera envoyé à l'auteur.",
+        "reasonPlaceholder": "Informations incomplètes, numéro invalide…",
+        "cancel": "Annuler",
+        "confirmReject": "Confirmer le rejet",
+        "editTitle": "Modifier avant approbation",
+        "editDesc": "Modifiez le JSON puis enregistrez. La modification sera tracée.",
+        "invalidJson": "JSON invalide",
+        "saveAndApprove": "Enregistrer et approuver"
+      }
+    }
+  },
+  "en": {
+    "manage": {
+      "title": "Admin Console",
+      "backHome": "Back to home",
+      "backToApp": "Back to app",
+      "nav": {
+        "dashboard": "Dashboard",
+        "submissions": "Submissions"
+      },
+      "bootstrap": {
+        "title": "Set up super admin",
+        "desc": "No super admin exists yet. Click below to become the first super admin. This is a one-time action.",
+        "claim": "Become super admin",
+        "success": "You are now super admin",
+        "already": "A super admin already exists"
+      },
+      "denied": {
+        "title": "Access denied",
+        "desc": "This area is restricted to administrators."
+      },
+      "dashboard": {
+        "title": "Overview",
+        "subtitle": "Live platform summary",
+        "quickActions": "Quick actions",
+        "reviewPending": "Review pending submissions",
+        "morePhases": "More modules (CRUD, advanced analytics, maps, AI) coming in next phases."
+      },
+      "kpi": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "users": "Users",
+        "doctors": "Doctors",
+        "hospitals": "Hospitals",
+        "pharmacies": "Pharmacies",
+        "donors": "Donors"
+      },
+      "subs": {
+        "title": "Submission review",
+        "tabs": {
+          "pending": "Pending",
+          "approved": "Approved",
+          "rejected": "Rejected",
+          "all": "All"
+        },
+        "empty": "No items in this tab.",
+        "tapToReview": "Tap to review",
+        "emptyPayload": "No data in this submission",
+        "openMap": "Open on map",
+        "approve": "Approve",
+        "reject": "Reject",
+        "editBeforeApprove": "Edit before approval",
+        "approvedOk": "Approved and published",
+        "rejectedOk": "Submission rejected",
+        "reason": "Reason",
+        "reasonRequired": "Reason is required",
+        "rejectTitle": "Reject submission",
+        "rejectDesc": "Write the reason. It will be sent to the author.",
+        "reasonPlaceholder": "Incomplete data, wrong phone…",
+        "cancel": "Cancel",
+        "confirmReject": "Confirm reject",
+        "editTitle": "Edit before approval",
+        "editDesc": "Edit the JSON then save & approve. The change is logged.",
+        "invalidJson": "Invalid JSON",
+        "saveAndApprove": "Save & approve"
+      }
+    }
+  }
+}
