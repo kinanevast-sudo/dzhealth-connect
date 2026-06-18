@@ -226,11 +226,20 @@ function Dashboard() {
       {/* KPI cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
         {kpis.map((k) => {
+          const toneMap: Record<string, { bg: string; text: string; blob: string }> = {
+            sky: { bg: "bg-sky-500/10", text: "text-sky-400", blob: "bg-sky-500" },
+            violet: { bg: "bg-violet-500/10", text: "text-violet-400", blob: "bg-violet-500" },
+            emerald: { bg: "bg-emerald-500/10", text: "text-emerald-400", blob: "bg-emerald-500" },
+            rose: { bg: "bg-rose-500/10", text: "text-rose-400", blob: "bg-rose-500" },
+            amber: { bg: "bg-amber-500/10", text: "text-amber-400", blob: "bg-amber-500" },
+            orange: { bg: "bg-orange-500/10", text: "text-orange-400", blob: "bg-orange-500" },
+          };
+          const tone = toneMap[k.tone];
           const inner = (
             <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-4 hover:border-primary/50 transition-all group">
-              <div className={`absolute -top-10 -end-10 h-24 w-24 rounded-full blur-2xl opacity-30 bg-${k.tone}-500`} />
+              <div className={`absolute -top-10 -end-10 h-24 w-24 rounded-full blur-2xl opacity-30 ${tone.blob}`} />
               <div className="flex items-center justify-between relative">
-                <div className={`h-9 w-9 rounded-xl bg-${k.tone}-500/10 text-${k.tone}-400 flex items-center justify-center`}>
+                <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${tone.bg} ${tone.text}`}>
                   <k.icon className="h-4 w-4" />
                 </div>
                 {k.delta !== null && c && (
@@ -252,6 +261,7 @@ function Dashboard() {
             : <div key={k.label}>{inner}</div>;
         })}
       </div>
+
 
       {/* Charts row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
