@@ -205,16 +205,16 @@ function Page() {
         </Section>
 
         {/* Preferences (toggles) */}
-        <Section label="التفضيلات">
+        <Section label={t("settings.preferences")}>
           <ToggleRow
             icon={<Bell className="w-4 h-4" />}
-            label="الإشعارات"
+            label={t("settings.notifications")}
             on={notif}
             onChange={toggleNotif}
           />
           <ToggleRow
             icon={<MapPin className="w-4 h-4" />}
-            label={geoState === "granted" ? "الموقع مفعّل (GPS)" : "تفعيل الموقع (GPS)"}
+            label={geoState === "granted" ? t("settings.locationOn") : t("settings.locationOff")}
             on={geoState === "granted"}
             onChange={requestGeo}
             last
@@ -222,22 +222,22 @@ function Page() {
         </Section>
 
         {/* Blood notifications */}
-        <Section label="إشعارات طلبات الدم">
+        <Section label={t("settings.bloodNotifTitle")}>
           <ToggleRow
             icon={<Droplet className="w-4 h-4" />}
-            label="استقبال إشعارات طلبات الدم"
+            label={t("settings.bloodReceive")}
             on={bloodPrefs.notify_blood_enabled}
             onChange={() => updateBloodPref("notify_blood_enabled")}
           />
           <ToggleRow
             icon={<Target className="w-4 h-4" />}
-            label="فصيلتي المتوافقة فقط"
+            label={t("settings.bloodMatchOnly")}
             on={bloodPrefs.notify_blood_match_only}
             onChange={() => updateBloodPref("notify_blood_match_only")}
           />
           <ToggleRow
             icon={<Zap className="w-4 h-4" />}
-            label="تنبيه إضافي للحالات الحرجة في بلديتي"
+            label={t("settings.bloodCritical")}
             on={bloodPrefs.notify_blood_critical_same_baladiya}
             onChange={() => updateBloodPref("notify_blood_critical_same_baladiya")}
             last
@@ -245,7 +245,7 @@ function Page() {
         </Section>
 
         {/* Account / Menu */}
-        <Section label="الحساب">
+        <Section label={t("settings.account")}>
           <div className="overflow-hidden">
             {MENU_ROWS.map(({ icon, label, action }, i) => (
               <motion.button
@@ -275,8 +275,9 @@ function Page() {
           className="w-full flex items-center justify-center gap-3 bg-destructive/10 border border-destructive/20 text-destructive rounded-2xl py-4 cursor-pointer hover:bg-destructive/15 transition-colors active:scale-95"
         >
           <LogOut className="w-5 h-5" />
-          <span className="font-bold">تسجيل الخروج</span>
+          <span className="font-bold">{t("settings.logout")}</span>
         </motion.button>
+
 
         {/* Footer */}
         <div className="text-center py-4 space-y-2">
