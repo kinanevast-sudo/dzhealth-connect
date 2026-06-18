@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/settings")({ component: Page });
 
@@ -19,10 +20,18 @@ const NOTIF_KEY = "dzhealth-notif";
 type Lang = "ar" | "fr" | "en";
 
 function Page() {
+  const { t, i18n } = useTranslation();
   const { theme, set: setTheme, isDark } = useTheme();
   const navigate = useNavigate();
   const [notif, setNotif] = useState(true);
-  const [lang, setLang] = useState<Lang>("ar");
+  const [lang, setLang] = useState<Lang>((i18n.language as Lang) || "ar");
+
+  useEffect(() => {
+    const onChange = (lng: string) => setLang(lng as Lang);
+    i18n.on("languageChanged", onChange);
+    return () => { i18n.off("languageChanged", onChange); };
+  }, [i18n]);
+
   const [geoState, setGeoState] = useState<"prompt" | "granted" | "denied">("prompt");
   const [email, setEmail] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
@@ -65,7 +74,7 @@ function Page() {
     setBloodPrefs(next);
     if (!userId) return;
     const { error } = await supabase.from("profiles").update({ [key]: next[key] } as any).eq("user_id", userId);
-    if (error) toast.error("تعذّر حفظ الإعداد");
+    if (error) toast.error(t("settings.saveError"));
   };
 
   const setLanguage = (k: Lang) => {
@@ -83,17 +92,17 @@ function Page() {
   };
 
   const requestGeo = () => {
-    if (!navigator.geolocation) return toast.error("الموقع غير مدعوم");
+    if (!navigator.geolocation) return toast.error(t("common.error"));
     navigator.geolocation.getCurrentPosition(
-      () => { setGeoState("granted"); toast.success("تم تفعيل الموقع"); },
-      () => { setGeoState("denied"); toast.error("تم رفض الإذن"); },
+      () => { setGeoState("granted"); toast.success(t("settings.locationOn")); },
+      () => { setGeoState("denied"); toast.error(t("common.error")); },
       { enableHighAccuracy: false, timeout: 8000 }
     );
   };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    toast.success("تم تسجيل الخروج");
+    toast.success(t("settings.logout"));
     navigate({ to: "/auth" });
   };
 
@@ -104,50 +113,53 @@ function Page() {
   ];
 
   const THEMES: { key: Theme; label: string; icon: React.ReactNode }[] = [
-    { key: "light", label: "فاتح", icon: <Sun className="w-4 h-4" /> },
-    { key: "dark", label: "داكن", icon: <Moon className="w-4 h-4" /> },
-    { key: "system", label: "النظام", icon: <Monitor className="w-4 h-4" /> },
+    { key: "light", label: t("settings.light"), icon: <Sun className="w-4 h-4" /> },
+    { key: "dark", label: t("settings.dark"), icon: <Moon className="w-4 h-4" /> },
+    { key: "system", label: t("settings.system"), icon: <Monitor className="w-4 h-4" /> },
   ];
 
   const MENU_ROWS = [
     {
       icon: <Bell className="w-4 h-4" />,
-      label: "الإشعارات",
+      label: t("settings.notifications"),
       action: () => navigate({ to: "/notifications" }),
     },
     {
       icon: <Shield className="w-4 h-4" />,
-      label: "سياسة الخصوصية",
-      action: () => toast.info("سياسة الخصوصية — قريباً"),
+      label: t("settings.privacy"),
+      action: () => toast.info(t("settings.privacy")),
     },
     {
       icon: <HelpCircle className="w-4 h-4" />,
-      label: "مركز المساعدة",
-      action: () => toast.info("مركز المساعدة — قريباً"),
+      label: t("settings.help"),
+      action: () => toast.info(t("settings.help")),
     },
     {
       icon: <Info className="w-4 h-4" />,
-      label: "عن التطبيق",
-      action: () => toast.info("DZHealth v1.0.0 — كل الخدمات الصحية في مكان واحد"),
+      label: t("settings.about"),
+      action: () => toast.info("DZHealth v1.0.0"),
     },
   ];
 
+  const isRTL = i18n.language === "ar";
+
   return (
     <AppShell>
-      <ScreenHeader title="الإعدادات" />
-      <div dir="rtl" className="px-4 py-4 space-y-4 pb-24">
+      <ScreenHeader title={t("settings.title")} />
+      <div dir={isRTL ? "rtl" : "ltr"} className="px-4 py-4 space-y-4 pb-24">
+
         {email && (
           <p className="text-sm text-muted-foreground -mt-1">{email}</p>
         )}
 
         {/* Appearance */}
-        <Section label="المظهر">
+        <Section label={t("settings.appearance")}>
           <div className="p-4">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center">
                 {isDark ? <Moon className="w-4 h-4 text-primary" /> : <Sun className="w-4 h-4 text-primary" />}
               </div>
-              <p className="font-semibold text-sm flex-1">الوضع</p>
+              <p className="font-semibold text-sm flex-1">{t("settings.mode")}</p>
             </div>
             <div className="flex gap-2">
               {THEMES.map(({ key, label, icon }) => (
@@ -170,14 +182,15 @@ function Page() {
         </Section>
 
         {/* Language */}
-        <Section label="اللغة">
+        <Section label={t("settings.language")}>
           <div className="p-4">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-9 h-9 bg-primary/10 rounded-xl flex items-center justify-center">
                 <Globe className="w-4 h-4 text-primary" />
               </div>
-              <p className="font-semibold text-sm flex-1">اللغة</p>
+              <p className="font-semibold text-sm flex-1">{t("settings.language")}</p>
             </div>
+
             <div className="flex gap-2">
               {LANGS.map((l) => (
                 <button
@@ -199,16 +212,16 @@ function Page() {
         </Section>
 
         {/* Preferences (toggles) */}
-        <Section label="التفضيلات">
+        <Section label={t("settings.preferences")}>
           <ToggleRow
             icon={<Bell className="w-4 h-4" />}
-            label="الإشعارات"
+            label={t("settings.notifications")}
             on={notif}
             onChange={toggleNotif}
           />
           <ToggleRow
             icon={<MapPin className="w-4 h-4" />}
-            label={geoState === "granted" ? "الموقع مفعّل (GPS)" : "تفعيل الموقع (GPS)"}
+            label={geoState === "granted" ? t("settings.locationOn") : t("settings.locationOff")}
             on={geoState === "granted"}
             onChange={requestGeo}
             last
@@ -216,22 +229,22 @@ function Page() {
         </Section>
 
         {/* Blood notifications */}
-        <Section label="إشعارات طلبات الدم">
+        <Section label={t("settings.bloodNotifTitle")}>
           <ToggleRow
             icon={<Droplet className="w-4 h-4" />}
-            label="استقبال إشعارات طلبات الدم"
+            label={t("settings.bloodReceive")}
             on={bloodPrefs.notify_blood_enabled}
             onChange={() => updateBloodPref("notify_blood_enabled")}
           />
           <ToggleRow
             icon={<Target className="w-4 h-4" />}
-            label="فصيلتي المتوافقة فقط"
+            label={t("settings.bloodMatchOnly")}
             on={bloodPrefs.notify_blood_match_only}
             onChange={() => updateBloodPref("notify_blood_match_only")}
           />
           <ToggleRow
             icon={<Zap className="w-4 h-4" />}
-            label="تنبيه إضافي للحالات الحرجة في بلديتي"
+            label={t("settings.bloodCritical")}
             on={bloodPrefs.notify_blood_critical_same_baladiya}
             onChange={() => updateBloodPref("notify_blood_critical_same_baladiya")}
             last
@@ -239,7 +252,7 @@ function Page() {
         </Section>
 
         {/* Account / Menu */}
-        <Section label="الحساب">
+        <Section label={t("settings.account")}>
           <div className="overflow-hidden">
             {MENU_ROWS.map(({ icon, label, action }, i) => (
               <motion.button
@@ -269,8 +282,9 @@ function Page() {
           className="w-full flex items-center justify-center gap-3 bg-destructive/10 border border-destructive/20 text-destructive rounded-2xl py-4 cursor-pointer hover:bg-destructive/15 transition-colors active:scale-95"
         >
           <LogOut className="w-5 h-5" />
-          <span className="font-bold">تسجيل الخروج</span>
+          <span className="font-bold">{t("settings.logout")}</span>
         </motion.button>
+
 
         {/* Footer */}
         <div className="text-center py-4 space-y-2">
@@ -278,7 +292,7 @@ function Page() {
             <Smartphone className="w-3.5 h-3.5 text-muted-foreground/50" />
             <p className="text-xs text-muted-foreground/50">DZHealth v1.0.0</p>
           </div>
-          <p className="text-xs text-muted-foreground/40">كل الخدمات الصحية في مكان واحد</p>
+          <p className="text-xs text-muted-foreground/40">{t("app.tagline")}</p>
           <div className="flex justify-center gap-0.5 mt-3">
             <div className="w-8 h-1.5 bg-green-600 rounded-s-full" />
             <div className="w-8 h-1.5 bg-white" />
@@ -288,7 +302,8 @@ function Page() {
           </div>
           <div className="flex items-center justify-center gap-1 mt-1">
             <Heart className="w-2.5 h-2.5 text-red-500" />
-            <p className="text-[10px] text-muted-foreground/40">Made with care</p>
+            <p className="text-[10px] text-muted-foreground/40">{t("settings.madeWith")}</p>
+
           </div>
         </div>
       </div>

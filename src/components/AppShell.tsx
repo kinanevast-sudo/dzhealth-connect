@@ -1,9 +1,11 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { Home, Search, User, Map as MapIcon, Plus } from "lucide-react";
 import type { ReactNode } from "react";
+import { useTranslation } from "react-i18next";
 
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { t } = useTranslation();
   const is = (p: string) => pathname === p;
 
   const Tab = ({ to, icon: Icon, label }: { to: string; icon: typeof Home; label: string }) => (
@@ -18,13 +20,13 @@ export function AppShell({ children }: { children: ReactNode }) {
       {children}
       <nav className="fixed bottom-0 left-1/2 z-40 w-full max-w-[480px] -translate-x-1/2 glass border-t border-border/60 px-2">
         <div className="flex items-end justify-between">
-          <Tab to="/home" icon={Home} label="الرئيسية" />
-          <Tab to="/search" icon={Search} label="بحث" />
+          <Tab to="/home" icon={Home} label={t("nav.home")} />
+          <Tab to="/search" icon={Search} label={t("nav.search")} />
           <Link to="/add" className="-mt-7 flex h-14 w-14 items-center justify-center rounded-full gradient-primary text-primary-foreground neon-glow animate-pulse-glow">
             <Plus className="h-7 w-7" strokeWidth={2.6} />
           </Link>
-          <Tab to="/profile" icon={User} label="الملف" />
-          <Tab to="/map" icon={MapIcon} label="الخريطة" />
+          <Tab to="/profile" icon={User} label={t("nav.profile")} />
+          <Tab to="/map" icon={MapIcon} label={t("nav.map")} />
         </div>
       </nav>
     </div>
@@ -36,7 +38,7 @@ export function ScreenHeader({ title, back = true }: { title: string; back?: boo
     <header className="sticky top-0 z-30 glass flex items-center justify-between px-4 py-3 border-b border-border/50">
       {back ? (
         <Link to="/home" className="rounded-full p-2 hover:bg-surface-2">
-          <span className="block h-5 w-5">→</span>
+          <span className="block h-5 w-5 rtl:rotate-180">→</span>
         </Link>
       ) : <span className="w-9" />}
       <h1 className="text-base font-bold">{title}</h1>
