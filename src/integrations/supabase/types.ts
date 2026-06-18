@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_actions_log: {
+        Row: {
+          action: string
+          actor_id: string | null
+          created_at: string
+          id: string
+          ip: string | null
+          new_data: Json | null
+          old_data: Json | null
+          reason: string | null
+          target_id: string | null
+          target_type: string
+        }
+        Insert: {
+          action: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip?: string | null
+          new_data?: Json | null
+          old_data?: Json | null
+          reason?: string | null
+          target_id?: string | null
+          target_type: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string | null
+          created_at?: string
+          id?: string
+          ip?: string | null
+          new_data?: Json | null
+          old_data?: Json | null
+          reason?: string | null
+          target_id?: string | null
+          target_type?: string
+        }
+        Relationships: []
+      }
       ambulances: {
         Row: {
           baladiya_id: number | null
@@ -414,6 +453,47 @@ export type Database = {
           },
         ]
       }
+      content_moderation_history: {
+        Row: {
+          action: string
+          after_data: Json | null
+          before_data: Json | null
+          created_at: string
+          id: string
+          notes: string | null
+          reviewer_id: string | null
+          submission_id: string | null
+        }
+        Insert: {
+          action: string
+          after_data?: Json | null
+          before_data?: Json | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          reviewer_id?: string | null
+          submission_id?: string | null
+        }
+        Update: {
+          action?: string
+          after_data?: Json | null
+          before_data?: Json | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          reviewer_id?: string | null
+          submission_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_moderation_history_submission_id_fkey"
+            columns: ["submission_id"]
+            isOneToOne: false
+            referencedRelation: "pending_submissions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       doctor_reviews: {
         Row: {
           comment: string | null
@@ -791,6 +871,69 @@ export type Database = {
         }
         Relationships: []
       }
+      pending_submissions: {
+        Row: {
+          approved_target_id: string | null
+          content_type: string
+          created_at: string
+          id: string
+          images: string[]
+          internal_notes: string | null
+          ip: string | null
+          lat: number | null
+          lng: number | null
+          payload: Json
+          priority: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewer_id: string | null
+          status: string
+          submitter_id: string | null
+          updated_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          approved_target_id?: string | null
+          content_type: string
+          created_at?: string
+          id?: string
+          images?: string[]
+          internal_notes?: string | null
+          ip?: string | null
+          lat?: number | null
+          lng?: number | null
+          payload?: Json
+          priority?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          submitter_id?: string | null
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          approved_target_id?: string | null
+          content_type?: string
+          created_at?: string
+          id?: string
+          images?: string[]
+          internal_notes?: string | null
+          ip?: string | null
+          lat?: number | null
+          lng?: number | null
+          payload?: Json
+          priority?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewer_id?: string | null
+          status?: string
+          submitter_id?: string | null
+          updated_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       pharmacies: {
         Row: {
           address: string | null
@@ -1067,6 +1210,14 @@ export type Database = {
       }
     }
     Views: {
+      admin_submission_stats: {
+        Row: {
+          content_type: string | null
+          count: number | null
+          status: string | null
+        }
+        Relationships: []
+      }
       profiles_public: {
         Row: {
           avatar_url: string | null
@@ -1087,6 +1238,11 @@ export type Database = {
       }
     }
     Functions: {
+      approve_submission: {
+        Args: { _id: string; _override_payload?: Json }
+        Returns: string
+      }
+      claim_super_admin_bootstrap: { Args: never; Returns: boolean }
       compatible_donor_types: {
         Args: { _recipient: Database["public"]["Enums"]["blood_type"] }
         Returns: Database["public"]["Enums"]["blood_type"][]
@@ -1098,9 +1254,15 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_super_admin: { Args: { _user_id: string }; Returns: boolean }
+      reject_submission: {
+        Args: { _id: string; _reason: string }
+        Returns: undefined
+      }
     }
     Enums: {
-      app_role: "admin" | "moderator" | "user"
+      app_role: "admin" | "moderator" | "user" | "super_admin"
       appointment_status: "pending" | "confirmed" | "completed" | "cancelled"
       blood_request_status: "open" | "fulfilled" | "cancelled"
       blood_type: "O+" | "O-" | "A+" | "A-" | "B+" | "B-" | "AB+" | "AB-"
@@ -1233,7 +1395,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "moderator", "user"],
+      app_role: ["admin", "moderator", "user", "super_admin"],
       appointment_status: ["pending", "confirmed", "completed", "cancelled"],
       blood_request_status: ["open", "fulfilled", "cancelled"],
       blood_type: ["O+", "O-", "A+", "A-", "B+", "B-", "AB+", "AB-"],
