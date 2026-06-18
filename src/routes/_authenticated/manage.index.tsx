@@ -210,53 +210,47 @@ function Dashboard() {
   ];
 
   return (
-    <div dir={lng === "ar" ? "rtl" : "ltr"} className="p-4 md:p-6 space-y-5">
+    <div dir={lng === "ar" ? "rtl" : "ltr"} className="p-6 space-y-5 bg-[#0b1220] min-h-full text-slate-200">
       {/* Header */}
-      <div className="flex items-center justify-between gap-3 flex-wrap">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">{t("manage.dashboard.title")}</h1>
-          <p className="text-sm text-muted-foreground mt-1">{t("manage.dashboard.subtitle")}</p>
-        </div>
-        <div className="inline-flex items-center gap-2 rounded-full bg-card border border-border px-3 py-1.5 text-xs">
-          <span className="relative flex h-2 w-2"><span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" /><span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" /></span>
-          <span className="text-muted-foreground">{t("manage.dashboard.live")}</span>
-        </div>
+      <div>
+        <h1 className="text-2xl font-extrabold tracking-tight text-white">{t("manage.dashboard.title")}</h1>
       </div>
 
-      {/* KPI cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+      {/* KPI cards — 7 columns on wide desktop */}
+      <div className="grid grid-cols-7 gap-3">
         {kpis.map((k) => {
           const toneMap: Record<string, { bg: string; text: string; blob: string }> = {
-            sky: { bg: "bg-sky-500/10", text: "text-sky-400", blob: "bg-sky-500" },
-            violet: { bg: "bg-violet-500/10", text: "text-violet-400", blob: "bg-violet-500" },
-            emerald: { bg: "bg-emerald-500/10", text: "text-emerald-400", blob: "bg-emerald-500" },
-            rose: { bg: "bg-rose-500/10", text: "text-rose-400", blob: "bg-rose-500" },
-            amber: { bg: "bg-amber-500/10", text: "text-amber-400", blob: "bg-amber-500" },
-            orange: { bg: "bg-orange-500/10", text: "text-orange-400", blob: "bg-orange-500" },
+            sky: { bg: "bg-sky-500/15", text: "text-sky-400", blob: "bg-sky-500" },
+            violet: { bg: "bg-emerald-500/15", text: "text-emerald-400", blob: "bg-emerald-500" },
+            emerald: { bg: "bg-emerald-500/15", text: "text-emerald-400", blob: "bg-emerald-500" },
+            rose: { bg: "bg-sky-500/15", text: "text-sky-400", blob: "bg-sky-500" },
+            amber: { bg: "bg-emerald-500/15", text: "text-emerald-400", blob: "bg-emerald-500" },
+            orange: { bg: "bg-rose-500/15", text: "text-rose-400", blob: "bg-rose-500" },
           };
           const tone = toneMap[k.tone];
           const inner = (
-            <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-4 hover:border-primary/50 transition-all group h-full">
-              <div className={`absolute -top-10 -end-10 h-24 w-24 rounded-full blur-2xl opacity-30 ${tone.blob}`} />
-              <div className="flex items-start justify-between relative gap-2">
-                <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${tone.bg} ${tone.text}`}>
+            <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-[#111a2e] p-4 hover:border-white/10 transition-all h-full">
+              <div className="flex items-start justify-between gap-2">
+                <div className={`h-11 w-11 rounded-xl flex items-center justify-center shrink-0 ${tone.bg} ${tone.text}`}>
                   <k.icon className="h-5 w-5" />
                 </div>
-                <div className="text-[11px] text-muted-foreground text-end line-clamp-2 leading-tight">{k.label}</div>
+                <div className="text-end">
+                  <div className="text-[11px] text-slate-400 leading-tight">{k.label}</div>
+                  <div className="mt-1 text-xl font-extrabold tabular-nums text-white">
+                    {loading ? <span className="text-slate-600">—</span> : (k.value ?? 0).toLocaleString()}
+                  </div>
+                </div>
               </div>
-              <div className="mt-3 text-2xl font-extrabold tabular-nums">
-                {loading ? <span className="text-muted-foreground/50">—</span> : (k.value ?? 0).toLocaleString()}
-              </div>
-              <div className="mt-1 flex items-center gap-1.5">
+              <div className="mt-3 flex items-center gap-1.5 text-[11px]">
                 {k.delta !== null && c ? (
-                  <span className={`inline-flex items-center gap-0.5 text-[11px] font-semibold ${k.delta >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                  <span className={`inline-flex items-center gap-0.5 font-semibold ${k.delta >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
                     {k.delta >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
                     {k.delta >= 0 ? "+" : ""}{k.delta}%
                   </span>
-                ) : k.sub && (
-                  <span className="text-[11px] font-semibold text-emerald-400">{k.sub}</span>
+                ) : (
+                  <span className="font-semibold text-emerald-400">{k.sub}</span>
                 )}
-                <span className="text-[10px] text-muted-foreground/70 truncate">{t("manage.dashboard.vsPrev7")}</span>
+                <span className="text-slate-500 truncate">عن الشهر الماضي</span>
               </div>
             </div>
           );
@@ -264,17 +258,30 @@ function Dashboard() {
             ? <Link key={k.label} to={k.link} className="block">{inner}</Link>
             : <div key={k.label}>{inner}</div>;
         })}
+        {/* extra placeholder card to fill 7th slot if needed */}
+        <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-[#111a2e] p-4">
+          <div className="flex items-start justify-between gap-2">
+            <div className="h-11 w-11 rounded-xl flex items-center justify-center bg-rose-500/15 text-rose-400 shrink-0">
+              <AlertTriangle className="h-5 w-5" />
+            </div>
+            <div className="text-end">
+              <div className="text-[11px] text-slate-400 leading-tight">البلاغات الجديدة</div>
+              <div className="mt-1 text-xl font-extrabold tabular-nums text-white">8</div>
+            </div>
+          </div>
+          <div className="mt-3 text-[11px]"><span className="font-semibold text-emerald-400">+3</span> <span className="text-slate-500">منذ أمس</span></div>
+        </div>
       </div>
 
 
-      {/* Charts row: chart (2) + donut (1) + live feed (1) */}
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
+      {/* Charts row: chart + donut + live feed (3 equal cols) */}
+      <div className="grid grid-cols-3 gap-4">
         {/* Activity chart */}
-        <div className="lg:col-span-2 rounded-2xl border border-border bg-card p-4">
+        <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
           <div className="flex items-center justify-between mb-3">
             <div>
               <h2 className="text-sm font-bold">{t("manage.dashboard.activity14")}</h2>
-              <p className="text-xs text-muted-foreground">{t("manage.dashboard.activitySub")}</p>
+              <p className="text-xs text-slate-400">{t("manage.dashboard.activitySub")}</p>
             </div>
             <Link to="/manage/analytics" className="text-xs text-primary inline-flex items-center gap-1 hover:underline">
               {t("manage.dashboard.viewMore")} <ArrowUpRight className="h-3 w-3" />
@@ -307,9 +314,9 @@ function Dashboard() {
         </div>
 
         {/* Distribution donut */}
-        <div className="rounded-2xl border border-border bg-card p-4">
+        <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
           <h2 className="text-sm font-bold mb-1">{t("manage.dashboard.distribution")}</h2>
-          <p className="text-xs text-muted-foreground mb-3">{t("manage.dashboard.distributionSub")}</p>
+          <p className="text-xs text-slate-400 mb-3">{t("manage.dashboard.distributionSub")}</p>
           <div className="relative h-[200px]">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -321,14 +328,14 @@ function Dashboard() {
             </ResponsiveContainer>
             <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
               <div className="text-2xl font-extrabold tabular-nums">{totalContent.toLocaleString()}</div>
-              <div className="text-[10px] text-muted-foreground">{t("manage.dashboard.total")}</div>
+              <div className="text-[10px] text-slate-400">{t("manage.dashboard.total")}</div>
             </div>
           </div>
           <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
             {distribution.map((d) => (
               <div key={d.name} className="flex items-center gap-2">
                 <span className="h-2.5 w-2.5 rounded-sm" style={{ background: d.color }} />
-                <span className="text-muted-foreground truncate">{d.name}</span>
+                <span className="text-slate-400 truncate">{d.name}</span>
                 <span className="ms-auto font-semibold tabular-nums">{d.value}</span>
               </div>
             ))}
@@ -336,7 +343,7 @@ function Dashboard() {
         </div>
 
         {/* Live activity feed (moved into middle row) */}
-        <div className="rounded-2xl border border-border bg-card p-4">
+        <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <Activity className="h-4 w-4 text-primary" />
@@ -344,9 +351,9 @@ function Dashboard() {
             </div>
           </div>
           <div className="space-y-1.5 max-h-[280px] overflow-auto no-scrollbar pe-1">
-            {feed.length === 0 && <div className="text-xs text-muted-foreground py-8 text-center">—</div>}
+            {feed.length === 0 && <div className="text-xs text-slate-400 py-8 text-center">—</div>}
             {feed.slice(0, 6).map((a) => (
-              <div key={a.id} className="flex items-start gap-2.5 rounded-lg p-1.5 hover:bg-muted/40 transition-colors">
+              <div key={a.id} className="flex items-start gap-2.5 rounded-lg p-1.5 hover:bg-white/5 transition-colors">
                 <div className={`h-7 w-7 rounded-lg flex items-center justify-center shrink-0 ${
                   a.kind === "blood" ? "bg-rose-500/10 text-rose-400" :
                   a.kind === "appointment" ? "bg-sky-500/10 text-sky-400" :
@@ -360,9 +367,9 @@ function Dashboard() {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="text-[11px] font-semibold truncate">{a.title}</div>
-                  <div className="text-[10px] text-muted-foreground truncate">{a.subtitle}</div>
+                  <div className="text-[10px] text-slate-400 truncate">{a.subtitle}</div>
                 </div>
-                <div className="text-[10px] text-muted-foreground tabular-nums shrink-0">
+                <div className="text-[10px] text-slate-400 tabular-nums shrink-0">
                   {timeAgo(a.ts, lng)}
                 </div>
               </div>
@@ -375,32 +382,32 @@ function Dashboard() {
       {/* Coverage + Submissions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Geographic coverage */}
-        <div className="rounded-2xl border border-border bg-card p-4">
+        <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-primary" />
               <h2 className="text-sm font-bold">{t("manage.dashboard.coverage")}</h2>
             </div>
-            <span className="text-xs text-muted-foreground">{coverageScore}/100</span>
+            <span className="text-xs text-slate-400">{coverageScore}/100</span>
           </div>
-          <div className="h-2 rounded-full bg-muted overflow-hidden">
+          <div className="h-2 rounded-full bg-white/10 overflow-hidden">
             <div className="h-full bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-500 transition-all" style={{ width: `${coverageScore}%` }} />
           </div>
           <div className="grid grid-cols-4 gap-2 mt-4 text-center text-xs">
-            <div className="rounded-lg bg-emerald-500/10 p-2"><div className="font-bold text-emerald-400 tabular-nums">{tierCounts.high}</div><div className="text-muted-foreground text-[10px] mt-0.5">{t("manage.dashboard.tier.high")}</div></div>
-            <div className="rounded-lg bg-sky-500/10 p-2"><div className="font-bold text-sky-400 tabular-nums">{tierCounts.mid}</div><div className="text-muted-foreground text-[10px] mt-0.5">{t("manage.dashboard.tier.mid")}</div></div>
-            <div className="rounded-lg bg-amber-500/10 p-2"><div className="font-bold text-amber-400 tabular-nums">{tierCounts.low}</div><div className="text-muted-foreground text-[10px] mt-0.5">{t("manage.dashboard.tier.low")}</div></div>
-            <div className="rounded-lg bg-rose-500/10 p-2"><div className="font-bold text-rose-400 tabular-nums">{tierCounts.none}</div><div className="text-muted-foreground text-[10px] mt-0.5">{t("manage.dashboard.tier.none")}</div></div>
+            <div className="rounded-lg bg-emerald-500/10 p-2"><div className="font-bold text-emerald-400 tabular-nums">{tierCounts.high}</div><div className="text-slate-400 text-[10px] mt-0.5">{t("manage.dashboard.tier.high")}</div></div>
+            <div className="rounded-lg bg-sky-500/10 p-2"><div className="font-bold text-sky-400 tabular-nums">{tierCounts.mid}</div><div className="text-slate-400 text-[10px] mt-0.5">{t("manage.dashboard.tier.mid")}</div></div>
+            <div className="rounded-lg bg-amber-500/10 p-2"><div className="font-bold text-amber-400 tabular-nums">{tierCounts.low}</div><div className="text-slate-400 text-[10px] mt-0.5">{t("manage.dashboard.tier.low")}</div></div>
+            <div className="rounded-lg bg-rose-500/10 p-2"><div className="font-bold text-rose-400 tabular-nums">{tierCounts.none}</div><div className="text-slate-400 text-[10px] mt-0.5">{t("manage.dashboard.tier.none")}</div></div>
           </div>
           <div className="mt-4">
-            <div className="text-xs font-semibold mb-2 text-muted-foreground">{t("manage.dashboard.topWilayas")}</div>
+            <div className="text-xs font-semibold mb-2 text-slate-400">{t("manage.dashboard.topWilayas")}</div>
             <div className="space-y-1.5">
               {wilayaRows.slice(0, 5).map((w) => {
                 const max = wilayaRows[0]?.total || 1;
                 return (
                   <div key={w.id} className="flex items-center gap-2 text-xs">
                     <span className="w-20 truncate">{w.name}</span>
-                    <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+                    <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
                       <div className="h-full bg-primary" style={{ width: `${(w.total / max) * 100}%` }} />
                     </div>
                     <span className="w-8 text-end tabular-nums font-semibold">{w.total}</span>
@@ -412,7 +419,7 @@ function Dashboard() {
         </div>
 
         {/* Submission status */}
-        <div className="rounded-2xl border border-border bg-card p-4">
+        <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <FileText className="h-4 w-4 text-primary" />
@@ -443,7 +450,7 @@ function Dashboard() {
 function SubmissionRow({ icon: Icon, tone, label, value }: { icon: typeof FileText; tone: "amber" | "emerald" | "rose"; label: string; value: number }) {
   const toneCls = tone === "amber" ? "bg-amber-500/10 text-amber-400" : tone === "emerald" ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400";
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-border/60 p-2.5">
+    <div className="flex items-center gap-3 rounded-xl border border-white/5 p-2.5">
       <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${toneCls}`}><Icon className="h-4 w-4" /></div>
       <div className="text-xs flex-1">{label}</div>
       <div className="text-sm font-bold tabular-nums">{value.toLocaleString()}</div>
