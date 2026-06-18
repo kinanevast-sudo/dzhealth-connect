@@ -2,13 +2,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { HeartPulse } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect } from "react";
+import { useTranslation } from "react-i18next";
 
 export const Route = createFileRoute("/")({ component: Splash });
 
 function Splash() {
+  const { t } = useTranslation();
   useEffect(() => {
-    const t = setTimeout(() => { window.location.href = "/onboarding"; }, 2400);
-    return () => clearTimeout(t);
+    const timer = setTimeout(() => { window.location.href = "/onboarding"; }, 2400);
+    return () => clearTimeout(timer);
   }, []);
   return (
     <div className="relative flex min-h-[100dvh] flex-col items-center justify-center overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
@@ -20,11 +22,11 @@ function Splash() {
       <motion.h1 initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.35 }}
         className="mt-8 text-5xl font-extrabold tracking-tight text-gradient">DzHealth</motion.h1>
       <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }}
-        className="mt-3 text-sm text-muted-foreground">كل الخدمات الصحية في مكان واحد</motion.p>
+        className="mt-3 text-sm text-muted-foreground">{t("index.tagline")}</motion.p>
       <div className="absolute bottom-16 h-1 w-40 overflow-hidden rounded-full bg-surface-2">
         <motion.div initial={{ x: "-100%" }} animate={{ x: "100%" }} transition={{ repeat: Infinity, duration: 1.2 }} className="h-full w-1/2 gradient-primary" />
       </div>
-      <Link to="/home" className="absolute bottom-6 text-xs text-muted-foreground/70">تخطي</Link>
+      <Link to="/home" className="absolute bottom-6 text-xs text-muted-foreground/70">{t("index.skip")}</Link>
     </div>
   );
 }

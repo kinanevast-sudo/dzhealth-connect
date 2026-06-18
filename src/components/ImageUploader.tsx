@@ -2,6 +2,7 @@ import { useRef, useState } from "react";
 import { Camera, ImagePlus, X, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { useTranslation } from "react-i18next";
 
 export function ImageUploader({
   value, onChange, folder,
@@ -10,6 +11,7 @@ export function ImageUploader({
   onChange: (url: string | null) => void;
   folder: "doctors" | "hospitals" | "pharmacies";
 }) {
+  const { t } = useTranslation();
   const cameraRef = useRef<HTMLInputElement>(null);
   const galleryRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -18,10 +20,10 @@ export function ImageUploader({
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
-    if (file.size > 5 * 1024 * 1024) { toast.error("الحجم الأقصى 5 ميغابايت"); return; }
+    if (file.size > 5 * 1024 * 1024) { toast.error(t("imageUploader.max_size_error")); return; }
     setUploading(true);
     const { data: u } = await supabase.auth.getUser();
-    if (!u.user) { toast.error("سجل الدخول أولاً"); setUploading(false); return; }
+    if (!u.user) { toast.error(t("imageUploader.login_required")); setUploading(false); return; }
     const ext = file.name.split(".").pop() || "jpg";
     const path = `${u.user.id}/${folder}/${Date.now()}.${ext}`;
     const { error } = await supabase.storage.from("places").upload(path, file, { upsert: true, contentType: file.type });
@@ -29,7 +31,7 @@ export function ImageUploader({
     const { data: signed } = await supabase.storage.from("places").createSignedUrl(path, 60 * 60 * 24 * 365 * 10);
     setUploading(false);
     if (signed?.signedUrl) onChange(signed.signedUrl);
-    else toast.error("تعذر إنشاء رابط الصورة");
+    else toast.error(t("imageUploader.image_url_error"));
   };
 
   return (
@@ -45,15 +47,15 @@ export function ImageUploader({
         </div>
       ) : (
         <div className="p-4">
-          <p className="text-sm font-semibold mb-3">رفع صورة</p>
+          <p className="text-sm font-semibold mb-3">{t("imageUploader.upload_title")}</p>
           <div className="grid grid-cols-2 gap-3">
             <button type="button" disabled={uploading} onClick={() => cameraRef.current?.click()} className="flex flex-col items-center gap-2 p-4 bg-secondary rounded-xl active:scale-95 transition-transform disabled:opacity-50">
               {uploading ? <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /> : <Camera className="w-6 h-6 text-muted-foreground" />}
-              <span className="text-xs text-muted-foreground font-medium">الكاميرا</span>
+              <span className="text-xs text-muted-foreground font-medium">{t("imageUploader.camera")}</span>
             </button>
             <button type="button" disabled={uploading} onClick={() => galleryRef.current?.click()} className="flex flex-col items-center gap-2 p-4 bg-secondary rounded-xl active:scale-95 transition-transform disabled:opacity-50">
               {uploading ? <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" /> : <ImagePlus className="w-6 h-6 text-muted-foreground" />}
-              <span className="text-xs text-muted-foreground font-medium">المعرض</span>
+              <span className="text-xs text-muted-foreground font-medium">{t("imageUploader.gallery")}</span>
             </button>
           </div>
         </div>

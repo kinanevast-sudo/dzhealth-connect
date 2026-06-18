@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
+import { useTranslation } from "react-i18next";
 
 export function FormShell({ title, onSubmit, submitting, children }: {
   title: string;
@@ -7,6 +8,7 @@ export function FormShell({ title, onSubmit, submitting, children }: {
   submitting?: boolean;
   children: ReactNode;
 }) {
+  const { t } = useTranslation();
   return (
     <AppShell>
       <ScreenHeader title={title} />
@@ -17,7 +19,7 @@ export function FormShell({ title, onSubmit, submitting, children }: {
           disabled={submitting}
           className="w-full rounded-2xl gradient-primary py-4 text-sm font-bold text-primary-foreground neon-glow disabled:opacity-60"
         >
-          {submitting ? "جارٍ الحفظ..." : "حفظ"}
+          {submitting ? t("formShell.saving") : t("formShell.save")}
         </button>
       </form>
     </AppShell>

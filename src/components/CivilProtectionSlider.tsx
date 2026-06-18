@@ -4,6 +4,7 @@ import { Phone, MapPin, Shield, ChevronLeft, Flame } from "lucide-react";
 import { Link } from "@tanstack/react-router";
 import { cn } from "@/lib/utils";
 import civilProtectionLogo from "@/assets/civil-protection.png.asset.json";
+import { useTranslation } from "react-i18next";
 
 type Center = {
   id: string;
@@ -14,44 +15,43 @@ type Center = {
   highlight?: string;
 };
 
-// Algerian Civil Protection emergency numbers + national reference
-const DEFAULT_CENTERS: Center[] = [
-  {
-    id: "national",
-    name: "الحماية المدنية — الرقم الأخضر",
-    phone: "14",
-    location: "الجزائر",
-    distance: "متاح 24/7",
-    highlight: "رقم وطني مجاني",
-  },
-  {
-    id: "samu",
-    name: "الإسعاف الطبي المستعجل (SAMU)",
-    phone: "115",
-    location: "كل الولايات",
-    distance: "متاح 24/7",
-    highlight: "حالات حرجة",
-  },
-  {
-    id: "fire",
-    name: "إطفاء الحرائق والإنقاذ",
-    phone: "14",
-    location: "تدخل سريع",
-    distance: "متاح 24/7",
-    highlight: "حرائق · حوادث · إنقاذ",
-  },
-];
-
 export function CivilProtectionSlider({ wilayaName }: { wilayaName?: string }) {
+  const { t } = useTranslation();
   const [index, setIndex] = useState(0);
-  const centers = DEFAULT_CENTERS.map((c, i) =>
-    i === 0 && wilayaName ? { ...c, location: wilayaName } : c
-  );
+
+  const DEFAULT_CENTERS: Center[] = [
+    {
+      id: "national",
+      name: t("civilProtectionSlider.national_name"),
+      phone: "14",
+      location: wilayaName ?? t("civilProtectionSlider.national_location"),
+      distance: t("civilProtectionSlider.national_available"),
+      highlight: t("civilProtectionSlider.national_highlight"),
+    },
+    {
+      id: "samu",
+      name: t("civilProtectionSlider.samu_name"),
+      phone: "115",
+      location: t("civilProtectionSlider.samu_location"),
+      distance: t("civilProtectionSlider.national_available"),
+      highlight: t("civilProtectionSlider.samu_highlight"),
+    },
+    {
+      id: "fire",
+      name: t("civilProtectionSlider.fire_name"),
+      phone: "14",
+      location: t("civilProtectionSlider.fire_location"),
+      distance: t("civilProtectionSlider.national_available"),
+      highlight: t("civilProtectionSlider.fire_highlight"),
+    },
+  ];
+
+  const centers = DEFAULT_CENTERS;
 
   useEffect(() => {
     if (centers.length <= 1) return;
-    const t = setInterval(() => setIndex((i) => (i + 1) % centers.length), 4500);
-    return () => clearInterval(t);
+    const timer = setInterval(() => setIndex((i) => (i + 1) % centers.length), 4500);
+    return () => clearInterval(timer);
   }, [centers.length]);
 
   const c = centers[index];
@@ -61,10 +61,10 @@ export function CivilProtectionSlider({ wilayaName }: { wilayaName?: string }) {
       <div className="flex items-center justify-between mb-2">
         <h2 className="font-black text-base text-foreground flex items-center gap-1.5">
           <Shield className="w-4 h-4 text-red-600" />
-          الحماية المدنية قريبة منك
+          {t("civilProtectionSlider.section_title")}
         </h2>
         <Link to="/civil-protection" className="text-primary text-xs font-medium flex items-center gap-1">
-          عرض الكل <ChevronLeft className="w-3 h-3" />
+          {t("civilProtectionSlider.view_all")} <ChevronLeft className="w-3 h-3" />
         </Link>
       </div>
 
@@ -82,11 +82,10 @@ export function CivilProtectionSlider({ wilayaName }: { wilayaName?: string }) {
               "shadow-[0_8px_40px_-8px_rgba(220,38,38,0.55)]"
             )}
           >
-            {/* Header plea */}
             <div className="flex flex-col items-center gap-1 mb-3">
               <div className="flex items-center gap-1.5 text-[11px] font-bold text-foreground/90">
                 <Flame className="w-3.5 h-3.5 text-orange-300" />
-                <span>في حالة الطوارئ — اتصل فوراً</span>
+                <span>{t("civilProtectionSlider.emergency_plea")}</span>
                 <Flame className="w-3.5 h-3.5 text-orange-300" />
               </div>
               {c.highlight && (
@@ -96,11 +95,10 @@ export function CivilProtectionSlider({ wilayaName }: { wilayaName?: string }) {
               )}
             </div>
 
-            {/* Body */}
             <div className="flex items-center justify-between gap-3">
               <div className="flex items-center gap-3 min-w-0 flex-1">
                 <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shrink-0 p-1 border-2 border-red-600/60">
-                  <img src={civilProtectionLogo.url} alt="الحماية المدنية" className="w-full h-full object-contain" />
+                  <img src={civilProtectionLogo.url} alt={t("civilProtectionSlider.civil_protection_alt")} className="w-full h-full object-contain" />
                 </div>
                 <div className="min-w-0">
                   <p className="text-sm font-extrabold text-foreground truncate">{c.name}</p>
@@ -114,7 +112,7 @@ export function CivilProtectionSlider({ wilayaName }: { wilayaName?: string }) {
               <a
                 href={`tel:${c.phone}`}
                 className="flex flex-col items-center justify-center w-14 h-14 rounded-xl bg-red-600 text-white shrink-0 active:scale-95 transition-transform"
-                aria-label={`اتصال بـ ${c.phone}`}
+                aria-label={t("civilProtectionSlider.call_aria", { phone: c.phone })}
               >
                 <Phone className="w-4 h-4" />
                 <span className="text-[11px] font-black mt-0.5">{c.phone}</span>
@@ -128,7 +126,7 @@ export function CivilProtectionSlider({ wilayaName }: { wilayaName?: string }) {
             {centers.map((_, i) => (
               <button
                 key={i}
-                aria-label={`اذهب للبطاقة ${i + 1}`}
+                aria-label={t("civilProtectionSlider.go_to_card", { n: i + 1 })}
                 onClick={() => setIndex(i)}
                 className={cn(
                   "h-1.5 rounded-full transition-all",
