@@ -334,10 +334,46 @@ function Dashboard() {
             ))}
           </div>
         </div>
+
+        {/* Live activity feed (moved into middle row) */}
+        <div className="rounded-2xl border border-border bg-card p-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <Activity className="h-4 w-4 text-primary" />
+              <h2 className="text-sm font-bold">{t("manage.dashboard.liveActivity")}</h2>
+            </div>
+          </div>
+          <div className="space-y-1.5 max-h-[280px] overflow-auto no-scrollbar pe-1">
+            {feed.length === 0 && <div className="text-xs text-muted-foreground py-8 text-center">—</div>}
+            {feed.slice(0, 6).map((a) => (
+              <div key={a.id} className="flex items-start gap-2.5 rounded-lg p-1.5 hover:bg-muted/40 transition-colors">
+                <div className={`h-7 w-7 rounded-lg flex items-center justify-center shrink-0 ${
+                  a.kind === "blood" ? "bg-rose-500/10 text-rose-400" :
+                  a.kind === "appointment" ? "bg-sky-500/10 text-sky-400" :
+                  a.kind === "signup" ? "bg-emerald-500/10 text-emerald-400" :
+                  "bg-amber-500/10 text-amber-400"
+                }`}>
+                  {a.kind === "blood" ? <Droplet className="h-3.5 w-3.5" /> :
+                   a.kind === "appointment" ? <Activity className="h-3.5 w-3.5" /> :
+                   a.kind === "signup" ? <Users className="h-3.5 w-3.5" /> :
+                   <ClipboardList className="h-3.5 w-3.5" />}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <div className="text-[11px] font-semibold truncate">{a.title}</div>
+                  <div className="text-[10px] text-muted-foreground truncate">{a.subtitle}</div>
+                </div>
+                <div className="text-[10px] text-muted-foreground tabular-nums shrink-0">
+                  {timeAgo(a.ts, lng)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
       {/* Coverage + Submissions + Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      {/* Coverage + Submissions */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Geographic coverage */}
         <div className="rounded-2xl border border-border bg-card p-4">
           <div className="flex items-center justify-between mb-3">
@@ -398,41 +434,6 @@ function Dashboard() {
               <span>{t("manage.dashboard.pendingAlert", { n: c.pending })}</span>
             </div>
           )}
-        </div>
-
-        {/* Recent activity feed */}
-        <div className="rounded-2xl border border-border bg-card p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Activity className="h-4 w-4 text-primary" />
-              <h2 className="text-sm font-bold">{t("manage.dashboard.liveActivity")}</h2>
-            </div>
-          </div>
-          <div className="space-y-2 max-h-[340px] overflow-auto no-scrollbar">
-            {feed.length === 0 && <div className="text-xs text-muted-foreground py-8 text-center">—</div>}
-            {feed.map((a) => (
-              <div key={a.id} className="flex items-start gap-3 rounded-xl p-2 hover:bg-muted/40 transition-colors">
-                <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${
-                  a.kind === "blood" ? "bg-rose-500/10 text-rose-400" :
-                  a.kind === "appointment" ? "bg-sky-500/10 text-sky-400" :
-                  a.kind === "signup" ? "bg-emerald-500/10 text-emerald-400" :
-                  "bg-amber-500/10 text-amber-400"
-                }`}>
-                  {a.kind === "blood" ? <Droplet className="h-4 w-4" /> :
-                   a.kind === "appointment" ? <Activity className="h-4 w-4" /> :
-                   a.kind === "signup" ? <Users className="h-4 w-4" /> :
-                   <ClipboardList className="h-4 w-4" />}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-xs font-semibold truncate">{a.title}</div>
-                  <div className="text-[11px] text-muted-foreground truncate">{a.subtitle}</div>
-                </div>
-                <div className="text-[10px] text-muted-foreground tabular-nums shrink-0">
-                  {timeAgo(a.ts, lng)}
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
     </div>
