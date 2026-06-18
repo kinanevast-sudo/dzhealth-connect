@@ -203,10 +203,10 @@ function Dashboard() {
   const kpis = [
     { label: t("manage.kpi.users"), value: c?.users, icon: Users, tone: "sky", delta: userDelta, sub: t("manage.dashboard.vsPrev7") },
     { label: t("manage.kpi.doctors"), value: c?.doctors, icon: Stethoscope, tone: "violet", delta: doctorDelta, sub: t("manage.dashboard.vsPrev7") },
-    { label: t("manage.kpi.pharmacies"), value: c?.pharmacies, icon: Pill, tone: "emerald", delta: null, sub: "" },
-    { label: t("manage.kpi.hospitals"), value: c?.hospitals, icon: Building2, tone: "rose", delta: null, sub: "" },
-    { label: t("manage.kpi.appointments"), value: c?.appointments, icon: Activity, tone: "amber", delta: null, sub: "" },
-    { label: t("manage.kpi.pending"), value: c?.pending, icon: ClipboardList, tone: "orange", delta: null, sub: "", link: "/manage/submissions" as const },
+    { label: t("manage.kpi.pharmacies"), value: c?.pharmacies, icon: Pill, tone: "emerald", delta: null, sub: t("manage.dashboard.vsPrev7") },
+    { label: t("manage.kpi.hospitals"), value: c?.hospitals, icon: Building2, tone: "rose", delta: null, sub: t("manage.dashboard.vsPrev7") },
+    { label: t("manage.kpi.pending"), value: c?.pending, icon: ClipboardList, tone: "amber", delta: null, sub: `+${c?.pending ?? 0}`, link: "/manage/submissions" as const },
+    { label: t("manage.kpi.bloodReqs"), value: c?.bloodRequests, icon: Droplet, tone: "orange", delta: null, sub: `+${c?.bloodRequests ?? 0}` },
   ];
 
   return (
@@ -224,7 +224,7 @@ function Dashboard() {
       </div>
 
       {/* KPI cards */}
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
         {kpis.map((k) => {
           const toneMap: Record<string, { bg: string; text: string; blob: string }> = {
             sky: { bg: "bg-sky-500/10", text: "text-sky-400", blob: "bg-sky-500" },
@@ -236,24 +236,28 @@ function Dashboard() {
           };
           const tone = toneMap[k.tone];
           const inner = (
-            <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-4 hover:border-primary/50 transition-all group">
+            <div className="relative overflow-hidden rounded-2xl border border-border bg-card p-4 hover:border-primary/50 transition-all group h-full">
               <div className={`absolute -top-10 -end-10 h-24 w-24 rounded-full blur-2xl opacity-30 ${tone.blob}`} />
-              <div className="flex items-center justify-between relative">
-                <div className={`h-9 w-9 rounded-xl flex items-center justify-center ${tone.bg} ${tone.text}`}>
-                  <k.icon className="h-4 w-4" />
+              <div className="flex items-start justify-between relative gap-2">
+                <div className={`h-10 w-10 rounded-xl flex items-center justify-center shrink-0 ${tone.bg} ${tone.text}`}>
+                  <k.icon className="h-5 w-5" />
                 </div>
-                {k.delta !== null && c && (
-                  <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full ${k.delta >= 0 ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400"}`}>
-                    {k.delta >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                    {Math.abs(k.delta)}%
-                  </span>
-                )}
+                <div className="text-[11px] text-muted-foreground text-end line-clamp-2 leading-tight">{k.label}</div>
               </div>
               <div className="mt-3 text-2xl font-extrabold tabular-nums">
                 {loading ? <span className="text-muted-foreground/50">—</span> : (k.value ?? 0).toLocaleString()}
               </div>
-              <div className="mt-0.5 text-xs text-muted-foreground line-clamp-1">{k.label}</div>
-              {k.sub && <div className="mt-1 text-[10px] text-muted-foreground/70">{k.sub}</div>}
+              <div className="mt-1 flex items-center gap-1.5">
+                {k.delta !== null && c ? (
+                  <span className={`inline-flex items-center gap-0.5 text-[11px] font-semibold ${k.delta >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                    {k.delta >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
+                    {k.delta >= 0 ? "+" : ""}{k.delta}%
+                  </span>
+                ) : k.sub && (
+                  <span className="text-[11px] font-semibold text-emerald-400">{k.sub}</span>
+                )}
+                <span className="text-[10px] text-muted-foreground/70 truncate">{t("manage.dashboard.vsPrev7")}</span>
+              </div>
             </div>
           );
           return k.link
@@ -263,8 +267,8 @@ function Dashboard() {
       </div>
 
 
-      {/* Charts row */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+      {/* Charts row: chart (2) + donut (1) + live feed (1) */}
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
         {/* Activity chart */}
         <div className="lg:col-span-2 rounded-2xl border border-border bg-card p-4">
           <div className="flex items-center justify-between mb-3">
