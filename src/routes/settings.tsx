@@ -67,7 +67,7 @@ function Page() {
     setBloodPrefs(next);
     if (!userId) return;
     const { error } = await supabase.from("profiles").update({ [key]: next[key] } as any).eq("user_id", userId);
-    if (error) toast.error("تعذّر حفظ الإعداد");
+    if (error) toast.error(t("settings.saveError"));
   };
 
   const setLanguage = (k: Lang) => {
