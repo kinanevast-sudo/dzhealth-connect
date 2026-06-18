@@ -195,8 +195,7 @@ function ManageSidebar({ pendingCount, profile }: { pendingCount: number; profil
 
   type Item = { to?: string; label: string; icon: typeof Home; badge?: number; badgeColor?: string; exact?: boolean; disabled?: boolean };
   const nav: Item[] = [
-    { to: "/manage", label: t("manage.nav.dashboard"), icon: Home, exact: true },
-    { to: "/manage", label: "لوحة التحكم", icon: LayoutDashboard, exact: true },
+    { to: "/manage", label: t("manage.nav.dashboard"), icon: LayoutDashboard, exact: true },
     { label: "المستخدمين", icon: UsersIcon, disabled: true },
     { label: "المحتوى", icon: FileText, disabled: true },
     { to: "/manage/submissions", label: "المراجعة والطلبات", icon: ClipboardList, badge: pendingCount, badgeColor: "bg-rose-500" },
