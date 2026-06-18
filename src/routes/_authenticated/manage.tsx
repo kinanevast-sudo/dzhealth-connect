@@ -105,6 +105,37 @@ function ManageLayout() {
     );
   }
 
+  // Desktop-only gate
+  const [isDesktop, setIsDesktop] = useState(true);
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+
+  if (!isDesktop) {
+    return (
+      <div dir="rtl" className="min-h-screen bg-[#0b1220] text-slate-200 flex items-center justify-center px-6">
+        <div className="max-w-sm w-full bg-[#111a2e] border border-white/10 rounded-2xl p-8 text-center space-y-5">
+          <div className="mx-auto h-16 w-16 rounded-2xl bg-sky-500/15 grid place-items-center">
+            <Monitor className="h-8 w-8 text-sky-400" />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-xl font-bold text-white">لوحة التحكم</h1>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              هذه اللوحة مُصممة خصيصًا لأجهزة الكمبيوتر. يُرجى فتحها من حاسوبك للحصول على أفضل تجربة.
+            </p>
+          </div>
+          <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
+            <Smartphone className="h-4 w-4" />
+            <span>العرض الحالي غير مدعوم</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div dir="rtl" className="manage-shell min-h-screen bg-[#0b1220] text-slate-200 flex">
       <ManageSidebar pendingCount={pendingCount} profile={profile} />
