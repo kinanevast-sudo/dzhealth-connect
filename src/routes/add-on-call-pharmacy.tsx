@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Search, Pill, Plus, Check } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { FormShell, Field, inputCls } from "@/components/FormShell";
 
@@ -17,6 +18,7 @@ function todayISO() {
 
 function Page() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [submitting, setSubmitting] = useState(false);
   const [q, setQ] = useState("");
   const [pharmacyId, setPharmacyId] = useState<string | null>(null);
@@ -37,10 +39,10 @@ function Page() {
   });
 
   const filtered = useMemo(() => {
-    const t = q.trim().toLowerCase();
-    if (!t) return pharmacies;
+    const query = q.trim().toLowerCase();
+    if (!query) return pharmacies;
     return (pharmacies as any[]).filter((p) =>
-      p.name?.toLowerCase().includes(t) ||
+      p.name?.toLowerCase().includes(query) ||
       p.wilayas?.name_ar?.includes(q) ||
       p.baladiyas?.name_ar?.includes(q)
     );
@@ -48,8 +50,8 @@ function Page() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!pharmacyId) { toast.error("اختر صيدلية"); return; }
-    if (!date) { toast.error("اختر تاريخ المناوبة"); return; }
+    if (!pharmacyId) { toast.error(t("errorNoPharmacy")); return; }
+    if (!date) { toast.error(t("errorNoDate")); return; }
     setSubmitting(true);
     const { data: u } = await supabase.auth.getUser();
     const { error } = await (supabase.from as any)("pharmacy_on_call").insert({
@@ -60,27 +62,27 @@ function Page() {
     });
     setSubmitting(false);
     if (error) {
-      if (error.code === "23505") { toast.error("هذه الصيدلية مسجلة مناوبة لنفس التاريخ والفترة"); return; }
+      if (error.code === "23505") { toast.error(t("errorDuplicate")); return; }
       toast.error(error.message);
       return;
     }
-    toast.success("تم تسجيل الصيدلية المناوبة");
+    toast.success(t("successRegister"));
     navigate({ to: "/on-call-pharmacies" });
   };
 
   return (
-    <FormShell title="تسجيل صيدلية مناوبة" onSubmit={submit} submitting={submitting}>
-      <Field label="تاريخ المناوبة *">
+    <FormShell title={t("title")} onSubmit={submit} submitting={submitting}>
+      <Field label={t("fieldDate")}>
         <input type="date" className={inputCls} value={date} onChange={(e) => setDate(e.target.value)} required />
-        <p className="mt-1 text-[11px] text-muted-foreground">الافتراضي اليوم. الصيدلية تبقى مسجلة مرة واحدة فقط، ويتم إنشاء سجل مناوبة لكل تاريخ.</p>
+        <p className="mt-1 text-[11px] text-muted-foreground">{t("dateHint")}</p>
       </Field>
 
-      <Field label="فترة المناوبة *">
+      <Field label={t("fieldShift")}>
         <div className="grid grid-cols-3 gap-2">
           {([
-            { v: "day", label: "نهارية", hint: "08:00 - 19:00" },
-            { v: "night", label: "ليلية", hint: "19:00 - 08:00" },
-            { v: "full", label: "24/24", hint: "نهار وليل" },
+            { v: "day", labelKey: "shiftDay", hintKey: "shiftDayHint" },
+            { v: "night", labelKey: "shiftNight", hintKey: "shiftNightHint" },
+            { v: "full", labelKey: "shiftFull", hintKey: "shiftFullHint" },
           ] as const).map((o) => {
             const active = shift === o.v;
             return (
@@ -90,35 +92,34 @@ function Page() {
                 onClick={() => setShift(o.v)}
                 className={`rounded-xl border px-2 py-2.5 text-center transition ${active ? "bg-green-500/10 border-green-500" : "bg-background border-border"}`}
               >
-                <p className="text-xs font-bold">{o.label}</p>
-                <p className="text-[10px] text-muted-foreground mt-0.5">{o.hint}</p>
+                <p className="text-xs font-bold">{t(o.labelKey)}</p>
+                <p className="text-[10px] text-muted-foreground mt-0.5">{t(o.hintKey)}</p>
               </button>
             );
           })}
         </div>
       </Field>
 
-
       <div className="bg-card rounded-2xl border border-border p-4 space-y-3">
         <div className="flex items-center justify-between">
-          <p className="text-sm font-semibold">اختر الصيدلية *</p>
+          <p className="text-sm font-semibold">{t("selectPharmacy")}</p>
           <Link to="/add-pharmacy" className="text-[11px] font-bold text-primary flex items-center gap-1">
-            <Plus className="w-3 h-3" /> إضافة جديدة
+            <Plus className="w-3 h-3" /> {t("addNew")}
           </Link>
         </div>
         <div className="relative">
           <Search className="w-4 h-4 absolute top-1/2 -translate-y-1/2 end-3 text-muted-foreground" />
           <input
             className={`${inputCls} pe-9`}
-            placeholder="ابحث عن صيدلية بالاسم أو الولاية..."
+            placeholder={t("searchPlaceholder")}
             value={q}
             onChange={(e) => setQ(e.target.value)}
           />
         </div>
         <div className="max-h-72 overflow-y-auto space-y-1.5 -mx-1 px-1">
-          {isLoading && <p className="text-xs text-muted-foreground py-4 text-center">جارٍ التحميل...</p>}
+          {isLoading && <p className="text-xs text-muted-foreground py-4 text-center">{t("loading")}</p>}
           {!isLoading && filtered.length === 0 && (
-            <p className="text-xs text-muted-foreground py-4 text-center">لا توجد نتائج</p>
+            <p className="text-xs text-muted-foreground py-4 text-center">{t("noResults")}</p>
           )}
           {filtered.map((p: any) => {
             const selected = pharmacyId === p.id;

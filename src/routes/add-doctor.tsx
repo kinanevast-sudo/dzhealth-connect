@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { CascadingLocation } from "@/components/CascadingLocation";
 import { FormShell, Field, inputCls } from "@/components/FormShell";
@@ -11,6 +12,7 @@ export const Route = createFileRoute("/add-doctor")({ component: Page, ssr: fals
 
 function Page() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const [specs, setSpecs] = useState<any[]>([]);
   const [submitting, setSubmitting] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
@@ -27,7 +29,7 @@ function Page() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!f.full_name || !f.specialty_id || !f.phone) { toast.error("املأ الحقول الأساسية"); return; }
+    if (!f.full_name || !f.specialty_id || !f.phone) { toast.error(t("errorRequired")); return; }
     setSubmitting(true);
     const { data: u } = await supabase.auth.getUser();
     const { error } = await supabase.from("doctors").insert({
@@ -41,31 +43,31 @@ function Page() {
     });
     setSubmitting(false);
     if (error) { toast.error(error.message); return; }
-    toast.success("تمت إضافة الطبيب");
+    toast.success(t("successAdd"));
     navigate({ to: "/doctors" });
   };
 
   return (
-    <FormShell title="إضافة طبيب" onSubmit={submit} submitting={submitting}>
+    <FormShell title={t("title")} onSubmit={submit} submitting={submitting}>
       <ImageUploader value={photoUrl} onChange={setPhotoUrl} folder="doctors" />
-      <Field label="الاسم الكامل *"><input className={inputCls} value={f.full_name} onChange={(e) => setF({ ...f, full_name: e.target.value })} required /></Field>
-      <Field label="رقم الهاتف *"><input dir="ltr" className={inputCls} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} placeholder="0555 XX XX XX" required /></Field>
-      <Field label="التخصص *">
+      <Field label={t("fieldFullName")}><input className={inputCls} value={f.full_name} onChange={(e) => setF({ ...f, full_name: e.target.value })} required /></Field>
+      <Field label={t("fieldPhone")}><input dir="ltr" className={inputCls} value={f.phone} onChange={(e) => setF({ ...f, phone: e.target.value })} placeholder="0555 XX XX XX" required /></Field>
+      <Field label={t("fieldSpecialty")}>
         <select className={inputCls} value={f.specialty_id} onChange={(e) => setF({ ...f, specialty_id: e.target.value })} required>
-          <option value="">اختر التخصص</option>
+          <option value="">{t("specialtyPlaceholder")}</option>
           {specs.map((s) => <option key={s.id} value={s.id}>{s.name_ar}</option>)}
         </select>
       </Field>
       <div className="grid grid-cols-2 gap-3">
-        <Field label="رسوم الاستشارة (دج)"><input type="number" className={inputCls} value={f.fee} onChange={(e) => setF({ ...f, fee: e.target.value })} placeholder="1500" /></Field>
-        <Field label="سنوات الخبرة"><input type="number" className={inputCls} value={f.experience_years} onChange={(e) => setF({ ...f, experience_years: e.target.value })} /></Field>
+        <Field label={t("fieldFee")}><input type="number" className={inputCls} value={f.fee} onChange={(e) => setF({ ...f, fee: e.target.value })} placeholder="1500" /></Field>
+        <Field label={t("fieldExperience")}><input type="number" className={inputCls} value={f.experience_years} onChange={(e) => setF({ ...f, experience_years: e.target.value })} /></Field>
       </div>
-      <Field label="نبذة عن الطبيب"><textarea rows={3} className={inputCls} value={f.about} onChange={(e) => setF({ ...f, about: e.target.value })} /></Field>
+      <Field label={t("fieldAbout")}><textarea rows={3} className={inputCls} value={f.about} onChange={(e) => setF({ ...f, about: e.target.value })} /></Field>
 
       <div className="bg-card rounded-2xl border border-border p-4 space-y-3">
-        <p className="text-sm font-semibold">الموقع</p>
+        <p className="text-sm font-semibold">{t("location")}</p>
         <CascadingLocation wilayaId={f.wilaya_id} baladiyaId={f.baladiya_id} onChange={(w, b) => setF({ ...f, wilaya_id: w, baladiya_id: b })} />
-        <input className={inputCls} value={f.address} onChange={(e) => setF({ ...f, address: e.target.value })} placeholder="العنوان التفصيلي" />
+        <input className={inputCls} value={f.address} onChange={(e) => setF({ ...f, address: e.target.value })} placeholder={t("addressPlaceholder")} />
         <LocationPickerField
           lat={f.lat} lng={f.lng}
           onPicked={(loc) => setF((p) => ({ ...p, lat: loc.lat, lng: loc.lng, address: p.address || loc.address || "" }))}
