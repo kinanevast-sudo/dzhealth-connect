@@ -108,33 +108,32 @@ function ManageLayout() {
     );
   }
 
-  if (!isDesktop) {
-    return (
-      <div dir="rtl" className="min-h-screen bg-[#0b1220] text-slate-200 flex items-center justify-center px-6">
-        <div className="max-w-sm w-full bg-[#111a2e] border border-white/10 rounded-2xl p-8 text-center space-y-5">
-          <div className="mx-auto h-16 w-16 rounded-2xl bg-sky-500/15 grid place-items-center">
-            <Monitor className="h-8 w-8 text-sky-400" />
-          </div>
-          <div className="space-y-2">
-            <h1 className="text-xl font-bold text-white">لوحة التحكم</h1>
-            <p className="text-sm text-slate-400 leading-relaxed">
-              هذه اللوحة مُصممة خصيصًا لأجهزة الكمبيوتر. يُرجى فتحها من حاسوبك للحصول على أفضل تجربة.
-            </p>
-          </div>
-          <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
-            <Smartphone className="h-4 w-4" />
-            <span>العرض الحالي غير مدعوم</span>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div dir="rtl" className="manage-shell min-h-screen bg-[#0b1220] text-slate-200 flex">
-      <ManageSidebar pendingCount={pendingCount} profile={profile} />
+      {/* Desktop sidebar */}
+      <div className="hidden lg:flex">
+        <ManageSidebar pendingCount={pendingCount} profile={profile} />
+      </div>
+
+      {/* Mobile sidebar drawer */}
+      {sidebarOpen && (
+        <div className="lg:hidden fixed inset-0 z-40 flex">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setSidebarOpen(false)} />
+          <div className="relative z-50 h-full animate-in slide-in-from-right">
+            <ManageSidebar pendingCount={pendingCount} profile={profile} />
+            <button
+              onClick={() => setSidebarOpen(false)}
+              className="absolute top-3 left-3 h-9 w-9 grid place-items-center rounded-lg bg-[#111a2e] border border-white/10 text-slate-300"
+              aria-label="close"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="flex-1 min-w-0 flex flex-col">
-        <ManageHeader />
+        <ManageHeader onMenuClick={() => setSidebarOpen(true)} />
         <main className="flex-1 overflow-auto">
           <Outlet />
         </main>
