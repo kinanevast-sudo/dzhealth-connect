@@ -44,6 +44,7 @@ import { Route as DoctorsIdRouteImport } from './routes/doctors.$id'
 import { Route as AuthenticatedManageRouteImport } from './routes/_authenticated/manage'
 import { Route as AuthenticatedManageIndexRouteImport } from './routes/_authenticated/manage.index'
 import { Route as AuthenticatedManageSubmissionsRouteImport } from './routes/_authenticated/manage.submissions'
+import { Route as AuthenticatedManageAnalyticsRouteImport } from './routes/_authenticated/manage.analytics'
 import { Route as AuthenticatedManageResourceSlugRouteImport } from './routes/_authenticated/manage.resource.$slug'
 
 const SettingsRoute = SettingsRouteImport.update({
@@ -222,6 +223,12 @@ const AuthenticatedManageSubmissionsRoute =
     path: '/submissions',
     getParentRoute: () => AuthenticatedManageRoute,
   } as any)
+const AuthenticatedManageAnalyticsRoute =
+  AuthenticatedManageAnalyticsRouteImport.update({
+    id: '/analytics',
+    path: '/analytics',
+    getParentRoute: () => AuthenticatedManageRoute,
+  } as any)
 const AuthenticatedManageResourceSlugRoute =
   AuthenticatedManageResourceSlugRouteImport.update({
     id: '/resource/$slug',
@@ -262,6 +269,7 @@ export interface FileRoutesByFullPath {
   '/doctors/$id': typeof DoctorsIdRoute
   '/pharmacies/$id': typeof PharmaciesIdRoute
   '/doctors/': typeof DoctorsIndexRoute
+  '/manage/analytics': typeof AuthenticatedManageAnalyticsRoute
   '/manage/submissions': typeof AuthenticatedManageSubmissionsRoute
   '/manage/': typeof AuthenticatedManageIndexRoute
   '/manage/resource/$slug': typeof AuthenticatedManageResourceSlugRoute
@@ -298,6 +306,7 @@ export interface FileRoutesByTo {
   '/doctors/$id': typeof DoctorsIdRoute
   '/pharmacies/$id': typeof PharmaciesIdRoute
   '/doctors': typeof DoctorsIndexRoute
+  '/manage/analytics': typeof AuthenticatedManageAnalyticsRoute
   '/manage/submissions': typeof AuthenticatedManageSubmissionsRoute
   '/manage': typeof AuthenticatedManageIndexRoute
   '/manage/resource/$slug': typeof AuthenticatedManageResourceSlugRoute
@@ -337,6 +346,7 @@ export interface FileRoutesById {
   '/doctors/$id': typeof DoctorsIdRoute
   '/pharmacies/$id': typeof PharmaciesIdRoute
   '/doctors/': typeof DoctorsIndexRoute
+  '/_authenticated/manage/analytics': typeof AuthenticatedManageAnalyticsRoute
   '/_authenticated/manage/submissions': typeof AuthenticatedManageSubmissionsRoute
   '/_authenticated/manage/': typeof AuthenticatedManageIndexRoute
   '/_authenticated/manage/resource/$slug': typeof AuthenticatedManageResourceSlugRoute
@@ -376,6 +386,7 @@ export interface FileRouteTypes {
     | '/doctors/$id'
     | '/pharmacies/$id'
     | '/doctors/'
+    | '/manage/analytics'
     | '/manage/submissions'
     | '/manage/'
     | '/manage/resource/$slug'
@@ -412,6 +423,7 @@ export interface FileRouteTypes {
     | '/doctors/$id'
     | '/pharmacies/$id'
     | '/doctors'
+    | '/manage/analytics'
     | '/manage/submissions'
     | '/manage'
     | '/manage/resource/$slug'
@@ -450,6 +462,7 @@ export interface FileRouteTypes {
     | '/doctors/$id'
     | '/pharmacies/$id'
     | '/doctors/'
+    | '/_authenticated/manage/analytics'
     | '/_authenticated/manage/submissions'
     | '/_authenticated/manage/'
     | '/_authenticated/manage/resource/$slug'
@@ -736,6 +749,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedManageSubmissionsRouteImport
       parentRoute: typeof AuthenticatedManageRoute
     }
+    '/_authenticated/manage/analytics': {
+      id: '/_authenticated/manage/analytics'
+      path: '/analytics'
+      fullPath: '/manage/analytics'
+      preLoaderRoute: typeof AuthenticatedManageAnalyticsRouteImport
+      parentRoute: typeof AuthenticatedManageRoute
+    }
     '/_authenticated/manage/resource/$slug': {
       id: '/_authenticated/manage/resource/$slug'
       path: '/resource/$slug'
@@ -747,12 +767,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedManageRouteChildren {
+  AuthenticatedManageAnalyticsRoute: typeof AuthenticatedManageAnalyticsRoute
   AuthenticatedManageSubmissionsRoute: typeof AuthenticatedManageSubmissionsRoute
   AuthenticatedManageIndexRoute: typeof AuthenticatedManageIndexRoute
   AuthenticatedManageResourceSlugRoute: typeof AuthenticatedManageResourceSlugRoute
 }
 
 const AuthenticatedManageRouteChildren: AuthenticatedManageRouteChildren = {
+  AuthenticatedManageAnalyticsRoute: AuthenticatedManageAnalyticsRoute,
   AuthenticatedManageSubmissionsRoute: AuthenticatedManageSubmissionsRoute,
   AuthenticatedManageIndexRoute: AuthenticatedManageIndexRoute,
   AuthenticatedManageResourceSlugRoute: AuthenticatedManageResourceSlugRoute,
