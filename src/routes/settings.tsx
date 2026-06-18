@@ -24,7 +24,14 @@ function Page() {
   const { theme, set: setTheme, isDark } = useTheme();
   const navigate = useNavigate();
   const [notif, setNotif] = useState(true);
-  const [lang, setLang] = useState<Lang>("ar");
+  const [lang, setLang] = useState<Lang>((i18n.language as Lang) || "ar");
+
+  useEffect(() => {
+    const onChange = (lng: string) => setLang(lng as Lang);
+    i18n.on("languageChanged", onChange);
+    return () => { i18n.off("languageChanged", onChange); };
+  }, [i18n]);
+
   const [geoState, setGeoState] = useState<"prompt" | "granted" | "denied">("prompt");
   const [email, setEmail] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null);
