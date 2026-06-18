@@ -1,0 +1,47 @@
+{
+  "ar": {
+    "screenTitle": "تفاصيل الصيدلية",
+    "notFound": "تعذّر العثور على هذه الصيدلية.",
+    "backToList": "العودة للقائمة",
+    "onCallBadge": "مناوبة اليوم",
+    "infoTitle": "المعلومات",
+    "addressLabel": "العنوان",
+    "phoneLabel": "الهاتف",
+    "openUntilLabel": "مفتوحة حتى",
+    "addressFallback": "غير محدد",
+    "phoneFallback": "غير متوفر",
+    "callButton": "اتصال",
+    "mapButton": "موقع على الخريطة",
+    "viewAllOnCall": "عرض كل الصيدليات المناوبة اليوم"
+  },
+  "fr": {
+    "screenTitle": "Détails de la pharmacie",
+    "notFound": "Impossible de trouver cette pharmacie.",
+    "backToList": "Retour à la liste",
+    "onCallBadge": "De garde aujourd'hui",
+    "infoTitle": "Informations",
+    "addressLabel": "Adresse",
+    "phoneLabel": "Téléphone",
+    "openUntilLabel": "Ouvert jusqu'à",
+    "addressFallback": "Non spécifié",
+    "phoneFallback": "Non disponible",
+    "callButton": "Appel",
+    "mapButton": "Voir sur la carte",
+    "viewAllOnCall": "Voir toutes les pharmacies de garde aujourd'hui"
+  },
+  "en": {
+    "screenTitle": "Pharmacy Details",
+    "notFound": "Could not find this pharmacy.",
+    "backToList": "Back to list",
+    "onCallBadge": "On-call today",
+    "infoTitle": "Information",
+    "addressLabel": "Address",
+    "phoneLabel": "Phone",
+    "openUntilLabel": "Open until",
+    "addressFallback": "Not specified",
+    "phoneFallback": "Not available",
+    "callButton": "Call",
+    "mapButton": "View on map",
+    "viewAllOnCall": "View all on-call pharmacies today"
+  }
+}

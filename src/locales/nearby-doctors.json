@@ -1,0 +1,38 @@
+{
+  "ar": {
+    "title": "أطباء قريبون",
+    "locating": "جاري تحديد موقعك...",
+    "geoNotSupported": "المتصفح لا يدعم تحديد الموقع",
+    "geoPermissionDenied": "تعذّر تحديد موقعك — فعّل إذن الموقع",
+    "distanceInfo": "المسافة محسوبة من موقعك الحالي · {{count}} طبيب",
+    "noResults": "لا يوجد أطباء قريبون",
+    "viewOnMap": "موقع على الخريطة",
+    "call": "اتصال",
+    "meterUnit": "م",
+    "kmUnit": "كم"
+  },
+  "fr": {
+    "title": "Médecins à proximité",
+    "locating": "Localisation en cours...",
+    "geoNotSupported": "Le navigateur ne supporte pas la géolocalisation",
+    "geoPermissionDenied": "Impossible de vous localiser — activez la permission de localisation",
+    "distanceInfo": "Distance calculée depuis votre position · {{count}} médecin(s)",
+    "noResults": "Aucun médecin à proximité",
+    "viewOnMap": "Voir sur la carte",
+    "call": "Appeler",
+    "meterUnit": "m",
+    "kmUnit": "km"
+  },
+  "en": {
+    "title": "Nearby doctors",
+    "locating": "Detecting your location...",
+    "geoNotSupported": "Your browser does not support geolocation",
+    "geoPermissionDenied": "Could not detect your location — enable location permission",
+    "distanceInfo": "Distance calculated from your current location · {{count}} doctor(s)",
+    "noResults": "No nearby doctors found",
+    "viewOnMap": "View on map",
+    "call": "Call",
+    "meterUnit": "m",
+    "kmUnit": "km"
+  }
+}
