@@ -6,7 +6,7 @@ import {
   LayoutDashboard, ClipboardList, ShieldCheck, Loader2, BarChart3, Home,
   Users as UsersIcon, FileText, Bell, Settings, Image as ImageIcon, Activity,
   Brain, History, Search, Maximize2, ChevronDown, Heart, AlertTriangle,
-  Database,
+  Database, Monitor, Smartphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -26,6 +26,15 @@ function ManageLayout() {
   const [claiming, setClaiming] = useState(false);
   const [pendingCount, setPendingCount] = useState(0);
   const [profile, setProfile] = useState<{ name: string; avatar: string | null } | null>(null);
+
+  // Desktop-only gate (must be before any early returns to respect Rules of Hooks)
+  const [isDesktop, setIsDesktop] = useState(true);
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   const check = async () => {
     setState("checking");
@@ -100,6 +109,28 @@ function ManageLayout() {
           <Button asChild variant="outline" className="w-full">
             <Link to="/home">{t("manage.backHome")}</Link>
           </Button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!isDesktop) {
+    return (
+      <div dir="rtl" className="min-h-screen bg-[#0b1220] text-slate-200 flex items-center justify-center px-6">
+        <div className="max-w-sm w-full bg-[#111a2e] border border-white/10 rounded-2xl p-8 text-center space-y-5">
+          <div className="mx-auto h-16 w-16 rounded-2xl bg-sky-500/15 grid place-items-center">
+            <Monitor className="h-8 w-8 text-sky-400" />
+          </div>
+          <div className="space-y-2">
+            <h1 className="text-xl font-bold text-white">لوحة التحكم</h1>
+            <p className="text-sm text-slate-400 leading-relaxed">
+              هذه اللوحة مُصممة خصيصًا لأجهزة الكمبيوتر. يُرجى فتحها من حاسوبك للحصول على أفضل تجربة.
+            </p>
+          </div>
+          <div className="flex items-center justify-center gap-2 text-xs text-slate-500">
+            <Smartphone className="h-4 w-4" />
+            <span>العرض الحالي غير مدعوم</span>
+          </div>
         </div>
       </div>
     );
