@@ -261,8 +261,9 @@ function Dashboard() {
         })}
       </div>
 
-      {/* Charts row: 3 equal columns */}
-      <div className="grid grid-cols-3 gap-4">
+      {/* Charts row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+
         {/* Activity chart */}
         <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
           <div className="flex items-center justify-between mb-3">
