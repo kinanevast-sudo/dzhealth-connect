@@ -20,7 +20,44 @@
         "doctorsBySpecialty": "الأطباء حسب التخصص (أعلى 10)",
         "hospitalsByWilaya": "المستشفيات حسب الولاية (أعلى 10)",
         "bloodByType": "طلبات الدم حسب الفصيلة",
-        "bloodByUrgency": "طلبات الدم حسب الاستعجال"
+        "bloodByUrgency": "طلبات الدم حسب الاستعجال",
+        "refresh": "تحديث",
+        "filters": {
+          "title": "الفلاتر",
+          "period": "المدة",
+          "wilaya": "الولاية",
+          "specialty": "التخصص",
+          "all": "الكل",
+          "reset": "إعادة تعيين",
+          "d7": "7 أيام", "d30": "30 يوم", "d90": "90 يوم", "d365": "سنة"
+        },
+        "kpi": {
+          "appointments": "المواعيد",
+          "urgentBlood": "طلبات دم مستعجلة",
+          "signups": "تسجيلات الفترة",
+          "prev": "في الفترة السابقة"
+        },
+        "alerts": {
+          "regDrop": "انخفاض التسجيلات بنسبة {{pct}}% ({{curr}} مقابل {{prev}} في الفترة السابقة)",
+          "urgentBlood": "تنبيه: {{n}} طلبات دم عاجلة/حرجة في الفترة الحالية",
+          "pendingHigh": "هناك {{n}} إضافة معلقة بانتظار المراجعة"
+        },
+        "table": {
+          "title": "جدول البيانات",
+          "search": "بحث في الجدول…",
+          "columns": "الأعمدة",
+          "blood": "طلبات الدم",
+          "appointments": "المواعيد",
+          "shown": "{{n}} من أصل {{total}} صف"
+        },
+        "feed": {
+          "title": "آخر الأنشطة",
+          "search": "بحث…",
+          "pullHint": "اسحب للأسفل في الجوال للتحديث",
+          "blood": "طلب دم",
+          "appointment": "موعد",
+          "signup": "تسجيل جديد"
+        }
       },
       "crud": {
         "total": "{{count}} عنصر",
@@ -123,7 +160,44 @@
         "doctorsBySpecialty": "Médecins par spécialité (top 10)",
         "hospitalsByWilaya": "Hôpitaux par wilaya (top 10)",
         "bloodByType": "Demandes de sang par groupe",
-        "bloodByUrgency": "Demandes de sang par urgence"
+        "bloodByUrgency": "Demandes de sang par urgence",
+        "refresh": "Actualiser",
+        "filters": {
+          "title": "Filtres",
+          "period": "Période",
+          "wilaya": "Wilaya",
+          "specialty": "Spécialité",
+          "all": "Toutes",
+          "reset": "Réinitialiser",
+          "d7": "7 jours", "d30": "30 jours", "d90": "90 jours", "d365": "1 an"
+        },
+        "kpi": {
+          "appointments": "Rendez-vous",
+          "urgentBlood": "Demandes urgentes",
+          "signups": "Inscriptions",
+          "prev": "période préc."
+        },
+        "alerts": {
+          "regDrop": "Baisse des inscriptions de {{pct}}% ({{curr}} vs {{prev}})",
+          "urgentBlood": "Alerte : {{n}} demandes de sang urgentes/critiques",
+          "pendingHigh": "{{n}} soumissions en attente de modération"
+        },
+        "table": {
+          "title": "Tableau de données",
+          "search": "Rechercher…",
+          "columns": "Colonnes",
+          "blood": "Sang",
+          "appointments": "Rendez-vous",
+          "shown": "{{n}} sur {{total}} lignes"
+        },
+        "feed": {
+          "title": "Activité récente",
+          "search": "Rechercher…",
+          "pullHint": "Tirez vers le bas (mobile) pour actualiser",
+          "blood": "Demande de sang",
+          "appointment": "Rendez-vous",
+          "signup": "Nouvel utilisateur"
+        }
       },
       "crud": {
         "total": "{{count}} éléments",
@@ -226,7 +300,44 @@
         "doctorsBySpecialty": "Doctors by specialty (top 10)",
         "hospitalsByWilaya": "Hospitals by wilaya (top 10)",
         "bloodByType": "Blood requests by type",
-        "bloodByUrgency": "Blood requests by urgency"
+        "bloodByUrgency": "Blood requests by urgency",
+        "refresh": "Refresh",
+        "filters": {
+          "title": "Filters",
+          "period": "Period",
+          "wilaya": "Wilaya",
+          "specialty": "Specialty",
+          "all": "All",
+          "reset": "Reset",
+          "d7": "7 days", "d30": "30 days", "d90": "90 days", "d365": "1 year"
+        },
+        "kpi": {
+          "appointments": "Appointments",
+          "urgentBlood": "Urgent blood",
+          "signups": "Signups",
+          "prev": "prev. period"
+        },
+        "alerts": {
+          "regDrop": "Signups dropped {{pct}}% ({{curr}} vs {{prev}} previously)",
+          "urgentBlood": "Alert: {{n}} urgent/critical blood requests in period",
+          "pendingHigh": "{{n}} pending submissions awaiting review"
+        },
+        "table": {
+          "title": "Data table",
+          "search": "Search table…",
+          "columns": "Columns",
+          "blood": "Blood requests",
+          "appointments": "Appointments",
+          "shown": "{{n}} of {{total}} rows"
+        },
+        "feed": {
+          "title": "Recent activity",
+          "search": "Search…",
+          "pullHint": "Pull down on mobile to refresh",
+          "blood": "Blood request",
+          "appointment": "Appointment",
+          "signup": "New user"
+        }
       },
       "crud": {
         "total": "{{count}} items",
