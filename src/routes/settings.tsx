@@ -285,7 +285,7 @@ function Page() {
             <Smartphone className="w-3.5 h-3.5 text-muted-foreground/50" />
             <p className="text-xs text-muted-foreground/50">DZHealth v1.0.0</p>
           </div>
-          <p className="text-xs text-muted-foreground/40">كل الخدمات الصحية في مكان واحد</p>
+          <p className="text-xs text-muted-foreground/40">{t("app.tagline")}</p>
           <div className="flex justify-center gap-0.5 mt-3">
             <div className="w-8 h-1.5 bg-green-600 rounded-s-full" />
             <div className="w-8 h-1.5 bg-white" />
@@ -295,7 +295,8 @@ function Page() {
           </div>
           <div className="flex items-center justify-center gap-1 mt-1">
             <Heart className="w-2.5 h-2.5 text-red-500" />
-            <p className="text-[10px] text-muted-foreground/40">Made with care</p>
+            <p className="text-[10px] text-muted-foreground/40">{t("settings.madeWith")}</p>
+
           </div>
         </div>
       </div>
