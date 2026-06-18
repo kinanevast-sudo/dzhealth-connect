@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { Pill, Phone, MapPin, Map as MapIcon, Clock, ArrowRight, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 import { openMap } from "@/lib/map";
@@ -16,6 +17,7 @@ function todayISO() {
 
 function Page() {
   const { id } = Route.useParams();
+  const { t } = useTranslation();
 
   const { data: p, isLoading, isError } = useQuery({
     queryKey: ["pharmacy", id],
@@ -44,7 +46,7 @@ function Page() {
 
   return (
     <AppShell>
-      <ScreenHeader title="تفاصيل الصيدلية" />
+      <ScreenHeader title={t("pharmacyDetail.screenTitle")} />
       <div className="px-4 pt-3 pb-6">
         {isLoading && (
           <div className="flex items-center justify-center py-16 text-muted-foreground">
@@ -53,9 +55,9 @@ function Page() {
         )}
         {!isLoading && (isError || !p) && (
           <div className="rounded-2xl bg-surface card-elevated p-8 text-center text-sm text-muted-foreground">
-            <p>تعذّر العثور على هذه الصيدلية.</p>
+            <p>{t("pharmacyDetail.notFound")}</p>
             <Link to="/on-call-pharmacies" className="mt-3 inline-flex items-center gap-1 text-primary text-xs font-bold">
-              <ArrowRight className="w-3.5 h-3.5" /> العودة للقائمة
+              <ArrowRight className="w-3.5 h-3.5 rtl:rotate-180" /> {t("pharmacyDetail.backToList")}
             </Link>
           </div>
         )}
@@ -83,7 +85,7 @@ function Page() {
                   <div className="flex flex-col gap-1.5 items-end shrink-0">
                     {onCallToday && (
                       <span className="text-[10px] font-black px-2.5 py-1 rounded-full bg-green-600 text-white">
-                        مناوبة اليوم
+                        {t("pharmacyDetail.onCallBadge")}
                       </span>
                     )}
                     {p.is_24_7 && (
@@ -98,11 +100,11 @@ function Page() {
 
             {/* Info */}
             <div className="rounded-2xl bg-card border border-border p-4 space-y-3">
-              <h2 className="text-sm font-extrabold text-foreground">المعلومات</h2>
-              <InfoRow icon={<MapPin className="w-4 h-4 text-primary" />} label="العنوان" value={p.address || ((p as any).baladiyas?.name_ar ? `${(p as any).baladiyas.name_ar}، ${(p as any).wilayas?.name_ar ?? ""}` : (p as any).wilayas?.name_ar) || "غير محدد"} />
-              <InfoRow icon={<Phone className="w-4 h-4 text-primary" />} label="الهاتف" value={p.phone || "غير متوفر"} />
+              <h2 className="text-sm font-extrabold text-foreground">{t("pharmacyDetail.infoTitle")}</h2>
+              <InfoRow icon={<MapPin className="w-4 h-4 text-primary" />} label={t("pharmacyDetail.addressLabel")} value={p.address || ((p as any).baladiyas?.name_ar ? `${(p as any).baladiyas.name_ar}، ${(p as any).wilayas?.name_ar ?? ""}` : (p as any).wilayas?.name_ar) || t("pharmacyDetail.addressFallback")} />
+              <InfoRow icon={<Phone className="w-4 h-4 text-primary" />} label={t("pharmacyDetail.phoneLabel")} value={p.phone || t("pharmacyDetail.phoneFallback")} />
               {p.open_until && (
-                <InfoRow icon={<Clock className="w-4 h-4 text-primary" />} label="مفتوحة حتى" value={p.open_until} />
+                <InfoRow icon={<Clock className="w-4 h-4 text-primary" />} label={t("pharmacyDetail.openUntilLabel")} value={p.open_until} />
               )}
             </div>
 
@@ -113,19 +115,19 @@ function Page() {
                 onClick={(e) => { if (!p.phone) e.preventDefault(); }}
                 className={`flex items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-extrabold text-white ${p.phone ? "bg-green-600 active:scale-95" : "bg-muted text-muted-foreground"}`}
               >
-                <Phone className="w-4 h-4" /> اتصال
+                <Phone className="w-4 h-4" /> {t("pharmacyDetail.callButton")}
               </a>
               <button
                 onClick={() => openMap(p.lat as any, p.lng as any, p.name)}
                 disabled={!p.lat || !p.lng}
                 className={`flex items-center justify-center gap-2 rounded-2xl py-3.5 text-sm font-extrabold text-white ${p.lat && p.lng ? "bg-cyan-700 active:scale-95" : "bg-muted text-muted-foreground"}`}
               >
-                <MapIcon className="w-4 h-4" /> موقع على الخريطة
+                <MapIcon className="w-4 h-4" /> {t("pharmacyDetail.mapButton")}
               </button>
             </div>
 
             <Link to="/on-call-pharmacies" className="block text-center text-xs text-primary font-bold py-2">
-              عرض كل الصيدليات المناوبة اليوم
+              {t("pharmacyDetail.viewAllOnCall")}
             </Link>
           </div>
         )}
