@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Search, Phone, Star, MapPin, Map as MapIcon, BadgeCheck, Stethoscope } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
 import { SearchInput } from "@/components/SearchInput";
@@ -10,6 +11,7 @@ import { openMap } from "@/lib/map";
 export const Route = createFileRoute("/doctors/")({ component: Doctors });
 
 function Doctors() {
+  const { t } = useTranslation();
   const [q, setQ] = useState("");
   const { data, isLoading, isError, refetch } = useQuery({
     queryKey: ["doctors-all"],
@@ -30,26 +32,26 @@ function Doctors() {
 
   return (
     <AppShell>
-      <ScreenHeader title="الأطباء" />
+      <ScreenHeader title={t("doctors-index.title")} />
       <div className="px-4 pt-3 pb-6">
-        <SearchInput value={q} onChange={setQ} placeholder="ابحث عن طبيب، تخصص، و..." />
+        <SearchInput value={q} onChange={setQ} placeholder={t("doctors-index.searchPlaceholder")} />
 
         <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-          <span>{filtered.length} طبيب</span>
-          <span>أطباء مميزون</span>
+          <span>{t("doctors-index.doctorCount", { count: filtered.length })}</span>
+          <span>{t("doctors-index.featuredDoctors")}</span>
         </div>
 
         <div className="mt-3 space-y-3">
           {isLoading && Array.from({ length: 4 }).map((_, i) => <DoctorSkeleton key={i} />)}
           {!isLoading && isError && (
             <div className="rounded-2xl bg-surface card-elevated p-8 text-center text-sm text-muted-foreground">
-              <p>تعذّر تحميل الأطباء. تحقق من الاتصال بالإنترنت.</p>
-              <button onClick={() => refetch()} className="mt-3 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground">إعادة المحاولة</button>
+              <p>{t("doctors-index.loadError")}</p>
+              <button onClick={() => refetch()} className="mt-3 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground">{t("doctors-index.retry")}</button>
             </div>
           )}
           {!isLoading && !isError && filtered.map((d: any) => <DoctorCard key={d.id} d={d} />)}
           {!isLoading && !isError && filtered.length === 0 && (
-            <div className="rounded-2xl bg-surface card-elevated p-8 text-center text-sm text-muted-foreground">لا توجد نتائج</div>
+            <div className="rounded-2xl bg-surface card-elevated p-8 text-center text-sm text-muted-foreground">{t("doctors-index.noResults")}</div>
           )}
         </div>
       </div>
@@ -70,6 +72,7 @@ function DoctorAvatar({ src, alt }: { src?: string | null; alt: string }) {
 }
 
 function DoctorCard({ d }: { d: any }) {
+  const { t } = useTranslation();
   return (
     <Link to="/doctors/$id" params={{ id: d.id }} className="block rounded-2xl p-4 active:scale-[0.98] transition" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
       <div className="flex items-start gap-3">
@@ -89,7 +92,7 @@ function DoctorCard({ d }: { d: any }) {
             <MapPin className="h-3 w-3" />
           </div>
           <div className="mt-2 flex items-center justify-between">
-            <span className="text-xs font-bold" style={{ color: "#0891b2" }}>{d.fee} دج</span>
+            <span className="text-xs font-bold" style={{ color: "#0891b2" }}>{t("doctors-index.fee", { fee: d.fee })}</span>
             <div className="flex items-center gap-1 text-xs">
               <span className="text-muted-foreground">({d.reviews_count ?? 0})</span>
               <span className="font-bold">{d.rating}</span>
@@ -100,10 +103,10 @@ function DoctorCard({ d }: { d: any }) {
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2.5 border-t pt-3" style={{ borderColor: "var(--border)" }}>
         <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); openMap(d.lat, d.lng, d.full_name); }} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0e7490" }}>
-          <MapIcon className="h-4 w-4" /> عرض على الخريطة
+          <MapIcon className="h-4 w-4" /> {t("doctors-index.viewOnMap")}
         </button>
         <a href={`tel:${d.phone}`} onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold" style={{ background: "#e0f2fe", color: "#0891b2" }}>
-          <Phone className="h-4 w-4" /> اتصال
+          <Phone className="h-4 w-4" /> {t("doctors-index.call")}
         </a>
       </div>
     </Link>

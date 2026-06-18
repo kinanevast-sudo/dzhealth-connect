@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { Building2, Phone, MapPin, Search, Map as MapIcon } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 import { supabase } from "@/integrations/supabase/client";
 import { AppShell, ScreenHeader } from "@/components/AppShell";
@@ -14,6 +15,7 @@ export const Route = createFileRoute("/hospitals")({ component: Page });
 const PAGE = 10;
 
 function Page() {
+  const { t } = useTranslation();
   const [origin, setOrigin] = useState<{ lat: number; lng: number } | null>(null);
   const [q, setQ] = useState("");
   const [showAll, setShowAll] = useState(false);
@@ -46,31 +48,36 @@ function Page() {
   const visible = showAll ? sorted : sorted.slice(0, PAGE);
   const hasMore = sorted.length > PAGE;
 
+  function fmtKm(km?: number) {
+    if (km == null || !isFinite(km)) return null;
+    return km < 1 ? `${Math.round(km * 1000)} ${t("hospitals.meterUnit")}` : `${km.toFixed(1)} ${t("hospitals.kmUnit")}`;
+  }
+
   return (
     <AppShell>
-      <ScreenHeader title="المستشفيات" />
+      <ScreenHeader title={t("hospitals.title")} />
       <div className="px-4 pt-3">
-        <SearchInput value={q} onChange={setQ} placeholder="ابحث عن مستشفى..." />
+        <SearchInput value={q} onChange={setQ} placeholder={t("hospitals.searchPlaceholder")} />
 
         <div className="mt-3 flex items-center justify-between text-xs text-muted-foreground">
-          <span>{sorted.length} مستشفى</span>
-          <span>مستشفيات قريبة</span>
+          <span>{t("hospitals.hospitalCount", { count: sorted.length })}</span>
+          <span>{t("hospitals.nearbyHospitals")}</span>
         </div>
 
         <div className="mt-3 space-y-3">
           {isLoading && Array.from({ length: 5 }).map((_, i) => <HospitalSkeleton key={i} />)}
           {!isLoading && isError && (
             <div className="rounded-2xl bg-surface card-elevated p-8 text-center text-sm text-muted-foreground">
-              <p>تعذّر تحميل المستشفيات. تحقق من الاتصال بالإنترنت.</p>
+              <p>{t("hospitals.loadError")}</p>
               <button onClick={() => refetch()} className="mt-3 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-primary-foreground">
-                إعادة المحاولة
+                {t("hospitals.retry")}
               </button>
             </div>
           )}
-          {!isLoading && !isError && visible.map((h: any) => <HospitalCard key={h.id} h={h} />)}
+          {!isLoading && !isError && visible.map((h: any) => <HospitalCard key={h.id} h={h} fmtKm={fmtKm} />)}
           {!isLoading && !isError && visible.length === 0 && (
             <div className="rounded-2xl bg-surface card-elevated p-8 text-center text-sm text-muted-foreground">
-              لا توجد نتائج
+              {t("hospitals.noResults")}
             </div>
           )}
         </div>
@@ -80,18 +87,13 @@ function Page() {
             onClick={() => setShowAll((s) => !s)}
             className="mt-4 w-full rounded-2xl gradient-primary py-3 text-sm font-bold text-primary-foreground neon-glow"
           >
-            {showAll ? "عرض أقل" : `عرض الكل (${sorted.length})`}
+            {showAll ? t("hospitals.showLess") : t("hospitals.showAll", { count: sorted.length })}
           </button>
         )}
         <div className="h-6" />
       </div>
     </AppShell>
   );
-}
-
-function fmtKm(km?: number) {
-  if (km == null || !isFinite(km)) return null;
-  return km < 1 ? `${Math.round(km * 1000)} م` : `${km.toFixed(1)} كم`;
 }
 
 function HospitalSkeleton() {
@@ -119,7 +121,8 @@ function HospitalImg({ src, alt }: { src?: string | null; alt: string }) {
   return <img src={src} alt={alt} loading="lazy" onError={() => setErr(true)} className="h-24 w-28 flex-shrink-0 rounded-xl object-cover" />;
 }
 
-function HospitalCard({ h }: { h: any }) {
+function HospitalCard({ h, fmtKm }: { h: any; fmtKm: (km?: number) => string | null }) {
+  const { t } = useTranslation();
   const km = fmtKm((h as any)._distanceKm);
   return (
     <Link to="/hospitals" className="block rounded-2xl p-4 active:scale-[0.98] transition" style={{ background: "var(--card)", border: "1px solid var(--border)" }}>
@@ -127,14 +130,14 @@ function HospitalCard({ h }: { h: any }) {
         <HospitalImg src={h.photo_url} alt={h.name} />
         <div className="min-w-0 flex-1 text-right">
           <h3 className="text-base font-extrabold leading-tight">{h.name}</h3>
-          <p className="mt-0.5 text-sm font-semibold" style={{ color: "#0891b2" }}>{h.kind ?? "مستشفى عام"}</p>
+          <p className="mt-0.5 text-sm font-semibold" style={{ color: "#0891b2" }}>{h.kind ?? t("hospitals.generalHospital")}</p>
           <div className="mt-1 flex items-center justify-end gap-1 text-xs text-muted-foreground">
             <span>{h.wilayas?.name_ar}{h.baladiyas?.name_ar ? ` - ${h.baladiyas?.name_ar}` : ""}</span>
             <MapPin className="h-3 w-3" />
           </div>
           <div className="mt-2 flex flex-wrap justify-end gap-1.5">
-            {["طوارئ","جراحة","أطفال"].map((t) => (
-              <span key={t} className="rounded-full px-2.5 py-0.5 text-[10px]" style={{ background: "#cffafe", color: "#0891b2" }}>{t}</span>
+            {[t("hospitals.emergency"), t("hospitals.surgery"), t("hospitals.pediatrics")].map((tag) => (
+              <span key={tag} className="rounded-full px-2.5 py-0.5 text-[10px]" style={{ background: "#cffafe", color: "#0891b2" }}>{tag}</span>
             ))}
           </div>
           {km && (
@@ -146,13 +149,12 @@ function HospitalCard({ h }: { h: any }) {
       </div>
       <div className="mt-3 grid grid-cols-2 gap-2.5 border-t pt-3" style={{ borderColor: "var(--border)" }}>
         <button onClick={(e) => { e.preventDefault(); e.stopPropagation(); openMap(h.lat, h.lng, h.name); }} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold text-white" style={{ background: "#0e7490" }}>
-          <MapIcon className="h-4 w-4" /> عرض على الخريطة
+          <MapIcon className="h-4 w-4" /> {t("hospitals.viewOnMap")}
         </button>
         <a href={`tel:${h.phone}`} onClick={(e) => e.stopPropagation()} className="flex items-center justify-center gap-2 rounded-full py-2.5 text-xs font-bold" style={{ background: "#e0f2fe", color: "#0891b2" }}>
-          <Phone className="h-4 w-4" /> اتصال
+          <Phone className="h-4 w-4" /> {t("hospitals.call")}
         </a>
       </div>
     </Link>
   );
 }
-
