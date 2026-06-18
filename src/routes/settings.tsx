@@ -70,9 +70,7 @@ function Page() {
 
   const setLanguage = (k: Lang) => {
     setLang(k);
-    localStorage.setItem(LANG_KEY, k);
-    document.documentElement.dir = k === "ar" ? "rtl" : "ltr";
-    document.documentElement.lang = k;
+    import("@/lib/i18n").then((m) => m.setAppLanguage(k));
   };
 
   const toggleNotif = async () => {
