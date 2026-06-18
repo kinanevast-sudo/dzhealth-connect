@@ -1,0 +1,38 @@
+{
+  "ar": {
+    "title": "إضافة مركز حماية مدنية",
+    "infoNote": "أضف معلومات مركز الحماية المدنية ليظهر مباشرة في البحث والخريطة.",
+    "fieldName": "اسم المركز *",
+    "fieldPhone": "رقم الهاتف *",
+    "phonePlaceholder": "14 أو 1021",
+    "location": "الموقع",
+    "addressPlaceholder": "العنوان التفصيلي",
+    "errorRequired": "املأ الحقول الأساسية",
+    "errorSave": "تعذّر الحفظ: ",
+    "successAdd": "تمت إضافة المركز بنجاح"
+  },
+  "fr": {
+    "title": "Ajouter un centre de protection civile",
+    "infoNote": "Ajoutez les informations du centre de protection civile pour qu'il apparaisse directement dans la recherche et sur la carte.",
+    "fieldName": "Nom du centre *",
+    "fieldPhone": "Numéro de téléphone *",
+    "phonePlaceholder": "14 ou 1021",
+    "location": "Localisation",
+    "addressPlaceholder": "Adresse détaillée",
+    "errorRequired": "Veuillez remplir les champs obligatoires",
+    "errorSave": "Échec de l'enregistrement : ",
+    "successAdd": "Centre ajouté avec succès"
+  },
+  "en": {
+    "title": "Add a Civil Protection Centre",
+    "infoNote": "Add the civil protection centre details to make it appear directly in search and on the map.",
+    "fieldName": "Centre Name *",
+    "fieldPhone": "Phone Number *",
+    "phonePlaceholder": "14 or 1021",
+    "location": "Location",
+    "addressPlaceholder": "Detailed address",
+    "errorRequired": "Please fill in the required fields",
+    "errorSave": "Failed to save: ",
+    "successAdd": "Centre added successfully"
+  }
+}

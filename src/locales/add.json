@@ -1,0 +1,44 @@
+{
+  "ar": {
+    "title": "إضافة معلومات",
+    "soon": "قريباً",
+    "addDoctor": "إضافة طبيب",
+    "addHospital": "إضافة مستشفى",
+    "addPharmacy": "إضافة صيدلية",
+    "addOnCallPharmacy": "تسجيل صيدلية مناوبة",
+    "addDonor": "تسجيل متبرع جديد",
+    "addEquipment": "إضافة معدات طبية",
+    "addCivilProtection": "إضافة مركز حماية مدنية",
+    "addLab": "إضافة مخبر تحاليل",
+    "addCharity": "إضافة جمعية خيرية",
+    "addAmbulance": "إضافة سيارة إسعاف"
+  },
+  "fr": {
+    "title": "Ajouter des informations",
+    "soon": "Bientôt",
+    "addDoctor": "Ajouter un médecin",
+    "addHospital": "Ajouter un hôpital",
+    "addPharmacy": "Ajouter une pharmacie",
+    "addOnCallPharmacy": "Enregistrer une pharmacie de garde",
+    "addDonor": "Inscrire un nouveau donneur",
+    "addEquipment": "Ajouter du matériel médical",
+    "addCivilProtection": "Ajouter un centre de protection civile",
+    "addLab": "Ajouter un laboratoire d'analyses",
+    "addCharity": "Ajouter une association caritative",
+    "addAmbulance": "Ajouter une ambulance"
+  },
+  "en": {
+    "title": "Add Information",
+    "soon": "Soon",
+    "addDoctor": "Add a Doctor",
+    "addHospital": "Add a Hospital",
+    "addPharmacy": "Add a Pharmacy",
+    "addOnCallPharmacy": "Register an On-Call Pharmacy",
+    "addDonor": "Register a New Donor",
+    "addEquipment": "Add Medical Equipment",
+    "addCivilProtection": "Add a Civil Protection Centre",
+    "addLab": "Add an Analysis Laboratory",
+    "addCharity": "Add a Charitable Association",
+    "addAmbulance": "Add an Ambulance"
+  }
+}

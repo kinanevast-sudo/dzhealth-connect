@@ -1,0 +1,41 @@
+{
+  "ar": {
+    "title": "إضافة سيارة إسعاف",
+    "infoNote": "أضف معلومات سيارة الإسعاف لتظهر مباشرة في البحث والخريطة.",
+    "fieldName": "اسم الخدمة / المالك *",
+    "fieldPhone": "رقم الهاتف *",
+    "available24": "متوفر 24 ساعة",
+    "available24Desc": "خدمة على مدار الساعة",
+    "coverageArea": "منطقة التغطية",
+    "addressPlaceholder": "العنوان / نقطة الانطلاق",
+    "errorRequired": "املأ الحقول الأساسية",
+    "errorSave": "تعذّر الحفظ: ",
+    "successAdd": "تمت إضافة سيارة الإسعاف بنجاح"
+  },
+  "fr": {
+    "title": "Ajouter une ambulance",
+    "infoNote": "Ajoutez les informations de l'ambulance pour qu'elle apparaisse directement dans la recherche et sur la carte.",
+    "fieldName": "Nom du service / propriétaire *",
+    "fieldPhone": "Numéro de téléphone *",
+    "available24": "Disponible 24h/24",
+    "available24Desc": "Service disponible en permanence",
+    "coverageArea": "Zone de couverture",
+    "addressPlaceholder": "Adresse / point de départ",
+    "errorRequired": "Veuillez remplir les champs obligatoires",
+    "errorSave": "Échec de l'enregistrement : ",
+    "successAdd": "Ambulance ajoutée avec succès"
+  },
+  "en": {
+    "title": "Add an Ambulance",
+    "infoNote": "Add the ambulance details to make it appear directly in search and on the map.",
+    "fieldName": "Service Name / Owner *",
+    "fieldPhone": "Phone Number *",
+    "available24": "Available 24 Hours",
+    "available24Desc": "Round-the-clock service",
+    "coverageArea": "Coverage Area",
+    "addressPlaceholder": "Address / Starting point",
+    "errorRequired": "Please fill in the required fields",
+    "errorSave": "Failed to save: ",
+    "successAdd": "Ambulance added successfully"
+  }
+}

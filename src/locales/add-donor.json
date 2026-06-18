@@ -1,0 +1,35 @@
+{
+  "ar": {
+    "title": "تسجيل متبرع دم",
+    "fieldFullName": "الاسم الكامل",
+    "fieldBloodType": "فصيلة الدم",
+    "fieldPhone": "الهاتف",
+    "fieldAddress": "العنوان",
+    "checkAvailable": "متاح",
+    "checkEmergency": "حالة طارئة",
+    "errorRequired": "املأ الحقول الأساسية",
+    "successRegister": "تم التسجيل، شكراً لك ❤️"
+  },
+  "fr": {
+    "title": "Inscrire un donneur de sang",
+    "fieldFullName": "Nom complet",
+    "fieldBloodType": "Groupe sanguin",
+    "fieldPhone": "Téléphone",
+    "fieldAddress": "Adresse",
+    "checkAvailable": "Disponible",
+    "checkEmergency": "Urgence",
+    "errorRequired": "Veuillez remplir les champs obligatoires",
+    "successRegister": "Inscription réussie, merci ! ❤️"
+  },
+  "en": {
+    "title": "Register a Blood Donor",
+    "fieldFullName": "Full Name",
+    "fieldBloodType": "Blood Type",
+    "fieldPhone": "Phone",
+    "fieldAddress": "Address",
+    "checkAvailable": "Available",
+    "checkEmergency": "Emergency",
+    "errorRequired": "Please fill in the required fields",
+    "successRegister": "Registration successful, thank you! ❤️"
+  }
+}

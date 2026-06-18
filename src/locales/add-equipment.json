@@ -1,0 +1,29 @@
+{
+  "ar": {
+    "title": "إضافة معدات طبية",
+    "fieldName": "اسم المعدات",
+    "fieldKind": "النوع",
+    "fieldCondition": "الحالة",
+    "fieldPhone": "الهاتف",
+    "errorRequired": "املأ الحقول الأساسية",
+    "successAdd": "تمت إضافة المعدات"
+  },
+  "fr": {
+    "title": "Ajouter du matériel médical",
+    "fieldName": "Nom du matériel",
+    "fieldKind": "Type",
+    "fieldCondition": "État",
+    "fieldPhone": "Téléphone",
+    "errorRequired": "Veuillez remplir les champs obligatoires",
+    "successAdd": "Matériel ajouté avec succès"
+  },
+  "en": {
+    "title": "Add Medical Equipment",
+    "fieldName": "Equipment Name",
+    "fieldKind": "Type",
+    "fieldCondition": "Condition",
+    "fieldPhone": "Phone",
+    "errorRequired": "Please fill in the required fields",
+    "successAdd": "Equipment added successfully"
+  }
+}
