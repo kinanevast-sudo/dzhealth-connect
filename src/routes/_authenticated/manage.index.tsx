@@ -200,57 +200,57 @@ function Dashboard() {
     return { high, mid, low, none };
   }, [wilayaRows]);
 
-  const kpis = [
-    { label: t("manage.kpi.users"), value: c?.users, icon: Users, tone: "sky", delta: userDelta, sub: t("manage.dashboard.vsPrev7") },
-    { label: t("manage.kpi.doctors"), value: c?.doctors, icon: Stethoscope, tone: "violet", delta: doctorDelta, sub: t("manage.dashboard.vsPrev7") },
-    { label: t("manage.kpi.pharmacies"), value: c?.pharmacies, icon: Pill, tone: "emerald", delta: null, sub: t("manage.dashboard.vsPrev7") },
-    { label: t("manage.kpi.hospitals"), value: c?.hospitals, icon: Building2, tone: "rose", delta: null, sub: t("manage.dashboard.vsPrev7") },
-    { label: t("manage.kpi.pending"), value: c?.pending, icon: ClipboardList, tone: "amber", delta: null, sub: `+${c?.pending ?? 0}`, link: "/manage/submissions" as const },
-    { label: t("manage.kpi.bloodReqs"), value: c?.bloodRequests, icon: Droplet, tone: "orange", delta: null, sub: `+${c?.bloodRequests ?? 0}` },
+  const kpis: Array<{
+    label: string; value: number | undefined; icon: typeof Users; tone: keyof typeof TONES;
+    delta: number | null; sub?: string; subTone?: "emerald" | "rose"; link?: "/manage/submissions";
+  }> = [
+    { label: "إجمالي المستخدمين", value: c?.users, icon: Users, tone: "sky", delta: userDelta, sub: "عن الشهر الماضي" },
+    { label: "المتبرعون بالدم", value: c?.donors, icon: Droplet, tone: "emerald", delta: 8, sub: "عن الشهر الماضي" },
+    { label: "الأطباء المسجلين", value: c?.doctors, icon: Stethoscope, tone: "emerald", delta: doctorDelta, sub: "عن الشهر الماضي" },
+    { label: "المستشفيات", value: c?.hospitals, icon: Building2, tone: "sky", delta: 5, sub: "عن الشهر الماضي" },
+    { label: "الصيدليات", value: c?.pharmacies, icon: Pill, tone: "emerald", delta: 6, sub: "عن الشهر الماضي" },
+    { label: "طلبات المراجعة", value: c?.pending, icon: ClipboardList, tone: "rose", delta: null, sub: "منذ أمس", subTone: "rose", link: "/manage/submissions" },
+    { label: "البلاغات الجديدة", value: 8, icon: AlertTriangle, tone: "rose", delta: null, sub: "منذ أمس", subTone: "emerald" },
   ];
 
   return (
-    <div dir={lng === "ar" ? "rtl" : "ltr"} className="p-6 space-y-5 bg-[#0b1220] min-h-full text-slate-200">
+    <div dir={lng === "ar" ? "rtl" : "ltr"} className="min-w-[1400px] p-6 space-y-5 bg-[#0b1220] min-h-full text-slate-200">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-extrabold tracking-tight text-white">{t("manage.dashboard.title")}</h1>
+        <h1 className="text-2xl font-extrabold tracking-tight text-white">لوحة التحكم الرئيسية</h1>
       </div>
 
-      {/* KPI cards — 7 columns on wide desktop */}
+      {/* KPI cards — 7 fixed columns desktop */}
       <div className="grid grid-cols-7 gap-3">
         {kpis.map((k) => {
-          const toneMap: Record<string, { bg: string; text: string; blob: string }> = {
-            sky: { bg: "bg-sky-500/15", text: "text-sky-400", blob: "bg-sky-500" },
-            violet: { bg: "bg-emerald-500/15", text: "text-emerald-400", blob: "bg-emerald-500" },
-            emerald: { bg: "bg-emerald-500/15", text: "text-emerald-400", blob: "bg-emerald-500" },
-            rose: { bg: "bg-sky-500/15", text: "text-sky-400", blob: "bg-sky-500" },
-            amber: { bg: "bg-emerald-500/15", text: "text-emerald-400", blob: "bg-emerald-500" },
-            orange: { bg: "bg-rose-500/15", text: "text-rose-400", blob: "bg-rose-500" },
-          };
-          const tone = toneMap[k.tone];
+          const tone = TONES[k.tone];
+          const deltaVal = k.delta;
+          const showDelta = deltaVal !== null;
+          const subToneCls = k.subTone === "rose" ? "text-rose-400" : "text-emerald-400";
           const inner = (
             <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-[#111a2e] p-4 hover:border-white/10 transition-all h-full">
               <div className="flex items-start justify-between gap-2">
                 <div className={`h-11 w-11 rounded-xl flex items-center justify-center shrink-0 ${tone.bg} ${tone.text}`}>
                   <k.icon className="h-5 w-5" />
                 </div>
-                <div className="text-end">
-                  <div className="text-[11px] text-slate-400 leading-tight">{k.label}</div>
+                <div className="text-end min-w-0">
+                  <div className="text-[11px] text-slate-400 leading-tight truncate">{k.label}</div>
                   <div className="mt-1 text-xl font-extrabold tabular-nums text-white">
                     {loading ? <span className="text-slate-600">—</span> : (k.value ?? 0).toLocaleString()}
                   </div>
                 </div>
               </div>
               <div className="mt-3 flex items-center gap-1.5 text-[11px]">
-                {k.delta !== null && c ? (
-                  <span className={`inline-flex items-center gap-0.5 font-semibold ${k.delta >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
-                    {k.delta >= 0 ? <TrendingUp className="h-3 w-3" /> : <TrendingDown className="h-3 w-3" />}
-                    {k.delta >= 0 ? "+" : ""}{k.delta}%
+                {showDelta ? (
+                  <span className={`font-semibold ${deltaVal! >= 0 ? "text-emerald-400" : "text-rose-400"}`}>
+                    {deltaVal! >= 0 ? "+" : ""}{deltaVal}%
                   </span>
                 ) : (
-                  <span className="font-semibold text-emerald-400">{k.sub}</span>
+                  <span className={`font-semibold ${subToneCls}`}>
+                    {k.subTone === "rose" ? "−2" : "+3"}
+                  </span>
                 )}
-                <span className="text-slate-500 truncate">عن الشهر الماضي</span>
+                <span className="text-slate-500 truncate">{k.sub}</span>
               </div>
             </div>
           );
@@ -258,45 +258,32 @@ function Dashboard() {
             ? <Link key={k.label} to={k.link} className="block">{inner}</Link>
             : <div key={k.label}>{inner}</div>;
         })}
-        {/* extra placeholder card to fill 7th slot if needed */}
-        <div className="relative overflow-hidden rounded-2xl border border-white/5 bg-[#111a2e] p-4">
-          <div className="flex items-start justify-between gap-2">
-            <div className="h-11 w-11 rounded-xl flex items-center justify-center bg-rose-500/15 text-rose-400 shrink-0">
-              <AlertTriangle className="h-5 w-5" />
-            </div>
-            <div className="text-end">
-              <div className="text-[11px] text-slate-400 leading-tight">البلاغات الجديدة</div>
-              <div className="mt-1 text-xl font-extrabold tabular-nums text-white">8</div>
-            </div>
-          </div>
-          <div className="mt-3 text-[11px]"><span className="font-semibold text-emerald-400">+3</span> <span className="text-slate-500">منذ أمس</span></div>
-        </div>
       </div>
 
-
-      {/* Charts row: chart + donut + live feed (3 equal cols) */}
+      {/* Charts row: 3 equal columns */}
       <div className="grid grid-cols-3 gap-4">
         {/* Activity chart */}
         <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
           <div className="flex items-center justify-between mb-3">
-            <div>
-              <h2 className="text-sm font-bold">{t("manage.dashboard.activity14")}</h2>
-              <p className="text-xs text-slate-400">{t("manage.dashboard.activitySub")}</p>
-            </div>
-            <Link to="/manage/analytics" className="text-xs text-primary inline-flex items-center gap-1 hover:underline">
-              {t("manage.dashboard.viewMore")} <ArrowUpRight className="h-3 w-3" />
-            </Link>
+            <h2 className="text-sm font-bold text-white">إحصائيات المستخدمين</h2>
+            <button className="text-xs text-slate-300 bg-[#0b1220] border border-white/5 rounded-lg px-3 py-1.5 flex items-center gap-1">
+              7 أيام <span className="text-slate-500">▾</span>
+            </button>
           </div>
-          <div className="h-[260px]">
+          <div className="flex items-center gap-4 text-[11px] text-slate-400 mb-2">
+            <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-sky-400" /> مستخدمون جدد</span>
+            <span className="flex items-center gap-1.5"><span className="h-2 w-2 rounded-full bg-emerald-400" /> مستخدمون نشطون</span>
+          </div>
+          <div className="h-[240px]">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={series} margin={{ top: 5, right: 8, left: -10, bottom: 0 }}>
                 <defs>
                   <linearGradient id="gUsers" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(199 89% 55%)" stopOpacity={0.5} />
+                    <stop offset="0%" stopColor="hsl(199 89% 55%)" stopOpacity={0.4} />
                     <stop offset="100%" stopColor="hsl(199 89% 55%)" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="gDocs" x1="0" x2="0" y1="0" y2="1">
-                    <stop offset="0%" stopColor="hsl(142 71% 50%)" stopOpacity={0.5} />
+                    <stop offset="0%" stopColor="hsl(142 71% 50%)" stopOpacity={0.4} />
                     <stop offset="100%" stopColor="hsl(142 71% 50%)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
@@ -304,10 +291,8 @@ function Dashboard() {
                 <XAxis dataKey="date" stroke="hsl(0 0% 100% / 0.4)" fontSize={11} />
                 <YAxis stroke="hsl(0 0% 100% / 0.4)" fontSize={11} />
                 <Tooltip contentStyle={{ background: "hsl(222 47% 11%)", border: "1px solid hsl(0 0% 100% / 0.1)", borderRadius: 12, fontSize: 12 }} />
-                <Legend wrapperStyle={{ fontSize: 12 }} />
-                <Area type="monotone" dataKey="users" name={t("manage.kpi.users")} stroke="hsl(199 89% 55%)" fill="url(#gUsers)" strokeWidth={2} />
-                <Area type="monotone" dataKey="doctors" name={t("manage.kpi.doctors")} stroke="hsl(142 71% 50%)" fill="url(#gDocs)" strokeWidth={2} />
-                <Line type="monotone" dataKey="hospitals" name={t("manage.kpi.hospitals")} stroke="hsl(346 87% 60%)" strokeWidth={2} dot={false} />
+                <Area type="monotone" dataKey="users" name="مستخدمون جدد" stroke="hsl(199 89% 55%)" fill="url(#gUsers)" strokeWidth={2} />
+                <Area type="monotone" dataKey="doctors" name="مستخدمون نشطون" stroke="hsl(142 71% 50%)" fill="url(#gDocs)" strokeWidth={2} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -315,102 +300,32 @@ function Dashboard() {
 
         {/* Distribution donut */}
         <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
-          <h2 className="text-sm font-bold mb-1">{t("manage.dashboard.distribution")}</h2>
-          <p className="text-xs text-slate-400 mb-3">{t("manage.dashboard.distributionSub")}</p>
-          <div className="relative h-[200px]">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie data={distribution} dataKey="value" innerRadius={60} outerRadius={85} paddingAngle={3} stroke="none">
-                  {distribution.map((d, i) => <Cell key={i} fill={d.color} />)}
-                </Pie>
-                <Tooltip contentStyle={{ background: "hsl(222 47% 11%)", border: "1px solid hsl(0 0% 100% / 0.1)", borderRadius: 12, fontSize: 12 }} />
-              </PieChart>
-            </ResponsiveContainer>
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-              <div className="text-2xl font-extrabold tabular-nums">{totalContent.toLocaleString()}</div>
-              <div className="text-[10px] text-slate-400">{t("manage.dashboard.total")}</div>
-            </div>
-          </div>
-          <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-            {distribution.map((d) => (
-              <div key={d.name} className="flex items-center gap-2">
-                <span className="h-2.5 w-2.5 rounded-sm" style={{ background: d.color }} />
-                <span className="text-slate-400 truncate">{d.name}</span>
-                <span className="ms-auto font-semibold tabular-nums">{d.value}</span>
+          <h2 className="text-sm font-bold mb-3 text-white">توزيع المحتوى</h2>
+          <div className="flex items-center gap-3">
+            <div className="relative h-[200px] w-[200px] shrink-0">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie data={distribution} dataKey="value" innerRadius={60} outerRadius={85} paddingAngle={3} stroke="none">
+                    {distribution.map((d, i) => <Cell key={i} fill={d.color} />)}
+                  </Pie>
+                  <Tooltip contentStyle={{ background: "hsl(222 47% 11%)", border: "1px solid hsl(0 0% 100% / 0.1)", borderRadius: 12, fontSize: 12 }} />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <div className="text-[10px] text-slate-400">الإجمالي</div>
+                <div className="text-xl font-extrabold tabular-nums text-white">{totalContent.toLocaleString()}</div>
               </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Live activity feed (moved into middle row) */}
-        <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <Activity className="h-4 w-4 text-primary" />
-              <h2 className="text-sm font-bold">{t("manage.dashboard.liveActivity")}</h2>
             </div>
-          </div>
-          <div className="space-y-1.5 max-h-[280px] overflow-auto no-scrollbar pe-1">
-            {feed.length === 0 && <div className="text-xs text-slate-400 py-8 text-center">—</div>}
-            {feed.slice(0, 6).map((a) => (
-              <div key={a.id} className="flex items-start gap-2.5 rounded-lg p-1.5 hover:bg-white/5 transition-colors">
-                <div className={`h-7 w-7 rounded-lg flex items-center justify-center shrink-0 ${
-                  a.kind === "blood" ? "bg-rose-500/10 text-rose-400" :
-                  a.kind === "appointment" ? "bg-sky-500/10 text-sky-400" :
-                  a.kind === "signup" ? "bg-emerald-500/10 text-emerald-400" :
-                  "bg-amber-500/10 text-amber-400"
-                }`}>
-                  {a.kind === "blood" ? <Droplet className="h-3.5 w-3.5" /> :
-                   a.kind === "appointment" ? <Activity className="h-3.5 w-3.5" /> :
-                   a.kind === "signup" ? <Users className="h-3.5 w-3.5" /> :
-                   <ClipboardList className="h-3.5 w-3.5" />}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="text-[11px] font-semibold truncate">{a.title}</div>
-                  <div className="text-[10px] text-slate-400 truncate">{a.subtitle}</div>
-                </div>
-                <div className="text-[10px] text-slate-400 tabular-nums shrink-0">
-                  {timeAgo(a.ts, lng)}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Coverage + Submissions + Activity */}
-      {/* Coverage + Submissions */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        {/* Geographic coverage */}
-        <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-primary" />
-              <h2 className="text-sm font-bold">{t("manage.dashboard.coverage")}</h2>
-            </div>
-            <span className="text-xs text-slate-400">{coverageScore}/100</span>
-          </div>
-          <div className="h-2 rounded-full bg-white/10 overflow-hidden">
-            <div className="h-full bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-500 transition-all" style={{ width: `${coverageScore}%` }} />
-          </div>
-          <div className="grid grid-cols-4 gap-2 mt-4 text-center text-xs">
-            <div className="rounded-lg bg-emerald-500/10 p-2"><div className="font-bold text-emerald-400 tabular-nums">{tierCounts.high}</div><div className="text-slate-400 text-[10px] mt-0.5">{t("manage.dashboard.tier.high")}</div></div>
-            <div className="rounded-lg bg-sky-500/10 p-2"><div className="font-bold text-sky-400 tabular-nums">{tierCounts.mid}</div><div className="text-slate-400 text-[10px] mt-0.5">{t("manage.dashboard.tier.mid")}</div></div>
-            <div className="rounded-lg bg-amber-500/10 p-2"><div className="font-bold text-amber-400 tabular-nums">{tierCounts.low}</div><div className="text-slate-400 text-[10px] mt-0.5">{t("manage.dashboard.tier.low")}</div></div>
-            <div className="rounded-lg bg-rose-500/10 p-2"><div className="font-bold text-rose-400 tabular-nums">{tierCounts.none}</div><div className="text-slate-400 text-[10px] mt-0.5">{t("manage.dashboard.tier.none")}</div></div>
-          </div>
-          <div className="mt-4">
-            <div className="text-xs font-semibold mb-2 text-slate-400">{t("manage.dashboard.topWilayas")}</div>
-            <div className="space-y-1.5">
-              {wilayaRows.slice(0, 5).map((w) => {
-                const max = wilayaRows[0]?.total || 1;
+            <div className="flex-1 space-y-2.5 text-xs">
+              {distribution.map((d) => {
+                const pct = totalContent ? ((d.value / totalContent) * 100).toFixed(1) : "0";
                 return (
-                  <div key={w.id} className="flex items-center gap-2 text-xs">
-                    <span className="w-20 truncate">{w.name}</span>
-                    <div className="flex-1 h-1.5 rounded-full bg-white/10 overflow-hidden">
-                      <div className="h-full bg-primary" style={{ width: `${(w.total / max) * 100}%` }} />
+                  <div key={d.name} className="flex items-center gap-2">
+                    <span className="h-2.5 w-2.5 rounded-sm shrink-0" style={{ background: d.color }} />
+                    <div className="min-w-0 flex-1">
+                      <div className="text-slate-300 truncate">{d.name}</div>
+                      <div className="text-[11px] text-slate-500 tabular-nums">{d.value.toLocaleString()} <span className="text-slate-600">({pct}%)</span></div>
                     </div>
-                    <span className="w-8 text-end tabular-nums font-semibold">{w.total}</span>
                   </div>
                 );
               })}
@@ -418,42 +333,118 @@ function Dashboard() {
           </div>
         </div>
 
-        {/* Submission status */}
+        {/* Live activity feed */}
         <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <FileText className="h-4 w-4 text-primary" />
-              <h2 className="text-sm font-bold">{t("manage.dashboard.contentReview")}</h2>
-            </div>
-            <Link to="/manage/submissions" className="text-xs text-primary inline-flex items-center gap-1 hover:underline">
-              {t("manage.dashboard.viewMore")} <ArrowUpRight className="h-3 w-3" />
-            </Link>
+          <h2 className="text-sm font-bold mb-3 text-white">النشاط المباشر</h2>
+          <div className="space-y-2 max-h-[260px] overflow-auto no-scrollbar pe-1">
+            {feed.length === 0 && <div className="text-xs text-slate-400 py-8 text-center">—</div>}
+            {feed.slice(0, 5).map((a) => (
+              <div key={a.id} className="flex items-start gap-2.5">
+                <div className="min-w-0 flex-1 text-end">
+                  <div className="text-[12px] font-semibold text-white truncate">{a.title}</div>
+                  <div className="text-[10px] text-slate-400 truncate">منذ {timeAgo(a.ts, lng)}</div>
+                </div>
+                <div className={`h-8 w-8 rounded-lg flex items-center justify-center shrink-0 ${
+                  a.kind === "blood" ? "bg-rose-500/15 text-rose-400" :
+                  a.kind === "appointment" ? "bg-sky-500/15 text-sky-400" :
+                  a.kind === "signup" ? "bg-emerald-500/15 text-emerald-400" :
+                  "bg-amber-500/15 text-amber-400"
+                }`}>
+                  {a.kind === "blood" ? <Droplet className="h-4 w-4" /> :
+                   a.kind === "appointment" ? <Activity className="h-4 w-4" /> :
+                   a.kind === "signup" ? <Users className="h-4 w-4" /> :
+                   <ClipboardList className="h-4 w-4" />}
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="space-y-2">
-            <SubmissionRow icon={ClipboardList} tone="amber" label={t("manage.kpi.pending")} value={c?.pending ?? 0} />
-            <SubmissionRow icon={CheckCircle2} tone="emerald" label={t("manage.kpi.approved")} value={c?.approved ?? 0} />
-            <SubmissionRow icon={XCircle} tone="rose" label={t("manage.kpi.rejected")} value={c?.rejected ?? 0} />
-            <SubmissionRow icon={Droplet} tone="rose" label={t("manage.kpi.bloodReqs")} value={c?.bloodRequests ?? 0} />
+        </div>
+      </div>
+
+      {/* Bottom row: 4 columns */}
+      <div className="grid grid-cols-4 gap-4">
+        {/* Geographic coverage */}
+        <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
+          <h2 className="text-sm font-bold mb-3 text-white">التغطية الجغرافية</h2>
+          <div className="h-[180px] grid place-items-center">
+            <MapPin className="h-20 w-20 text-emerald-500/40" />
           </div>
-          {!!c?.pending && c.pending > 5 && (
-            <div className="mt-3 flex items-start gap-2 rounded-xl bg-amber-500/10 border border-amber-500/30 p-2.5 text-xs">
-              <AlertTriangle className="h-4 w-4 text-amber-400 mt-0.5 shrink-0" />
-              <span>{t("manage.dashboard.pendingAlert", { n: c.pending })}</span>
+          <div className="mt-3 space-y-1.5 text-xs">
+            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-400" /><span className="text-slate-300">عالية</span></div>
+            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-600" /><span className="text-slate-300">متوسطة</span></div>
+            <div className="flex items-center gap-2"><span className="h-2 w-2 rounded-full bg-emerald-800" /><span className="text-slate-300">منخفضة</span></div>
+          </div>
+        </div>
+
+        {/* Health coverage index */}
+        <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
+          <h2 className="text-sm font-bold mb-3 text-white text-center">مؤشر التغطية الصحية</h2>
+          <div className="text-center">
+            <div className="text-5xl font-extrabold text-emerald-400 tabular-nums inline-flex items-baseline gap-1">
+              {coverageScore}<span className="text-2xl text-slate-500">/100</span>
             </div>
-          )}
+            <div className="text-xs text-emerald-400 mt-1 font-semibold">جيد</div>
+          </div>
+          <div className="mt-3 h-2 rounded-full bg-white/10 overflow-hidden">
+            <div className="h-full bg-gradient-to-r from-emerald-500 via-amber-400 to-rose-500" style={{ width: `${coverageScore}%` }} />
+          </div>
+          <div className="mt-4 space-y-2 text-xs">
+            <div className="flex items-center gap-2"><span className="flex-1 text-slate-300">ولايات عالية</span><span className="font-bold tabular-nums">{tierCounts.high}</span><span className="h-2 w-2 rounded-full bg-emerald-400" /></div>
+            <div className="flex items-center gap-2"><span className="flex-1 text-slate-300">ولايات متوسطة</span><span className="font-bold tabular-nums">{tierCounts.mid}</span><span className="h-2 w-2 rounded-full bg-emerald-500" /></div>
+            <div className="flex items-center gap-2"><span className="flex-1 text-slate-300">ولايات منخفضة</span><span className="font-bold tabular-nums">{tierCounts.low + tierCounts.none}</span><span className="h-2 w-2 rounded-full bg-rose-400" /></div>
+          </div>
+        </div>
+
+        {/* Content under review */}
+        <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
+          <h2 className="text-sm font-bold mb-3 text-white">المحتوى قيد المراجعة</h2>
+          <div className="space-y-2.5">
+            <ReviewRow icon={Stethoscope} label="أطباء" value={15} />
+            <ReviewRow icon={Pill} label="صيدليات" value={6} />
+            <ReviewRow icon={Building2} label="مستشفيات" value={2} />
+            <ReviewRow icon={MapPin} label="مراكز أخرى" value={1} />
+          </div>
+          <Link to="/manage/submissions" className="block text-center text-xs text-sky-400 hover:underline mt-4">عرض الكل</Link>
+        </div>
+
+        {/* Latest reports */}
+        <div className="rounded-2xl border border-white/5 bg-[#111a2e] p-4">
+          <h2 className="text-sm font-bold mb-3 text-white">أحدث البلاغات</h2>
+          <div className="space-y-2.5">
+            <ReportRow label="صيدلية مزيفة" severity="عالية" tone="rose" />
+            <ReportRow label="معلومات خاطئة" severity="متوسطة" tone="amber" />
+            <ReportRow label="طبيب غير متاح" severity="عالية" tone="rose" />
+          </div>
+          <button className="block text-center text-xs text-sky-400 hover:underline mt-4 w-full">عرض الكل</button>
         </div>
       </div>
     </div>
   );
 }
 
-function SubmissionRow({ icon: Icon, tone, label, value }: { icon: typeof FileText; tone: "amber" | "emerald" | "rose"; label: string; value: number }) {
-  const toneCls = tone === "amber" ? "bg-amber-500/10 text-amber-400" : tone === "emerald" ? "bg-emerald-500/10 text-emerald-400" : "bg-rose-500/10 text-rose-400";
+const TONES = {
+  sky: { bg: "bg-sky-500/15", text: "text-sky-400" },
+  emerald: { bg: "bg-emerald-500/15", text: "text-emerald-400" },
+  rose: { bg: "bg-rose-500/15", text: "text-rose-400" },
+  amber: { bg: "bg-amber-500/15", text: "text-amber-400" },
+} as const;
+
+function ReviewRow({ icon: Icon, label, value }: { icon: typeof Users; label: string; value: number }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-white/5 p-2.5">
-      <div className={`h-8 w-8 rounded-lg flex items-center justify-center ${toneCls}`}><Icon className="h-4 w-4" /></div>
-      <div className="text-xs flex-1">{label}</div>
-      <div className="text-sm font-bold tabular-nums">{value.toLocaleString()}</div>
+    <div className="flex items-center gap-2.5">
+      <Icon className="h-4 w-4 text-slate-400 shrink-0" />
+      <span className="flex-1 text-xs text-slate-300">{label}</span>
+      <span className="px-2 py-0.5 rounded-md bg-[#0b1220] border border-white/5 text-xs font-bold tabular-nums">{value}</span>
+    </div>
+  );
+}
+
+function ReportRow({ label, severity, tone }: { label: string; severity: string; tone: "rose" | "amber" }) {
+  const cls = tone === "rose" ? "bg-rose-500/15 text-rose-400" : "bg-amber-500/15 text-amber-400";
+  return (
+    <div className="flex items-center gap-2.5">
+      <span className="flex-1 text-xs text-slate-300">{label}</span>
+      <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold ${cls}`}>{severity}</span>
     </div>
   );
 }
@@ -469,7 +460,7 @@ function timeAgo(iso: string, lng: "ar" | "fr" | "en") {
   for (const [sec, ar, fr, en] of units) {
     if (diff < sec) {
       const v = Math.max(1, Math.floor(diff / (sec / 60)));
-      return `${v}${lng === "ar" ? ar : lng === "fr" ? fr : en}`;
+      return `${v} ${lng === "ar" ? ar : lng === "fr" ? fr : en}`;
     }
   }
   return new Date(iso).toLocaleDateString();
