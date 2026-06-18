@@ -13,7 +13,9 @@ import { Toaster } from "sonner";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import "../lib/i18n";
+import { hydrateLanguageFromCloud } from "../lib/i18n";
 import { OfflineScreen } from "../components/OfflineScreen";
+import { supabase } from "../integrations/supabase/client";
 
 function NotFoundComponent() {
   return (
@@ -100,6 +102,11 @@ function RootComponent() {
     const t = (typeof localStorage !== "undefined" && localStorage.getItem("dzhealth-theme")) || "dark";
     if (t === "light") document.documentElement.classList.add("light");
     else document.documentElement.classList.remove("light");
+    hydrateLanguageFromCloud();
+    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_IN" || event === "USER_UPDATED") hydrateLanguageFromCloud();
+    });
+    return () => sub.subscription.unsubscribe();
   }, []);
   return (
     <QueryClientProvider client={queryClient}>
