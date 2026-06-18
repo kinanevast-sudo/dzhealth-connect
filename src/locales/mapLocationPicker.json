@@ -1,0 +1,17 @@
+{
+  "ar": {
+    "title": "تحديد الموقع",
+    "fetching_address": "جارٍ تحميل العنوان...",
+    "confirm_location": "تأكيد الموقع"
+  },
+  "fr": {
+    "title": "Choisir l'emplacement",
+    "fetching_address": "Chargement de l'adresse...",
+    "confirm_location": "Confirmer l'emplacement"
+  },
+  "en": {
+    "title": "Pick Location",
+    "fetching_address": "Fetching address...",
+    "confirm_location": "Confirm Location"
+  }
+}

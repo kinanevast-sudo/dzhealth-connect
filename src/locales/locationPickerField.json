@@ -1,0 +1,14 @@
+{
+  "ar": {
+    "location_set": "{{lat}}، {{lng}}",
+    "pick_location": "تحديد الموقع على الخريطة"
+  },
+  "fr": {
+    "location_set": "{{lat}}, {{lng}}",
+    "pick_location": "Choisir l'emplacement sur la carte"
+  },
+  "en": {
+    "location_set": "{{lat}}, {{lng}}",
+    "pick_location": "Pick location on map"
+  }
+}

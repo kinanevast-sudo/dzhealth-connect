@@ -1,0 +1,26 @@
+{
+  "ar": {
+    "max_size_error": "الحجم الأقصى للصورة هو 5 ميجابايت",
+    "login_required": "يجب تسجيل الدخول",
+    "image_url_error": "تعذّر الحصول على رابط الصورة",
+    "upload_title": "صورة المكان",
+    "camera": "الكاميرا",
+    "gallery": "المعرض"
+  },
+  "fr": {
+    "max_size_error": "La taille maximale de l'image est de 5 Mo",
+    "login_required": "Connexion requise",
+    "image_url_error": "Impossible d'obtenir l'URL de l'image",
+    "upload_title": "Photo du lieu",
+    "camera": "Caméra",
+    "gallery": "Galerie"
+  },
+  "en": {
+    "max_size_error": "Maximum image size is 5 MB",
+    "login_required": "Sign-in required",
+    "image_url_error": "Could not retrieve the image URL",
+    "upload_title": "Place photo",
+    "camera": "Camera",
+    "gallery": "Gallery"
+  }
+}

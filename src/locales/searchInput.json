@@ -1,0 +1,14 @@
+{
+  "ar": {
+    "placeholder": "ابحث...",
+    "voice_input": "إدخال صوتي"
+  },
+  "fr": {
+    "placeholder": "Rechercher...",
+    "voice_input": "Saisie vocale"
+  },
+  "en": {
+    "placeholder": "Search...",
+    "voice_input": "Voice input"
+  }
+}

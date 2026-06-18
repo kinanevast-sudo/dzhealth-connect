@@ -1,0 +1,14 @@
+{
+  "ar": {
+    "tagline": "كل الخدمات الصحية في الجزائر في مكان واحد",
+    "skip": "تخطي"
+  },
+  "fr": {
+    "tagline": "Tous les services de santé en Algérie au même endroit",
+    "skip": "Passer"
+  },
+  "en": {
+    "tagline": "All health services in Algeria in one place",
+    "skip": "Skip"
+  }
+}
