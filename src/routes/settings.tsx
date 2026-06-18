@@ -85,17 +85,17 @@ function Page() {
   };
 
   const requestGeo = () => {
-    if (!navigator.geolocation) return toast.error("الموقع غير مدعوم");
+    if (!navigator.geolocation) return toast.error(t("common.error"));
     navigator.geolocation.getCurrentPosition(
-      () => { setGeoState("granted"); toast.success("تم تفعيل الموقع"); },
-      () => { setGeoState("denied"); toast.error("تم رفض الإذن"); },
+      () => { setGeoState("granted"); toast.success(t("settings.locationOn")); },
+      () => { setGeoState("denied"); toast.error(t("common.error")); },
       { enableHighAccuracy: false, timeout: 8000 }
     );
   };
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    toast.success("تم تسجيل الخروج");
+    toast.success(t("settings.logout"));
     navigate({ to: "/auth" });
   };
 
@@ -106,38 +106,41 @@ function Page() {
   ];
 
   const THEMES: { key: Theme; label: string; icon: React.ReactNode }[] = [
-    { key: "light", label: "فاتح", icon: <Sun className="w-4 h-4" /> },
-    { key: "dark", label: "داكن", icon: <Moon className="w-4 h-4" /> },
-    { key: "system", label: "النظام", icon: <Monitor className="w-4 h-4" /> },
+    { key: "light", label: t("settings.light"), icon: <Sun className="w-4 h-4" /> },
+    { key: "dark", label: t("settings.dark"), icon: <Moon className="w-4 h-4" /> },
+    { key: "system", label: t("settings.system"), icon: <Monitor className="w-4 h-4" /> },
   ];
 
   const MENU_ROWS = [
     {
       icon: <Bell className="w-4 h-4" />,
-      label: "الإشعارات",
+      label: t("settings.notifications"),
       action: () => navigate({ to: "/notifications" }),
     },
     {
       icon: <Shield className="w-4 h-4" />,
-      label: "سياسة الخصوصية",
-      action: () => toast.info("سياسة الخصوصية — قريباً"),
+      label: t("settings.privacy"),
+      action: () => toast.info(t("settings.privacy")),
     },
     {
       icon: <HelpCircle className="w-4 h-4" />,
-      label: "مركز المساعدة",
-      action: () => toast.info("مركز المساعدة — قريباً"),
+      label: t("settings.help"),
+      action: () => toast.info(t("settings.help")),
     },
     {
       icon: <Info className="w-4 h-4" />,
-      label: "عن التطبيق",
-      action: () => toast.info("DZHealth v1.0.0 — كل الخدمات الصحية في مكان واحد"),
+      label: t("settings.about"),
+      action: () => toast.info("DZHealth v1.0.0"),
     },
   ];
 
+  const isRTL = i18n.language === "ar";
+
   return (
     <AppShell>
-      <ScreenHeader title="الإعدادات" />
-      <div dir="rtl" className="px-4 py-4 space-y-4 pb-24">
+      <ScreenHeader title={t("settings.title")} />
+      <div dir={isRTL ? "rtl" : "ltr"} className="px-4 py-4 space-y-4 pb-24">
+
         {email && (
           <p className="text-sm text-muted-foreground -mt-1">{email}</p>
         )}
